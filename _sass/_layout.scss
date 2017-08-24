@@ -148,7 +148,6 @@
 }
 
 .post-link {
-    display: block;
     font-size: 24px;
 }
 
@@ -251,60 +250,4 @@
   }
 }
 
-/*
- Share Button
-*/
-.sharebutton {
-  list-style: none;
-  margin: 0 auto;
-  display: inline-block;
-  padding-bottom: 25px;
-  font-size: 14px;
 
-  li {
-    float: left;
-    margin-right: 5px;
-  }
-
-  .share {
-    padding: 4px;
-    font-size: 16px
-  }
-
-  a {
-    color: #FFFFFF!important;
-    display: block;
-    font-weight: 600;
-    text-decoration: none;
-    padding: 5px 10px;
-    opacity: .8;
-
-    &:hover {
-      opacity: 1;
-      box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    }
-  }
-}
-.fb a {
-  background: #306199;
-}
-
-.linkedin a {
-  background: #007bb6;
-}
-
-.twitter a {
-  background: #26c4f1;
-}
-
-.gplus a {
-  background: #e93f2e;
-}
-
-.pinterest a {
-  background: #b81621;
-}
-
-.pinterest {
-  margin-right: 0;
-}

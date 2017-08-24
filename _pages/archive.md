@@ -6,11 +6,11 @@ permalink: /archive
 ---
 <div class="archive-header">
     <h2>Archives</h2>
-    <span class="icon toggle-search">{% include search.svg %} Search</span>
+    <span class="icon toggle-search">{% include svg/search.svg %} Search</span>
 </div>
 <div class="search">
     <div class="wrapper">
-        <span class="icon toggle-search">{% include close.svg %}</span>
+        <span class="icon toggle-search">{% include svg/close.svg %}</span>
         <input type="text" class="search-input" id="search-input" placeholder="Search...">
         <ul id="results-container"></ul>
     </div>
