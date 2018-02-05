@@ -10,13 +10,14 @@ layout: default
         <h2>
           <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
         </h2>
-          <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
         <p class="description">
-            {% if post.description %}
-                {{ post.description | strip_html | strip_newlines | truncate: 250 }}
-            {% else %}
-                {{ post.content | strip_html | strip_newlines | truncate: 250 }}
-            {% endif %}</p>
+          {% if post.description %}
+              {{ post.description | strip_html | strip_newlines | truncate: 250 }}
+          {% else %}
+              {{ post.content | strip_html | strip_newlines | truncate: 250 }}
+          {% endif %}
+        </p>
       </li>
     {% endfor %}
   </ul>
@@ -25,4 +26,5 @@ layout: default
   <div class="pagination">
     {% if paginator.previous_page %} <a href="{{ paginator.previous_page_path | prepend: site.baseurl }}" class="prev">Newer Posts</a> {% endif %}
     {% if paginator.next_page %} <a href="{{ paginator.next_page_path | prepend: site.baseurl }}" class="next">Older Posts</a>{% endif %}
-  </div>{% endif %}
+  </div>
+{% endif %}

@@ -111,9 +111,12 @@
 .site-footer {
     border-top: 1px solid $grey-color-light;
     padding: $spacing-unit 0;
+    background-color: #eee;
+    text-align: center;
 }
-.copy {
-    float: left;
+
+.footer-icon {
+  text-decoration: none !important;
 }
 
 /**

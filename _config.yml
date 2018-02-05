@@ -16,7 +16,6 @@ twitter:
 facebook:
   app_id: 1234
   publisher: 1234
-google_plus: #gplus id or username
 
 
 # Build settings
@@ -25,7 +24,7 @@ markdown: kramdown
 sass:
     style: compressed
 
-gems:
+plugins:
   - jekyll-redirect-from
   - jekyll-mentions
   - jekyll-paginate
@@ -46,5 +45,5 @@ exclude:
   - Gemfile
   - Gemfile.lock
 
-paginate: 5
+paginate: 8
 paginate_path: 'p/:num'
