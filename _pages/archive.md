@@ -16,7 +16,9 @@ permalink: /archive
   </div>
 </div>
 <ul class="archive-lists">
+  <div>
   {% for post in site.posts %}
+  {% if post.categories contains "articles" %}
     {% unless post.next %}
     <div class="by-year">
       <h3>{{ post.date | date: '%Y' }}</h3>
@@ -24,12 +26,13 @@ permalink: /archive
       {% capture year %}{{ post.date | date: '%Y' }}{% endcapture %}
       {% capture nyear %}{{ post.next.date | date: '%Y' }}{% endcapture %}
       {% if year != nyear %}
-    </div>
-    <div class="by-year">
-      <h3>{{ post.date | date: '%Y' }}</h3>
+        </div>
+        <div class="by-year">
+          <h3>{{ post.date | date: '%Y' }}</h3>
       {% endif %}
     {% endunless %}
     <li><span class="date">{{ post.date | date:"%b" }}</span> <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a></li>
+    {% endif %}
   {% endfor %}
   </div>
 </ul>

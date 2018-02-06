@@ -5,18 +5,8 @@ description: > # this means to ignore newlines until "baseurl:"
   Welcome to my awesome blog.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site
-google_analytics: #your GA unique id, e.g. UA-xxxxxxxx-x
-disqus_username: #Your disqus_username to add comments on the post
-
-# Optional settings
-github: deep110
-linkedin: #linkedin username
-twitter:
-  username: #twitter username here
-facebook:
-  app_id: 1234
-  publisher: 1234
-
+google_analytics: UA-113643986-1
+disqus_username: deep110-github-io
 
 # Build settings
 markdown: kramdown
@@ -28,9 +18,7 @@ plugins:
   - jekyll-redirect-from
   - jekyll-mentions
   - jekyll-paginate
-  - jekyll-sitemap
   - jekyll-seo-tag
-  - jekyll-feed
   - jemoji
 
 defaults:
@@ -46,4 +34,4 @@ exclude:
   - Gemfile.lock
 
 paginate: 8
-paginate_path: 'p/:num'
+paginate_path: "/page/:num/"

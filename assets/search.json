@@ -4,6 +4,7 @@ permalink: /search.json
 ---
 [
 {% for post in site.posts %}
+{% if post.categories contains "articles" %}
 	{
 		"title"    : "{{ post.title | escape }}",
 		"category" : "{{ post.categories }}",
@@ -12,5 +13,6 @@ permalink: /search.json
 		"url"      : "{{ post.url | prepend: site.baseurl }}",
 		"date"     : "{{ post.date }}"
 	} {% unless forloop.last %},{% endunless %}
+{% endif %}
 {% endfor %}
 ]
