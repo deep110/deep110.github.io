@@ -1,0 +1,8 @@
+---
+layout: post
+title:  "Ballx2 - Android Game"
+hidden: true
+---
+Made in native Android, it was my first experiment with Android and development in general. Aim of the game is to hit the balls to split them into two balls of half the radius using arrows. If the radius goes below a minimum one, ball vanishes.
+
+[Play](https://play.google.com/store/apps/details?id=com.mdg.ballx2).
