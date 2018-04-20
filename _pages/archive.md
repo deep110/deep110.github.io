@@ -35,5 +35,4 @@ permalink: /archive
     {% endif %}
   {% endfor %}
   </div>
-</ul>
 <span class="last-update">Site last generated: {{ site.time | date: "%b %-d, %Y"  }}</span>

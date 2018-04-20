@@ -24,7 +24,12 @@ layout: default
 </div>
 {% if paginator.total_pages > 1 %}<!-- Pagination links -->
   <div class="pagination">
-    {% if paginator.previous_page %} <a href="{{ paginator.previous_page_path | prepend: site.baseurl }}" class="prev">Newer Posts</a> {% endif %}
-    {% if paginator.next_page %} <a href="{{ paginator.next_page_path | prepend: site.baseurl }}" class="next">Older Posts</a>{% endif %}
+    {% if paginator.previous_page %}
+    <a href="{{ paginator.previous_page_path | prepend: site.baseurl }}" class="prev">Newer Posts</a>
+    {% endif %}
+
+    {% if paginator.next_page %}
+    <a href="{{ paginator.next_page_path | prepend: site.baseurl }}" class="next">Older Posts</a>
+    {% endif %}
   </div>
 {% endif %}
