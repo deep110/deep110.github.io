@@ -25,9 +25,28 @@ layout: default
   <footer class="post-footer">
   
     <!-- Post Navigation -->
+    {% for post in site.categories.articles %}
+        {% if post.url == page.url %}
+            {% assign post_index0 = forloop.index0 %}
+            {% assign post_index1 = forloop.index %}
+        {% endif %}
+    {% endfor %}
+    {% for post in site.categories.articles %}
+        {% if post_index0 == forloop.index %}
+            {% assign next_post = post.url %}
+        {% endif %}
+        {% if post_index1 == forloop.index0 %}
+            {% assign prev_post = post.url %}
+        {% endif %}
+    {% endfor %}
+
     <div class="post-navigation">
-      {% if page.previous.url %}<a class="prev" href="{{ page.previous.url | prepend: site.baseurl }}">←&nbsp;Previous Post</a>{% endif %}
-      {% if page.next.url %}<a class="next" href="{{ page.next.url | prepend: site.baseurl }}">Next Post&nbsp;→</a>{% endif %}
+      {% if prev_post %}
+        <a class="next" href="{{ prev_post | prepend: site.baseurl }}">←&nbsp;Prev Post</a>
+      {% endif %}
+      {% if next_post %}
+        <a class="prev" href="{{ next_post | prepend: site.baseurl }}">Next Post&nbsp;→</a>
+      {% endif %}
     </div>
       {% include comment.html %}
   </footer>
