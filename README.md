@@ -1,1 +1,1 @@
-Just simple theme for your jekyll blog, based on default Jekyll theme.
+My personal blog based on jekyll
