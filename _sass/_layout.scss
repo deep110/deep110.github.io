@@ -6,7 +6,7 @@
     min-height: 56px;
     background-color: #515865;
 
-    .menu-icon {
+    #menu-icon {
         display: none;
         @include media-query($on-palm) {
             display: block;
@@ -31,7 +31,7 @@
         }
     }
 }
-.exp .menu-icon::before {
+.exp #menu-icon::before {
     content: "";
     width: 100%;
     height: 100%;
