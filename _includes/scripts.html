@@ -2,3 +2,6 @@
 {% for script in page.scripts %}
     <script type="text/javascript" src="{{'/assets/js/' | prepend:site.baseurl | append: script }}"></script>
 {% endfor %}
+{% for css in page.css %}
+    <link rel="stylesheet" href="{{'/assets/css/' | prepend:site.baseurl | append: css }}"></script>
+{% endfor %}
