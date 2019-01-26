@@ -33,14 +33,12 @@ For calculating the properties we basically use Newton's Law of motion.
 <p class="equation">v = \intop{1/m * F \; dt}</p>
 and,
 <p class="equation">x = \intop{v \; dt}</p>
-where,
-```
-F = force applied
-v = Velocity
-m = mass of body
-x = position
+where,  
+F = force applied  
+v = Velocity  
+m = mass of body  
+x = position  
 dt = time elapsed since last execution (1\60 if 60 fps)
-```
 
 To solve these differential equations for games, we widely come across these three integrators:
 1. [Explicit Euler method](https://en.wikipedia.org/wiki/Euler_method)
@@ -57,24 +55,26 @@ To solve these differential equations for games, we widely come across these thr
 
 3. [Runge-Kutta (RK) 4th Order Method](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods)
     
-    I won't be going into much explaination about what it does, but it gives better accuracy than euler methods but is computationally expensive. Euler methods are actually simplification of this method.
+    I won't be going into much explaination about what it does, but it gives better accuracy than euler methods but is computationally expensive. Euler methods are actually just special case of this method.
 
 Implicit euler gives us more accurate results than explicit euler and is much closer to RK4. [Here](https://gafferongames.com/post/integration_basics/) is a more detailed comparison of all three methods and is explained why implicit euler is okay for game engines.
 
 So using implicit euler we will get:
-```java
- v += (1/m * F) * dt   // velocity
- x += v * dt           // position
+```python
+ v += (1/m * F) * dt   # velocity
+ x += v * dt           # position
 ```
 
 If we take rotation into account,
-<pre><code class="equation">
-\omega \mathrel{+}= (1/I * \tau) * dt\\\theta \mathrel{+}= \omega * dt
-</code></pre>
-where,
+```python
+ω += (1/I * τ) * dt
+θ += ω * dt
 ```
-I = Moment of Inertia
-```
+where,  
+I = Moment of Inertia  
+θ = orientation  
+ω = angular velocity  
+τ = Torque
 
 ### Calculate colliding pairs of rigidbodies
 At each loop it is necessary for engine to know which pair of rigidbodies are colliding, so that the collision can be solved and bodies do not pass each other.
@@ -89,36 +89,53 @@ So first we use a process called **BroadPhase calculation** to narrow down the n
 [Here](http://buildnewgames.com/broad-phase-collision-detection/) is a nice blog explaining the broadphase implementation in more detail, like choice of grid size, etc. In my code since it was just for a small scope I have not implemented this part.
 
 
-Then we proceed to **NarrowPhase calculation** i.e which actually determines which bodies are colliding. Aim of Narrowphase is to calculate three things for every pair of collision:
+Then we proceed to **NarrowPhase calculation** i.e which actually determines which bodies are colliding. Aim of Narrowphase is to calculate three things for every pair of colliding bodies:
 1. *Collision Normal*: Direction of bodies they are colliding
 2. *Penetration Depth*: How much bodies have overlapped each other
 3. *Contact Points*: Points of contact where they are overlapping
 
 It can be implemented using [Separating Axis Theorem](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem). The basic principle is:  *If two bodies are not colliding, there will be certain axis for which their projections will not overlap.*
 
-For a general convex polygon there could be a lot of axis to check, but for simplication purposes, I have just taken the shape of the colliders to be *Circle* and *Axis-Aligned Bounding Box (AABB)* i.e just a rectangle. Now for collision checks, we will need to implement four combinations:
+For a general convex polygon there could be a lot of axis to check, but for simplication purposes, I have just taken the shape of the colliders to be *Circle* and *Axis-Aligned Bounding Box (AABB)* i.e just a rectangle. Now for collision checks, we will like to implement four combinations (not taking rotation into account):
 * Circle-Circle:
   
   For this, test is easy - Distance between circles should be less than sum of their radii
   ```java
-  class Circle {
-    Vector2 pos;
-    float radius;
-  }
-
-  // for colliding
-  if (distance(circle1.pos, circle2.pos) <= circle1.radius + circle2.radius) {
-    isColliding = true;
-  }
+  // distance must be less for overlap
+  isColliding = distance(circle1, circle2) <= circle1.radius + circle2.radius
   ```
 
 * Circle-AABB
+  
+  We will first find the nearest point of contact on AABB between AABB and circle.
+  ```java
+  positionDiff = AABB.pos - circle.pos
+  
+  // on x-axis take the point which is near, the bounds or diff
+  nearestPoint.x = clamp(-AABB.width/2, AABB.width/2, positionDiff.x)
+  // same for y-axis
+  nearestPoint.y = clamp(-AABB.height/2, AABB.height/2, positionDiff.y)
 
-  hello
-
+  // distance between nearest point on rectangle and circle's center should
+  // be less than circle's radius
+  isColliding = distance(circle1, nearestPoint) <= circle.radius
+  ```
 * AABB-Circle
-* AABB-AABB
+  
+  Same procedure as above
 
+* AABB-AABB
+  
+  ```java
+  positionDiff = AABB2.pos - AABB1.pos
+
+  // find overlap values
+  xOverlap = AABB1.width/2 + AABB2.width/2 - abs(positionDiff.x) // x-axis overlap
+  yOverlap = AABB1.height/2 + AABB2.height/2 - abs(positionDiff.y) // y-axis overlap
+  
+  // for bodies to be colliding both axis must overlap
+  isColliding = xOverlap > 0 && yOverlap > 0
+  ```
 
 For a convex polygon its implementation will be more complex, there is a good [video](https://gdcvault.com/play/1017646/Physics-for-Game-Programmers-The) in GDC Vault explaining the process. Also you can go through the [Box2D](https://github.com/erincatto/Box2D) code for the same. It is next in my list for implementation.
 
@@ -128,15 +145,15 @@ Impulse resolution means when bodies collide, we need to stop them from moving i
 Each rigidbody apart from dynamic properties also has some physical properties which we group into **Material**.
 - Mass (m): how much the body weigh
 - Coefficient of restitution (e): how rough is the surface
-- Coefficient of Static friction (F<sub>s</sub>): friction coefficient for stationary objects
-- Coefficient of dynamic friction (F<sub>d</sub>): friction coefficient for moving objects
+- Coefficient of Static friction (μ<sub>s</sub>): friction coefficient for stationary objects
+- Coefficient of dynamic friction (μ<sub>d</sub>): friction coefficient for moving objects
 
 For a pair of bodies we calculate equivalent coefficients.
 * Equivalent coefficient of restitution is `e = min(e1, e2)`.
 * Equivalent coefficients of friction are:
   <pre><code class="equation">
-  F_s = \sqrt{F_{s1} * F_{s1} + F_{s2} * F_{s1}}\\
-  F_d = \sqrt{F_{d1} * F_{d1} + F_{d2} * F_{d1}}
+  μ_s = \sqrt{μ_{s1} * μ_{s1} + μ_{s2} * μ_{s1}}\\
+  μ_d = \sqrt{μ_{d1} * μ_{d1} + μ_{d2} * μ_{d1}}
   </code></pre>
 
 During the time of contact we will consider two impulses acting on them:
@@ -149,51 +166,86 @@ Impulse (j) is calculated using [Momentum Conservation](https://en.wikipedia.org
 
 #### Normal Impulse
 Let us define some variables,
-<pre><code>v<sup>A</sup>, u<sup>A</sup> = final and initital velocity of body A
-v<sup>B</sup>, u<sup>B</sup> = final and initital velocity of body B
-j<sup>A</sup> = change in momentum of A
-j<sup>B</sup> = change in momentum of B
-n = normal vector in direction of collision normal
+<pre><code>v<sub>A</sub>, u<sub>A</sub> = final and initital velocity of body A
+v<sub>B</sub>, u<sub>B</sub> = final and initital velocity of body B
+j<sub>A</sub> = change in momentum of A
+j<sub>B</sub> = change in momentum of B
+n = normal vector in direction of collision normal (n.n = 1)
 </code></pre>
 
 According to Newton's law of restitution,
 ```
 e = relative final velocity / relative intitial velocity
 ```
-Since momentum is conserved change in momentum of Body A will be opposite to the change in momentum of body B i.e j<sup>A</sup> . n = -j<sup>B</sup> . n. Taking a dot product with `n` since we are interested only in normal direction.
-
+Since momentum is conserved change in momentum of Body A will be opposite to the change in momentum of body B i.e j<sub>A</sub> . n = -j<sub>B</sub> . n. Taking a dot product with `n` since we are interested only in normal direction.
 <p class="equation">
 e = \dfrac {-(v_{B} - v_{A})}{u_{B} - u_{A}}
 \\~\\
 j_{A}.n = m_{A} (v_{A} - u_{A})\\
 j_{B}.n = -j_{A}.n = m_{B} (v_{B} - u_{B})
+u_{AB} = u_{A} - u_{B}\\
 </p>
 So our aim is to calculate `j` in terms of initial velocity since we don't know the final velocities of bodies after collision. We will just rearrange the terms:
 <p class="equation">
 v_{A} = u_{A} + \dfrac {j_{A}n}{m_{A}}\\
 v_{B} = u_{B} - \dfrac {j_{A}n}{m_{B}}
 \\~\\
-u_{AB} = u_{A} - u_{B}\\
-v_{B} - v_{A} = eu_{AB} = -u_{AB} - j_{A}n \big(\frac {1}{m_{A}} + \frac {1}{m_{B}}\big)
+v_{B} - v_{A} = eu_{AB} = -u_{AB} - j_{A}n \big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}}\big)
 \\~\\
-\boxed{j_{A} = -j_{B} = - \dfrac {(1+e) u_{AB}.n}{n.n \big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}}\big)}}
+\boxed{j_{A} = -j_{B} = - \dfrac {(1+e) u_{AB}.n}{\big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}}\big)}}
 </p>
 
 Whew, that's a lot of equations, but don't worry that's just rearranging the terms to get what we need, you can work it out yourself.
-If you want to rotational motion into account, its easy, like linear momentum is conserved angular momentum is also [conserved](https://en.wikipedia.org/wiki/Angular_momentum#Conservation_of_angular_momentum).
 
+If you want to rotational motion into account, its easy, like linear momentum, angular momentum is also [conserved](https://en.wikipedia.org/wiki/Angular_momentum#Conservation_of_angular_momentum). Let us define more terms so that furthur equation can be clear.
+```
+L = angular momentum
+p = linear momentum
+I = Moment of Inertial about Center of Mass (COM)
+r = radius vector perperdincular to COM
+```
+Some basic definations,
+<p class="equation">
+L = I\omega = r x p\\
+v_{A}^{total} = v_{A}^{linear} + r_{A}\omega_{A}
+\\~\\
+\Delta L = I \dfrac{\Delta v_{angular}}{r}
+</p>
+When considering the change in linear momentum also add angular momentum giving us final equation:
+<p class="equation">
+\boxed{j_{A} = -j_{B} = - \dfrac {(1+e) u_{AB}.n}{\big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}} \big) + \dfrac {(r_{A}.n)^2}{I_{A}} + \dfrac {(r_{B}.n)^2}{I_{B}}}}
+</p>
 
 #### Frictional Impulse
-Frictional impulse is calculated using [Coulomb's Law](https://en.wikipedia.org/wiki/Friction#Dry_friction)
-    
-F<sub>f</sub> <= μF<sub>n</sub>
+Frictional Impulse is applied perpendicular to collision normal.
+<div style="text-align:center"><img src="/assets/images/2019-01/tangent-normal-rv.png"/></div>
 
-Friction force is less than or equal to normal force on the surface multiplied by μ.
-Check is performed using static friction coefficient but value is taken to be of dynamic
-coefficient.
+Frictional impulse can just be calculated by subsituting normal vector with tangential magnitude of relative velocity, and in opposite direction.
 
+Replace `n` with `t`:
+<p class="equation">
+\boxed{j_{f} = - \dfrac {(1+e) u_{AB}.t}{\big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}} \big) + \dfrac {(r_{A}.n)^2}{I_{A}} + \dfrac {(r_{B}.n)^2}{I_{B}}}}
+</p>
+Now we just need to calculate `t`. For that we will get normal component of relative velocity and subtract from total relative velocity to get tangential component (Vector Math). Negative sign is since friction is opposite to the direction of motion.
+<p class="equation">
+t = -[V_{AB} − (V_{AB}⋅n)∗n]
+</p>
+But wait there is a catch, friction acts differently for static and dynamic objects, that is why two coefficients of friction. Which one to use is determined using [Coulomb's Law](https://en.wikipedia.org/wiki/Friction#Dry_friction).
+<pre><code>j<sub>f</sub> <= μj<sub>n</sub></code></pre>
+
+Let us understand this defination, if our solved `jf` (representing the force of friction ) is less than μ<sub>static</sub> times the normal force (`jn`), then we can use our `jf` magnitude as friction. If not, then we must use our normal force times μ<sub>dynamic</sub> instead.
+<pre><code>
+if (abs(jf) < μ<sub>s</sub>jn) {
+    // no change
+} else {
+    jf = μ<sub>d</sub>jn
+}
+</code></pre>
+
+<br>
+Hopefully you can begin to understand the basics of writing a game engine, and again you can find the code [here](https://github.com/deep110/LucidEngine). I have tried to include most of the topics that are absolutely required to implement a working demo. Now you can read up articles for specific topics to understand them more and how it will benefit your implementation.
 
 #### Image and Other Credits
 * Wikipidea
-* [ReasearchGate](https://www.researchgate.net/figure/Spatial-partition-of-a-2D-scene-using-a-quadtree-subdivision_fig2_236611845)
+* [ResearchGate](https://www.researchgate.net/figure/Spatial-partition-of-a-2D-scene-using-a-quadtree-subdivision_fig2_236611845)
 * [GameDevTuts](https://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169)
