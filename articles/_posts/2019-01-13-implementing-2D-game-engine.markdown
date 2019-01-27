@@ -6,20 +6,20 @@ scripts: [katex.min.js]
 css: [katex.min.css]
 ---
 First of all you would think that when there are so many game engines out there why
-would you want to implement your own. Well it may be that you don't like any of them, or just thinking of starting a game and implementing your own engine might be a good idea, then please don't do it and this article might not be for you. But if you (like me), want to learn nitty-gritties of a physics engine, this could be a good excercise.
+would you want to implement your own. Well it may be that you don't like any of them, or just thinking of starting a game and implementing your own engine might be a good idea, then please don't do it and this article might not be for you. But if you (like me), want to learn nitty-gritties of a physics engine, this could be a good exercise.
 
-Here is demo of the end result and you can find the code [here](https://github.com/deep110/LucidEngine) on my github.
+Here is the demo of the end result and you can find the code [here](https://github.com/deep110/LucidEngine) on my github.
 
 
 <div style="text-align:center"><img src="/assets/images/2019-01/game_engine_demo.gif"/></div>
 <br><br>
-In this article I won't be providing any code snippets since you can find that in the github link I have provided above, but more of an explaination how things are pieced together.
+In this article I won't be providing any code snippets since you can find that in the github link I have provided above, but more of an explanation how things are pieced together.
 
-First we will start with some basic assumptions:
+First, we will start with some basic assumptions:
 1. All bodies are [rigid bodies](https://en.wikipedia.org/wiki/Rigid_body) means they cannot deform on impact.
 2. Colliding shapes of rigidbodies are [convex](https://en.wikipedia.org/wiki/Convex_polygon), non-convex shapes should be bounded by a convex shape for collision detection purposes.
 2. Physics simulation runs at a constant frame rate i.e usually 60 fps.
-3. Whatever I will be describing has been implemented for 2D but most of the general idea is applicable for 3D as well. Also, the processes I have described is what I have implemented, most of the commercial engines do a lot of optimizations on top of this which is beyond the scope of this article.
+3. Whatever I will be describing has been implemented for 2D but most of the general idea is applicable for 3D as well. Also, the processes I have described is what I have implemented, different game engines tend to use different models or optimizations.
 
 ### Overview
 For a physics engine to function properly it should perform three basic things:
@@ -55,7 +55,7 @@ To solve these differential equations for games, we widely come across these thr
 
 3. [Runge-Kutta (RK) 4th Order Method](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods)
     
-    I won't be going into much explaination about what it does, but it gives better accuracy than euler methods but is computationally expensive. Euler methods are actually just special case of this method.
+    I won't be going into much explaination about what it does, but it gives better accuracy than euler methods but is computationally expensive. Actually, Euler methods are just special case of RK.
 
 Implicit euler gives us more accurate results than explicit euler and is much closer to RK4. [Here](https://gafferongames.com/post/integration_basics/) is a more detailed comparison of all three methods and is explained why implicit euler is okay for game engines.
 
@@ -85,8 +85,8 @@ So first we use a process called **BroadPhase calculation** to narrow down the n
 * It is implemented through [Space Partitioning](https://en.wikipedia.org/wiki/Space_partitioning) algorithms.
 * The basic idea is that you divide the whole region into grids (in volumes for 3D) and assign every body to a position in the grid.
 
-* Now, the body is added to each cell it is overlapping, so at last we iterate through grid and make pair of overlapping bodies. Objects are stored in data structures like [k-d tree](https://en.wikipedia.org/wiki/K-d_tree) or [BSP tree](https://en.wikipedia.org/wiki/BSP_tree) for efficiency. It generally reduces the iterate time from O(N<sup>2</sup>) to lograthmic times.
-[Here](http://buildnewgames.com/broad-phase-collision-detection/) is a nice blog explaining the broadphase implementation in more detail, like choice of grid size, etc. In my code since it was just for a small scope I have not implemented this part.
+* Now, the body is added to each cell it is overlapping, so at last we iterate through grid and make pair of overlapping bodies. Objects are stored in data structures like [k-d tree](https://en.wikipedia.org/wiki/K-d_tree) or [BSP tree](https://en.wikipedia.org/wiki/BSP_tree) for efficiency. It generally reduces the iterate time from O(N<sup>2</sup>) to logarithmic times.
+[Here](http://buildnewgames.com/broad-phase-collision-detection/) is a nice blog explaining the broadphase implementation in more detail, like choice of grid size, etc. My demo was just for a small scope, so I have not implemented this part.
 
 
 Then we proceed to **NarrowPhase calculation** i.e which actually determines which bodies are colliding. Aim of Narrowphase is to calculate three things for every pair of colliding bodies:
@@ -96,7 +96,7 @@ Then we proceed to **NarrowPhase calculation** i.e which actually determines whi
 
 It can be implemented using [Separating Axis Theorem](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem). The basic principle is:  *If two bodies are not colliding, there will be certain axis for which their projections will not overlap.*
 
-For a general convex polygon there could be a lot of axis to check, but for simplication purposes, I have just taken the shape of the colliders to be *Circle* and *Axis-Aligned Bounding Box (AABB)* i.e just a rectangle. Now for collision checks, we will like to implement four combinations (not taking rotation into account):
+For a general convex polygon there could be a lot of axis to check, but for simplification purposes, I have just taken the shape of the colliders to be *Circle* and *Axis-Aligned Bounding Box (AABB)* i.e just a rectangle. Now for collision checks, we will like to implement four combinations (not taking rotation into account):
 * Circle-Circle:
   
   For this, test is easy - Distance between circles should be less than sum of their radii
@@ -166,8 +166,8 @@ Impulse (j) is calculated using [Momentum Conservation](https://en.wikipedia.org
 
 #### Normal Impulse
 Let us define some variables,
-<pre><code>v<sub>A</sub>, u<sub>A</sub> = final and initital velocity of body A
-v<sub>B</sub>, u<sub>B</sub> = final and initital velocity of body B
+<pre><code>v<sub>A</sub>, u<sub>A</sub> = final and initial velocity of body A
+v<sub>B</sub>, u<sub>B</sub> = final and initial velocity of body B
 j<sub>A</sub> = change in momentum of A
 j<sub>B</sub> = change in momentum of B
 n = normal vector in direction of collision normal (n.n = 1)
@@ -175,7 +175,7 @@ n = normal vector in direction of collision normal (n.n = 1)
 
 According to Newton's law of restitution,
 ```
-e = relative final velocity / relative intitial velocity
+e = relative final velocity / relative initial velocity
 ```
 Since momentum is conserved change in momentum of Body A will be opposite to the change in momentum of body B i.e j<sub>A</sub> . n = -j<sub>B</sub> . n. Taking a dot product with `n` since we are interested only in normal direction.
 <p class="equation">
@@ -197,14 +197,14 @@ v_{B} - v_{A} = eu_{AB} = -u_{AB} - j_{A}n \big(\dfrac {1}{m_{A}} + \dfrac {1}{m
 
 Whew, that's a lot of equations, but don't worry that's just rearranging the terms to get what we need, you can work it out yourself.
 
-If you want to rotational motion into account, its easy, like linear momentum, angular momentum is also [conserved](https://en.wikipedia.org/wiki/Angular_momentum#Conservation_of_angular_momentum). Let us define more terms so that furthur equation can be clear.
+If you want to rotational motion into account, its easy, like linear momentum, angular momentum is also [conserved](https://en.wikipedia.org/wiki/Angular_momentum#Conservation_of_angular_momentum). Let us define more terms so that further equation can be clear.
 ```
 L = angular momentum
 p = linear momentum
 I = Moment of Inertial about Center of Mass (COM)
-r = radius vector perperdincular to COM
+r = radius vector perpendicular to COM
 ```
-Some basic definations,
+Some basic definitions,
 <p class="equation">
 L = I\omega = r x p\\
 v_{A}^{total} = v_{A}^{linear} + r_{A}\omega_{A}
@@ -220,20 +220,20 @@ When considering the change in linear momentum also add angular momentum giving 
 Frictional Impulse is applied perpendicular to collision normal.
 <div style="text-align:center"><img src="/assets/images/2019-01/tangent-normal-rv.png"/></div>
 
-Frictional impulse can just be calculated by subsituting normal vector with tangential magnitude of relative velocity, and in opposite direction.
+Frictional impulse can be calculated by just substituting normal vector with tangential magnitude of relative velocity, and in opposite direction.
 
 Replace `n` with `t`:
 <p class="equation">
 \boxed{j_{f} = - \dfrac {(1+e) u_{AB}.t}{\big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}} \big) + \dfrac {(r_{A}.n)^2}{I_{A}} + \dfrac {(r_{B}.n)^2}{I_{B}}}}
 </p>
-Now we just need to calculate `t`. For that we will get normal component of relative velocity and subtract from total relative velocity to get tangential component (Vector Math). Negative sign is since friction is opposite to the direction of motion.
+Now we just need to calculate `t`. For that we will get normal component of relative velocity and subtract from total relative velocity to get tangential component (Vector Math). Negative sign is used since friction is always opposite to the direction of motion.
 <p class="equation">
 t = -[V_{AB} − (V_{AB}⋅n)∗n]
 </p>
-But wait there is a catch, friction acts differently for static and dynamic objects, that is why two coefficients of friction. Which one to use is determined using [Coulomb's Law](https://en.wikipedia.org/wiki/Friction#Dry_friction).
+But wait there is a catch, friction acts differently for static and dynamic objects, that is why two coefficients of friction. How to use them can be determined using [Coulomb's Law](https://en.wikipedia.org/wiki/Friction#Dry_friction).
 <pre><code>j<sub>f</sub> <= μj<sub>n</sub></code></pre>
 
-Let us understand this defination, if our solved `jf` (representing the force of friction ) is less than μ<sub>static</sub> times the normal force (`jn`), then we can use our `jf` magnitude as friction. If not, then we must use our normal force times μ<sub>dynamic</sub> instead.
+Let us understand this definition, if our solved `jf` (representing the force of friction ) is less than μ<sub>static</sub> times the normal force (`jn`), then we can use our `jf` magnitude as friction. If not, then we must use our normal force times μ<sub>dynamic</sub> instead.
 <pre><code>
 if (abs(jf) < μ<sub>s</sub>jn) {
     // no change
@@ -243,9 +243,9 @@ if (abs(jf) < μ<sub>s</sub>jn) {
 </code></pre>
 
 <br>
-Hopefully you can begin to understand the basics of writing a game engine, and again you can find the code [here](https://github.com/deep110/LucidEngine). I have tried to include most of the topics that are absolutely required to implement a working demo. Now you can read up articles for specific topics to understand them more and how it will benefit your implementation.
+Hopefully you can now begin to understand the basics of writing a game engine, and again you can find the code [here](https://github.com/deep110/LucidEngine). I have tried to include most of the topics that are absolutely required to implement a working demo. Now you can read up articles for specific topics to understand them more and how it will benefit your implementation.
 
 #### Image and Other Credits
-* Wikipidea
+* Wikipedia
 * [ResearchGate](https://www.researchgate.net/figure/Spatial-partition-of-a-2D-scene-using-a-quadtree-subdivision_fig2_236611845)
 * [GameDevTuts](https://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169)
