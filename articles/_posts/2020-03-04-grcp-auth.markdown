@@ -1,0 +1,62 @@
+---
+layout: post
+title:  "GRPC Authentication and Authorization"
+date:   2020-03-04 13:20:00 +0530
+---
+In gRPC there are number of ways you can add authentication between client and server. It is handled via Credentials Objects.
+
+There are two types of credential objects:
+1. **Channel Credentials:** These are handled on the channel level, i.e when the connection is established and a channel is created.
+2. **Call Credentials:** These are handled on per request level, i.e for every RPC call that is made.
+
+These Credential objects can also be combined to create **CompositeChannelCredentials** with one Channel Credential and one Call Credential object.
+
+Now let us see how we can use these credential objects.
+
+## Client Side TLS/SSL Authentication
+gRPC provides a way to establish a connection without any secure connection i.e just like HTTP.
+
+```go
+// client.go
+conn, _ := grpc.Dial("localhost:5000", grpc.WithInsecure())
+
+
+// server.go
+lis, err := net.Listen("tcp", ":5000")
+s := grpc.NewServer()
+// ... register gRPC services ...
+s.Serve(lis)
+```
+
+For secure communication we will create **TransportCredentials** which is a type of ChannelCredential object.
+
+```go
+// client.go
+creds, _ := credentials.NewClientTLSFromFile(certFile, "")
+conn, _ := grpc.Dial("localhost:5000", grpc.WithTransportCredentials(creds))
+
+// server.go
+lis, _ := net.Listen("tcp", "localhost:50051")
+creds, _ := credentials.NewServerTLSFromFile(certFile, keyFile)
+s := grpc.NewServer(grpc.Creds(creds))
+
+s.Serve(lis)
+```
+You can read more about generating own ssl certificates [here](https://www.linuxjournal.com/content/understanding-public-key-infrastructure-and-x509-certificates).
+
+In case where you don't own the client, means you are creating a gRPC API for public use, you cannot give your certificate to every one using your client. In that case we rely on well known [Certificate Authority](https://en.wikipedia.org/wiki/Certificate_authority) like LetsEncrypt, Amazon, etc. to generate us a certificate. So we will change our client code a little.
+
+```go
+// client.go
+config := &tls.Config{
+	InsecureSkipVerify: false,
+}
+conn, err := grpc.Dial(address, grpc.WithTransportCredentials(credentials.NewTLS(config)))
+
+// server code remains the same
+```
+In this case what happens is that grpc loads the certificates of well known Certificate Authorities from the OS and send it to server, hence no need to manually provide a certificate.
+
+## Token Based Authentication
+Many a times we want to differentiate a client by issuing them different tokens. TLS Authentication is good way to secure your connection but it does not tell us from which client the request is coming from. We will send the token in request metadata just like HTTP Headers.
+
