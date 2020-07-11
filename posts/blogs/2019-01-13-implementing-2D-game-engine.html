@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>
+    
+      Implementing your Own 2D game engine
+    
+  </title>
+
+  <link rel="stylesheet" href="https://deep110.github.io/assets/css/main.css">
+
+</head>
+
+  <body>
+    <header class="site-header">
+    <div class="wrapper">
+        <a href="#" id="menu-icon">
+            <svg viewBox="0 0 18 15">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+                <path d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+                <path d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+        </a>
+        <a class="site-title" href="https://deep110.github.io/">Deepankar</a>
+        <nav class="site-nav">
+            <div class="trigger">
+                <a class="page-link" href="https://deep110.github.io/about.html">About Me</a>
+                <a class="page-link" href="https://deep110.github.io/archive.html">Archive</a>
+                <a class="page-link" href="https://deep110.github.io/projects.html">Projects</a>
+            </div>
+        </nav>
+    </div>
+</header>
+
+    <div class="page-content">
+      <div class="wrapper">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+          <header class="post-header">
+            <h1 class="post-title" itemprop="name headline">Implementing your Own 2D game engine</h1>
+            <p class="post-meta">
+               <time datetime="2019-01-13 00:00:00 +0000" itemprop="datePublished">
+                  Jan 13, 2019
+               </time>
+               
+                | <span class="time">
+                    11
+                  </span>
+                   Minute Read
+            </p>
+          </header>
+          <div class="post-content" itemprop="articleBody">
+            <p>First of all, you would think that when there are so many game engines out there why
+would you want to implement your own. Well it may be that you don't like any of them, or just thinking of starting a game and implementing your own engine might be a good idea, then please don't do it and this article might not be for you. But if you (like me), want to learn nitty-gritty of a physics engine, this could be a good exercise.</p>
+<p>Here is the demo of the end result and you can find the code <a href="https://github.com/deep110/LucidEngine">here</a> on my github.</p>
+<div style="text-align:center"><img src="/assets/images/2019-01/game_engine_demo.gif"/></div>
+<br><br>
+In this article I won't be providing any code snippets since you can find that in the github link I have provided above, but more of an explanation of how things are pieced together.
+<p>First, we will start with some basic assumptions:</p>
+<ol>
+<li>All bodies are <a href="https://en.wikipedia.org/wiki/Rigid_body">rigid bodies</a> means they cannot deform on impact.</li>
+<li>Colliding shapes of rigidbodies are <a href="https://en.wikipedia.org/wiki/Convex_polygon">convex</a>, non-convex shapes should be bounded by a convex shape for collision detection purposes.</li>
+<li>Physics simulation runs at a constant frame rate i.e usually 60 fps.</li>
+<li>Whatever I will be describing has been implemented for 2D but most of the general idea is applicable for 3D as well. Also, the processes I have described is what I have implemented, different game engines tend to use different models or optimizations.</li>
+</ol>
+<h3>Overview</h3>
+<p>For a physics engine to function properly it should perform three basic things:</p>
+<ol>
+<li>It should be able to predict translational properties like position, velocity, acceleration and rotational properties like orientation, angular velocity, torque at any given point of time.</li>
+<li>It should be able to detect which bodies are colliding.</li>
+<li>It should be able to properly resolve the impulses generated due to those collisions.</li>
+</ol>
+<h3>Calculating Properties</h3>
+<p>For calculating the properties we basically use Newton's Law of motion.</p>
+<p class="equation">v = \intop{1/m * F \; dt}</p>
+and,
+<p class="equation">x = \intop{v \; dt}</p>
+where,  
+F = force applied  
+v = Velocity  
+m = mass of body  
+x = position  
+dt = time elapsed since last execution (1\60 if 60 fps)
+<p>To solve these differential equations for games, we widely come across these three integrator:</p>
+<ol>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/Euler_method">Explicit Euler method</a></p>
+<div style="text-align:center"><img src="/assets/images/2019-01/euler-method.png"/></div>
+ It is the most basic method to solve this first order differential equation. It is just adding the curve values at small intervals.
+ <p class="equation" style="text-align:center">x_{n+1} = x_n + v(t_n) * dt\\v_{n+1} = v_n + a(t_n) * dt</p>
+</li>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/Backward_Euler_method">Implicit (Symplectic) Euler</a></p>
+<p>The difference here is we solve the problem using right <a href="https://en.wikipedia.org/wiki/Riemann_sum">Reimann sum rule</a> instead of left sum rule. For those who are not going to read wikipedia, reimann sum is used to calculate the area of the region by breaking it into small shapes. In euler methods region is a rectangle.</p>
+<p>For example to get position at time t, we will need velocity at time t+1, so instead of starting with zero velocity we compute velocity first and then position.</p>
+<p class="equation" style="text-align:center">v_{n+1} = v_n + a(t_{n+1}) * dt\\x_{n+1} = x_n + v(t_{n+1}) * dt</p>
+</li>
+<li>
+<p><a href="https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods">Runge-Kutta (RK) 4th Order Method</a></p>
+<p>I won't be going into much explanation about what it does, but it gives better accuracy than euler methods but is computationally expensive. Actually, Euler methods are just a special case of RK.</p>
+</li>
+</ol>
+<p>Implicit euler gives us more accurate results than explicit euler and is much closer to RK4. <a href="https://gafferongames.com/post/integration_basics/">Here</a> is a more detailed comparison of all three methods and is explained why implicit euler is okay for game engines.</p>
+<p>So using implicit euler we will get:</p>
+<pre style="background-color:#2b303b;">
+<span style="background-color:#2b303b;color:#c0c5ce;"> v += (</span><span style="background-color:#2b303b;color:#d08770;">1</span><span style="background-color:#2b303b;color:#c0c5ce;">/m * F) * dt   </span><span style="background-color:#2b303b;color:#65737e;"># velocity
+ </span><span style="background-color:#2b303b;color:#c0c5ce;">x += v * dt           </span><span style="background-color:#2b303b;color:#65737e;"># position
+</span></pre>
+<p>If we take rotation into account,</p>
+<pre style="background-color:#2b303b;">
+<span style="background-color:#2b303b;color:#c0c5ce;">ω += (</span><span style="background-color:#2b303b;color:#d08770;">1</span><span style="background-color:#2b303b;color:#c0c5ce;">/I * τ) * dt
+θ += ω * dt
+</span></pre>
+<p>where,<br />
+I = Moment of Inertia<br />
+θ = orientation<br />
+ω = angular velocity<br />
+τ = Torque</p>
+<h3>Calculate colliding pairs of rigidbodies</h3>
+<p>At each loop it is necessary for engine to know which pair of rigidbodies are colliding, so that the collision can be solved and bodies do not pass each other.</p>
+<p>Naively if we iterate on all N bodies, we will need to check <code>N*(N-1)/2</code> possible combinations which are a lot. Suppose N = 100, we will need to check 4950 body pairs which can take way too much than the frame duration (i.e just 1/60s or 16ms). In most of the games there are more objects present than that at any given point of time.</p>
+<p>So first we use a process called <strong>BroadPhase calculation</strong> to narrow down the number of collisions to check. Its purpose is to generate a list of pair of rigid bodies that may be colliding.</p>
+<ul>
+<li>
+<p>It is implemented through <a href="https://en.wikipedia.org/wiki/Space_partitioning">Space Partitioning</a> algorithms.</p>
+</li>
+<li>
+<p>The basic idea is that you divide the whole region into grids (in volumes for 3D) and assign every body to a position in the grid.</p>
+</li>
+<li>
+<p>Now, the body is added to each cell it is overlapping, so at last we iterate through grid and make pair of overlapping bodies. Objects are stored in data structures like <a href="https://en.wikipedia.org/wiki/K-d_tree">k-d tree</a> or <a href="https://en.wikipedia.org/wiki/BSP_tree">BSP tree</a> for efficiency. It generally reduces the iterate time from O(N<sup>2</sup>) to logarithmic times.
+<a href="http://buildnewgames.com/broad-phase-collision-detection/">Here</a> is a nice blog explaining the broadphase implementation in more detail, like choice of grid size, etc. My demo was just for a small scope, so I have not implemented this part.</p>
+</li>
+</ul>
+<p>Then we proceed to <strong>NarrowPhase calculation</strong> i.e which actually determines which bodies are colliding. Aim of Narrowphase is to calculate three things for every pair of colliding bodies:</p>
+<ol>
+<li><em>Collision Normal</em>: Direction of bodies they are colliding</li>
+<li><em>Penetration Depth</em>: How much bodies have overlapped each other</li>
+<li><em>Contact Points</em>: Points of contact where they are overlapping</li>
+</ol>
+<p>It can be implemented using <a href="https://en.wikipedia.org/wiki/Hyperplane_separation_theorem">Separating Axis Theorem</a>. The basic principle is:  <em>If two bodies are not colliding, there will be a certain axis for which their projections will not overlap.</em></p>
+<p>For a general convex polygon there could be a lot of axes to check, but for simplification purposes, I have just taken the shape of the colliders to be <em>Circle</em> and <em>Axis-Aligned Bounding Box (AABB)</em> i.e just a rectangle. Now for collision checks, we will like to implement four combinations (not taking rotation into account):</p>
+<ul>
+<li>
+<p>Circle-Circle:</p>
+<p>For this, test is easy - Distance between circles should be less than sum of their radii</p>
+<pre style="background-color:#2b303b;">
+<span style="background-color:#2b303b;color:#65737e;">// distance must be less for overlap
+</span><span style="background-color:#2b303b;color:#c0c5ce;">isColliding = </span><span style="background-color:#2b303b;color:#8fa1b3;">distance</span><span style="background-color:#2b303b;color:#c0c5ce;">(circle1, circle2) &lt;= circle1.radius + circle2.radius
+</span></pre></li>
+<li>
+<p>Circle-AABB</p>
+<p>We will first find the nearest point of contact on AABB between AABB and circle.</p>
+<pre style="background-color:#2b303b;">
+<span style="background-color:#2b303b;color:#c0c5ce;">positionDiff = </span><span style="background-color:#2b303b;color:#d08770;">AABB</span><span style="background-color:#2b303b;color:#c0c5ce;">.pos - circle.pos
+</span><span style="background-color:#2b303b;color:#c0c5ce;">
+</span><span style="background-color:#2b303b;color:#65737e;">// on x-axis take the point which is near, the bounds or diff
+</span><span style="background-color:#2b303b;color:#c0c5ce;">nearestPoint.x = </span><span style="background-color:#2b303b;color:#8fa1b3;">clamp</span><span style="background-color:#2b303b;color:#c0c5ce;">(-</span><span style="background-color:#2b303b;color:#d08770;">AABB</span><span style="background-color:#2b303b;color:#c0c5ce;">.width/</span><span style="background-color:#2b303b;color:#d08770;">2</span><span style="background-color:#2b303b;color:#c0c5ce;">, </span><span style="background-color:#2b303b;color:#d08770;">AABB</span><span style="background-color:#2b303b;color:#c0c5ce;">.width/</span><span style="background-color:#2b303b;color:#d08770;">2</span><span style="background-color:#2b303b;color:#c0c5ce;">, positionDiff.x)
+</span><span style="background-color:#2b303b;color:#65737e;">// same for y-axis
+</span><span style="background-color:#2b303b;color:#c0c5ce;">nearestPoint.y = </span><span style="background-color:#2b303b;color:#8fa1b3;">clamp</span><span style="background-color:#2b303b;color:#c0c5ce;">(-</span><span style="background-color:#2b303b;color:#d08770;">AABB</span><span style="background-color:#2b303b;color:#c0c5ce;">.height/</span><span style="background-color:#2b303b;color:#d08770;">2</span><span style="background-color:#2b303b;color:#c0c5ce;">, </span><span style="background-color:#2b303b;color:#d08770;">AABB</span><span style="background-color:#2b303b;color:#c0c5ce;">.height/</span><span style="background-color:#2b303b;color:#d08770;">2</span><span style="background-color:#2b303b;color:#c0c5ce;">, positionDiff.y)
+
+</span><span style="background-color:#2b303b;color:#65737e;">// distance between nearest point on rectangle and circle&#39;s center should
+</span><span style="background-color:#2b303b;color:#65737e;">// be less than circle&#39;s radius
+</span><span style="background-color:#2b303b;color:#c0c5ce;">isColliding = </span><span style="background-color:#2b303b;color:#8fa1b3;">distance</span><span style="background-color:#2b303b;color:#c0c5ce;">(circle1, nearestPoint) &lt;= circle.radius
+</span></pre></li>
+<li>
+<p>AABB-Circle</p>
+<p>Same procedure as above</p>
+</li>
+<li>
+<p>AABB-AABB</p>
+<pre style="background-color:#2b303b;">
+<span style="background-color:#2b303b;color:#c0c5ce;">positionDiff = </span><span style="background-color:#2b303b;color:#d08770;">AABB2</span><span style="background-color:#2b303b;color:#c0c5ce;">.pos - </span><span style="background-color:#2b303b;color:#d08770;">AABB1</span><span style="background-color:#2b303b;color:#c0c5ce;">.pos
+
+</span><span style="background-color:#2b303b;color:#65737e;">// find overlap values
+</span><span style="background-color:#2b303b;color:#c0c5ce;">xOverlap = </span><span style="background-color:#2b303b;color:#d08770;">AABB1</span><span style="background-color:#2b303b;color:#c0c5ce;">.width/</span><span style="background-color:#2b303b;color:#d08770;">2 </span><span style="background-color:#2b303b;color:#c0c5ce;">+ </span><span style="background-color:#2b303b;color:#d08770;">AABB2</span><span style="background-color:#2b303b;color:#c0c5ce;">.width/</span><span style="background-color:#2b303b;color:#d08770;">2 </span><span style="background-color:#2b303b;color:#c0c5ce;">- </span><span style="background-color:#2b303b;color:#8fa1b3;">abs</span><span style="background-color:#2b303b;color:#c0c5ce;">(positionDiff.x) </span><span style="background-color:#2b303b;color:#65737e;">// x-axis overlap
+</span><span style="background-color:#2b303b;color:#c0c5ce;">yOverlap = </span><span style="background-color:#2b303b;color:#d08770;">AABB1</span><span style="background-color:#2b303b;color:#c0c5ce;">.height/</span><span style="background-color:#2b303b;color:#d08770;">2 </span><span style="background-color:#2b303b;color:#c0c5ce;">+ </span><span style="background-color:#2b303b;color:#d08770;">AABB2</span><span style="background-color:#2b303b;color:#c0c5ce;">.height/</span><span style="background-color:#2b303b;color:#d08770;">2 </span><span style="background-color:#2b303b;color:#c0c5ce;">- </span><span style="background-color:#2b303b;color:#8fa1b3;">abs</span><span style="background-color:#2b303b;color:#c0c5ce;">(positionDiff.y) </span><span style="background-color:#2b303b;color:#65737e;">// y-axis overlap
+</span><span style="background-color:#2b303b;color:#c0c5ce;">
+</span><span style="background-color:#2b303b;color:#65737e;">// for bodies to be colliding both axis must overlap
+</span><span style="background-color:#2b303b;color:#c0c5ce;">isColliding = xOverlap &gt; </span><span style="background-color:#2b303b;color:#d08770;">0 </span><span style="background-color:#2b303b;color:#c0c5ce;">&amp;&amp; yOverlap &gt; </span><span style="background-color:#2b303b;color:#d08770;">0
+</span></pre></li>
+</ul>
+<p>For a convex polygon its implementation will be more complex, there is a good <a href="https://gdcvault.com/play/1017646/Physics-for-Game-Programmers-The">video</a> in GDC Vault explaining the process. Also you can go through the <a href="https://github.com/erincatto/Box2D">Box2D</a> code for the same. It is next in my list for implementation.</p>
+<h3>Impulse Resolution</h3>
+<p>Impulse resolution means when bodies collide, we need to stop them from moving inside each other. The first thing that comes to mind is that we can apply a force to them, but force does not instantaneously change the velocity. For this we directly change the velocity of the bodies or say we applied an impulse (i.e you can think of it as a large force in almost zero time).</p>
+<p>Each rigidbody apart from dynamic properties also has some physical properties which we group into <strong>Material</strong>.</p>
+<ul>
+<li>Mass (m): how much the body weigh</li>
+<li>Coefficient of restitution (e): how rough is the surface</li>
+<li>Coefficient of Static friction (μ<sub>s</sub>): friction coefficient for stationary objects</li>
+<li>Coefficient of dynamic friction (μ<sub>d</sub>): friction coefficient for moving objects</li>
+</ul>
+<p>For a pair of bodies we calculate equivalent coefficients.</p>
+<ul>
+<li>Equivalent coefficient of restitution is <code>e = min(e1, e2)</code>.</li>
+<li>Equivalent coefficients of friction are:<pre><code class="equation">
+μ_s = \sqrt{μ_{s1} * μ_{s1} + μ_{s2} * μ_{s1}}\\
+μ_d = \sqrt{μ_{d1} * μ_{d1} + μ_{d2} * μ_{d1}}
+</code></pre>
+</li>
+</ul>
+<p>During the time of contact we will consider two impulses acting on them:</p>
+<ol>
+<li>Normal Force (Normal to the plane of contact)</li>
+<li>Frictional Force (Tangential to the plane of contact)</li>
+</ol>
+<p>Impulse (j) is calculated using <a href="https://en.wikipedia.org/wiki/Momentum#Conservation">Momentum Conservation</a> and <a href="https://en.wikipedia.org/wiki/Coefficient_of_restitution">Newton's law of restitution</a>.</p>
+<div style="text-align:center"><img src="/assets/images/2019-01/object-collision.png"/></div>
+<h4>Normal Impulse</h4>
+<p>Let us define some variables,</p>
+<pre><code>v<sub>A</sub>, u<sub>A</sub> = final and initial velocity of body A
+v<sub>B</sub>, u<sub>B</sub> = final and initial velocity of body B
+j<sub>A</sub> = change in momentum of A
+j<sub>B</sub> = change in momentum of B
+n = normal vector in direction of collision normal (n.n = 1)
+</code></pre>
+<p>According to Newton's law of restitution,</p>
+<pre style="background-color:#2b303b;">
+<span style="background-color:#2b303b;color:#c0c5ce;">e = relative final velocity / relative initial velocity
+</span></pre>
+<p>Since momentum is conserved change in momentum of Body A will be opposite to the change in momentum of body B i.e j<sub>A</sub> . n = -j<sub>B</sub> . n. Taking a dot product with <code>n</code> since we are interested only in normal direction.</p>
+<p class="equation">
+e = \dfrac {-(v_{B} - v_{A})}{u_{B} - u_{A}}
+\\~\\
+j_{A}.n = m_{A} (v_{A} - u_{A})\\
+j_{B}.n = -j_{A}.n = m_{B} (v_{B} - u_{B})\\
+u_{AB} = u_{A} - u_{B}
+</p>
+So our aim is to calculate `j` in terms of initial velocity since we don't know the final velocities of bodies after collision. We will just rearrange the terms:
+<p class="equation">
+v_{A} = u_{A} + \dfrac {j_{A}n}{m_{A}}\\
+v_{B} = u_{B} - \dfrac {j_{A}n}{m_{B}}
+\\~\\
+v_{B} - v_{A} = eu_{AB} = -u_{AB} - j_{A}n \big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}}\big)
+\\~\\
+\boxed{j_{A} = -j_{B} = - \dfrac {(1+e) u_{AB}.n}{\big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}}\big)}}
+</p>
+<p>Whew, that's a lot of equations, but don't worry that's just rearranging the terms to get what we need, you can work it out yourself.</p>
+<p>If you want to rotational motion into account, its easy, like linear momentum, angular momentum is also <a href="https://en.wikipedia.org/wiki/Angular_momentum#Conservation_of_angular_momentum">conserved</a>. Let us define more terms so that further equation can be clear.</p>
+<pre style="background-color:#2b303b;">
+<span style="background-color:#2b303b;color:#c0c5ce;">L = angular momentum
+p = linear momentum
+I = Moment of Inertial about Center of Mass (COM)
+r = radius vector perpendicular to COM
+</span></pre>
+<p>Some basic definitions,</p>
+<p class="equation">
+L = I\omega = r x p\\
+v_{A}^{total} = v_{A}^{linear} + r_{A}\omega_{A}
+\\~\\
+\Delta L = I \dfrac{\Delta v_{angular}}{r}
+</p>
+When considering the change in linear momentum also add angular momentum giving us final equation:
+<p class="equation">
+\boxed{j_{A} = -j_{B} = - \dfrac {(1+e) u_{AB}.n}{\big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}} \big) + \dfrac {(r_{A}.n)^2}{I_{A}} + \dfrac {(r_{B}.n)^2}{I_{B}}}}
+</p>
+<h4>Frictional Impulse</h4>
+<p>Frictional Impulse is applied perpendicular to collision normal.</p>
+<div style="text-align:center"><img src="/assets/images/2019-01/tangent-normal-rv.png"/></div>
+<p>Frictional impulse can be calculated by just substituting normal vector with the tangential magnitude of relative velocity and in opposite direction.</p>
+<p>Replace <code>n</code> with <code>t</code>:</p>
+<p class="equation">
+\boxed{j_{f} = - \dfrac {(1+e) u_{AB}.t}{\big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}} \big) + \dfrac {(r_{A}.n)^2}{I_{A}} + \dfrac {(r_{B}.n)^2}{I_{B}}}}
+</p>
+Now we just need to calculate `t`. For that we will get normal component of relative velocity and subtract from total relative velocity to get tangential component (Vector Math). Negative sign is used since friction is always opposite to the direction of motion.
+<p class="equation">
+t = -[V_{AB} − (V_{AB}⋅n)∗n]
+</p>
+But wait there is a catch, friction acts differently for static and dynamic objects, that is why two coefficients of friction. How to use them can be determined using [Coulomb's Law](https://en.wikipedia.org/wiki/Friction#Dry_friction).
+<pre><code>j<sub>f</sub> <= μj<sub>n</sub></code></pre>
+<p>Let us understand this definition, if our solved <code>jf</code> (representing the force of friction ) is less than μ<sub>static</sub> times the normal force (<code>jn</code>), then we can use our <code>jf</code> magnitude as friction. If not, then we must use our normal force times μ<sub>dynamic</sub> instead.</p>
+<pre><code>
+if (abs(jf) < μ<sub>s</sub>jn) {
+    // no change
+} else {
+    jf = μ<sub>d</sub>jn
+}
+</code></pre>
+<br>
+Hopefully you can now begin to understand the basics of writing a game engine, and again you can find the code [here](https://github.com/deep110/LucidEngine). I have tried to include most of the topics that are absolutely required to implement a working demo. Now you can read up articles for specific topics to understand them more and how it will benefit your implementation.
+<h4>Image and Other Credits</h4>
+<ul>
+<li>Wikipedia</li>
+<li><a href="https://www.researchgate.net/figure/Spatial-partition-of-a-2D-scene-using-a-quadtree-subdivision_fig2_236611845">ResearchGate</a></li>
+<li><a href="https://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169">GameDevTuts</a></li>
+</ul>
+
+          </div>
+          <footer class="post-footer">
+          
+            <!-- Post Navigation -->
+            
+                
+            
+                
+                    
+                    
+                
+            
+                
+            
+                
+            
+                
+            
+                
+            
+            
+                
+                    
+                
+                
+            
+                
+                
+            
+                
+                
+                    
+                
+            
+                
+                
+            
+                
+                
+            
+                
+                
+            
+
+            <div class="post-navigation">
+              
+                <a class="next" href="https://deep110.github.io/posts/blogs/2018-04-17-hello-world.html">←&nbsp;Prev Post</a>
+              
+              
+                <a class="prev" href="https://deep110.github.io/posts/blogs/2020-03-04-grcp-auth.html">Next Post&nbsp;→</a>
+              
+            </div>
+          </footer>
+        
+        </article>
+
+      </div>
+    </div>
+    <footer class="site-footer">
+  <div class="wrapper">
+
+    <a class="footer-icon" href="https://github.com/deep110">
+      <span class="icon">
+        <svg enable-background="new 0 0 438.549 438.549" version="1.1" viewBox="0 0 438.55 438.55">
+          <path
+            d="m409.13 114.57c-19.608-33.596-46.205-60.194-79.798-79.8-33.598-19.607-70.277-29.408-110.06-29.408-39.781 0-76.472 9.804-110.06 29.408-33.596 19.605-60.192 46.204-79.8 79.8-19.605 33.595-29.408 70.281-29.408 110.06 0 47.78 13.94 90.745 41.827 128.91 27.884 38.164 63.906 64.572 108.06 79.227 5.14 0.954 8.945 0.283 11.419-1.996 2.475-2.282 3.711-5.14 3.711-8.562 0-0.571-0.049-5.708-0.144-15.417-0.098-9.709-0.144-18.179-0.144-25.406l-6.567 1.136c-4.187 0.767-9.469 1.092-15.846 1-6.374-0.089-12.991-0.757-19.842-1.999-6.854-1.231-13.229-4.086-19.13-8.559-5.898-4.473-10.085-10.328-12.56-17.556l-2.855-6.57c-1.903-4.374-4.899-9.233-8.992-14.559-4.093-5.331-8.232-8.945-12.419-10.848l-1.999-1.431c-1.332-0.951-2.568-2.098-3.711-3.429-1.142-1.331-1.997-2.663-2.568-3.997-0.572-1.335-0.098-2.43 1.427-3.289s4.281-1.276 8.28-1.276l5.708 0.853c3.807 0.763 8.516 3.042 14.133 6.851 5.614 3.806 10.229 8.754 13.846 14.842 4.38 7.806 9.657 13.754 15.846 17.847 6.184 4.093 12.419 6.136 18.699 6.136s11.704-0.476 16.274-1.423c4.565-0.952 8.848-2.383 12.847-4.285 1.713-12.758 6.377-22.559 13.988-29.41-10.848-1.14-20.601-2.857-29.264-5.14-8.658-2.286-17.605-5.996-26.835-11.14-9.235-5.137-16.896-11.516-22.985-19.126-6.09-7.614-11.088-17.61-14.987-29.979-3.901-12.374-5.852-26.648-5.852-42.826 0-23.035 7.52-42.637 22.557-58.817-7.044-17.318-6.379-36.732 1.997-58.24 5.52-1.715 13.706-0.428 24.554 3.853 10.85 4.283 18.794 7.952 23.84 10.994 5.046 3.041 9.089 5.618 12.135 7.708 17.705-4.947 35.976-7.421 54.818-7.421s37.117 2.474 54.823 7.421l10.849-6.849c7.419-4.57 16.18-8.758 26.262-12.565 10.088-3.805 17.802-4.853 23.134-3.138 8.562 21.509 9.325 40.922 2.279 58.24 15.036 16.18 22.559 35.787 22.559 58.817 0 16.178-1.958 30.497-5.853 42.966-3.9 12.471-8.941 22.457-15.125 29.979-6.191 7.521-13.901 13.85-23.131 18.986-9.232 5.14-18.182 8.85-26.84 11.136-8.662 2.286-18.415 4.004-29.263 5.146 9.894 8.562 14.842 22.077 14.842 40.539v60.237c0 3.422 1.19 6.279 3.572 8.562 2.379 2.279 6.136 2.95 11.276 1.995 44.163-14.653 80.185-41.062 108.07-79.226 27.88-38.161 41.825-81.126 41.825-128.91-0.01-39.771-9.818-76.454-29.414-110.05z" />
+        </svg>
+      </span>
+    </a>
+
+    <a class="footer-icon" href="https://www.linkedin.com/in/deepankar-agrawal-318aab96/">
+      <span class="icon">
+        <svg enable-background="new 0 0 486.392 486.392" version="1.1" viewBox="0 0 486.39 486.39">
+          <path
+            d="m243.2 0c-134.3 0-243.2 108.89-243.2 243.2s108.89 243.2 243.2 243.2 243.2-108.89 243.2-243.2c0-134.34-108.89-243.2-243.2-243.2zm-60.799 360.99h-60.799v-212.8h60.799v212.8zm-28.515-225.84c-15.747 0-28.484-12.768-28.484-28.515s12.768-28.515 28.484-28.515c15.747 0.03 28.515 12.798 28.515 28.515 0 15.747-12.768 28.515-28.515 28.515zm241.31 225.84h-60.799v-131.57c0-15.413-4.408-26.204-23.347-26.204-31.403 0-37.452 26.204-37.452 26.204v131.57h-60.799v-212.8h60.799v20.337c8.694-6.657 30.399-20.307 60.799-20.307 19.699 0 60.799 11.795 60.799 83.051v129.72z" />
+        </svg>
+      </span>
+    </a>
+
+    <a class="footer-icon" href="https://stackoverflow.com/users/5209012/deepankar">
+      <span class="icon">
+        <svg enable-background="new 0 0 34.641 34.641" version="1.1" viewBox="0 0 34.641 34.641">
+          <path
+            d="m23.994 20.416h2.319v14.225h-22.585v-14.225h2.318v11.92h17.946c2e-3 -3.977 2e-3 -7.943 2e-3 -11.92zm-6.605-15.918c2.572 3.772 5.138 7.533 7.707 11.3 0.812-0.555 1.611-1.1 2.414-1.647-2.576-3.776-5.14-7.534-7.707-11.299-0.808 0.55-1.604 1.093-2.414 1.646zm7.233 11.698c-3.936-2.321-7.854-4.632-11.78-6.948-0.499 0.845-0.989 1.675-1.486 2.517 3.926 2.315 7.847 4.627 11.782 6.948 0.499-0.847 0.991-1.679 1.484-2.517zm3.949-16.196c-0.965 0.168-1.91 0.333-2.879 0.5 0.78 4.499 1.562 8.981 2.34 13.474 0.972-0.168 1.922-0.334 2.88-0.5-0.781-4.504-1.56-8.987-2.341-13.474zm-5.674 19.539c-4.41-1.188-8.803-2.367-13.208-3.552-0.254 0.942-0.505 1.875-0.76 2.822 4.409 1.186 8.806 2.366 13.209 3.551 0.257-0.948 0.507-1.881 0.759-2.821zm-1.239 7.565h-13.654v2.905h13.654v-2.905zm0.342-3.755c-4.547-0.418-9.078-0.838-13.619-1.254-0.091 0.977-0.181 1.938-0.271 2.91 4.547 0.418 9.079 0.836 13.62 1.254 0.091-0.978 0.179-1.939 0.27-2.91z" />
+        </svg>
+      </span>
+    </a>
+
+    <a class="footer-icon" href="mailto:deepankar11093@gmail.com">
+      <span class="icon">
+        <svg enable-background="new 0 0 511.626 511.626" version="1.1" viewBox="0 0 511.63 511.63">
+          <path
+            d="m49.106 178.73c6.472 4.567 25.981 18.131 58.528 40.685 32.548 22.554 57.482 39.92 74.803 52.099 1.903 1.335 5.946 4.237 12.131 8.71 6.186 4.476 11.326 8.093 15.416 10.852 4.093 2.758 9.041 5.852 14.849 9.277 5.806 3.422 11.279 5.996 16.418 7.7 5.14 1.718 9.898 2.569 14.275 2.569h0.575c4.377 0 9.137-0.852 14.277-2.569 5.137-1.704 10.615-4.281 16.416-7.7 5.804-3.429 10.752-6.52 14.845-9.277 4.093-2.759 9.229-6.376 15.417-10.852 6.184-4.477 10.232-7.375 12.135-8.71 17.508-12.179 62.051-43.11 133.62-92.79 13.894-9.703 25.502-21.411 34.827-35.116 9.332-13.699 13.993-28.07 13.993-43.105 0-12.564-4.523-23.319-13.565-32.264-9.041-8.947-19.749-13.418-32.117-13.418h-420.26c-14.655 0-25.933 4.948-33.832 14.844-7.898 9.898-11.847 22.27-11.847 37.115 0 11.991 5.236 24.985 15.703 38.974 10.466 13.99 21.604 24.983 33.403 32.976z" />
+          <path
+            d="m483.07 209.28c-62.424 42.251-109.82 75.087-142.18 98.501-10.849 7.991-19.65 14.229-26.409 18.699-6.759 4.473-15.748 9.041-26.98 13.702-11.228 4.668-21.692 6.995-31.401 6.995h-0.578c-9.707 0-20.177-2.327-31.405-6.995-11.228-4.661-20.223-9.229-26.98-13.702-6.755-4.47-15.559-10.708-26.407-18.699-25.697-18.842-72.995-51.68-141.9-98.501-10.852-7.228-20.464-15.513-28.839-24.838v226.68c0 12.57 4.471 23.319 13.418 32.265 8.945 8.949 19.701 13.422 32.264 13.422h420.27c12.56 0 23.315-4.473 32.261-13.422 8.949-8.949 13.418-19.694 13.418-32.265v-226.68c-8.186 9.132-17.7 17.417-28.555 24.838z" />
+        </svg>
+      </span>
+    </a>
+
+  </div>
+</footer>
+    <script type="text/javascript" src="https://deep110.github.io/assets/js/main.js"></script>
+
+    <script type="text/javascript" src="https://deep110.github.io/assets/js/katex.min.js"></script>
+
+
+    <link rel="stylesheet" href="https://deep110.github.io/assets/css/katex.min.css"></script>
+
+
+  </body>
+</html>
