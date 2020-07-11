@@ -1,0 +1,19 @@
+---
+layout: default.liquid
+title: Projects
+permalink: /projects.html
+---
+<ul class="post-list">
+  {% for post in collections.posts.pages %}
+    {% if post.categories contains "project" %}
+      <li>
+        <h2>
+          <a class="post-link" href="{{ post.data.github_url }}">{{ post.title }}</a>
+        </h2>
+        <span class="post-meta">{{ post.published_date | date: "%b %-d, %Y" }}</span>
+          <p></p>
+          {{ post.content }}
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>

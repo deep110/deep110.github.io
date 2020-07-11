@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  {% include "head.liquid" %}
+  <body>
+    {% include "header.liquid" %}
+    <div class="page-content">
+      <div class="wrapper">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+          <header class="post-header">
+            <h1 class="post-title" itemprop="name headline">{{ page.title }}</h1>
+            <p class="post-meta">
+               <time datetime="{{ page.published_date }}" itemprop="datePublished">
+                  {{ page.published_date | date: "%b %-d, %Y" }}
+               </time>
+               {% if page.author %} |
+                  <span itemprop="author" itemscope itemtype="http://schema.org/Person">
+                    <span itemprop="name">{{ page.author }}</span>
+                  </span>
+               {% endif %}
+                | <span class="time">
+                    {{ page.content | split:" " | size | divided_by:180 }}
+                  </span>
+                   Minute Read
+            </p>
+          </header>
+          <div class="post-content" itemprop="articleBody">
+            {{ page.content }}
+          </div>
+          <footer class="post-footer">
+          
+            <!-- Post Navigation -->
+            {% for post in collections.posts.pages %}
+                {% if post.permalink == page.permalink and post.categories contains "blog" %}
+                    {% assign post_index0 = forloop.index0 %}
+                    {% assign post_index1 = forloop.index %}
+                {% endif %}
+            {% endfor %}
+            {% for post in collections.posts.pages %}
+                {% if post_index0 == forloop.index and post.categories contains "blog" %}
+                    {% assign next_post = post.permalink %}
+                {% endif %}
+                {% if post_index1 == forloop.index0 and post.categories contains "blog" %}
+                    {% assign prev_post = post.permalink %}
+                {% endif %}
+            {% endfor %}
+
+            <div class="post-navigation">
+              {% if prev_post %}
+                <a class="next" href="{{ prev_post | prepend: '/' | prepend: site.base_url }}">←&nbsp;Prev Post</a>
+              {% endif %}
+              {% if next_post %}
+                <a class="prev" href="{{ next_post | prepend: '/' | prepend: site.base_url }}">Next Post&nbsp;→</a>
+              {% endif %}
+            </div>
+          </footer>
+        
+        </article>
+
+      </div>
+    </div>
+    {% include "footer.liquid" %}
+    {% include "scripts.liquid" %}
+  </body>
+</html>

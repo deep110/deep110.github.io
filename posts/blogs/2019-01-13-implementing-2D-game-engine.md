@@ -1,9 +1,10 @@
 ---
-layout: post
+layout: blog.liquid
 title: "Implementing your Own 2D game engine"
-date: 2019-01-13 10:00:00 +0530
-scripts: [katex.min.js]
-css: [katex.min.css]
+categories: ["blog"]
+data:
+  scripts: [katex.min.js]
+  css: [katex.min.css]
 ---
 First of all, you would think that when there are so many game engines out there why
 would you want to implement your own. Well it may be that you don't like any of them, or just thinking of starting a game and implementing your own engine might be a good idea, then please don't do it and this article might not be for you. But if you (like me), want to learn nitty-gritty of a physics engine, this could be a good exercise.

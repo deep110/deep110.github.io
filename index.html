@@ -1,35 +1,73 @@
 ---
-layout: default
+layout: default.liquid
+title: Home
+pagination:
+  include: Categories
+  per_page: 7
+  permalink_suffix: "./{{ num }}/"
+  order: Desc
+  sort_by: ["published_date"]
+  date_index: ["Year", "Month"]
 ---
 
 <div class="home">
-  <h1 class="page-heading">Posts</h1>
-  <ul class="post-list">
-    {% for post in paginator.posts %}
+  <h1 class="page-heading">Blogs</h1>
+  {% if paginator.indexes %}
+  {% for ptag in paginator.indexes %}
+    {% if ptag.index_title.first== 'blog' %}
+      <ul class="post-list">
+        {% for post in ptag.pages %}
+        <li>
+          <h2>
+            <a class="post-link" href="/{{ post.permalink }}">{{ post.title }}</a>
+          </h2>
+          <span class="post-meta">{{ post.published_date | date: "%b %-d, %Y" }}</span>
+          <p class="description">
+            {{ post.content | strip_html | strip_newlines | truncate: 250 }}
+          </p>
+        </li>
+        {% endfor %}
+      </ul>
+
+      {% if ptag.total_indexes > 1 %}
+      <div class="pagination">
+        {% if ptag.previous_index %}
+        <a href="/{{ ptag.previous_index_permalink }}" class="prev">Newer Posts</a>
+        {% endif %}
+
+        {% if ptag.next_index %}
+        <a href="/{{ ptag.next_index_permalink }}" class="next">Older Posts</a>
+        {% endif %}
+      </div>
+      {% endif %}
+
+    {% endif %}
+  {% endfor %}
+  
+  {% else %}
+    <ul class="post-list">
+      {% for post in paginator.pages %}
       <li>
         <h2>
-          <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
+          <a class="post-link" href="/{{ post.permalink }}">{{ post.title }}</a>
         </h2>
-        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+        <span class="post-meta">{{ post.published_date | date: "%b %-d, %Y" }}</span>
         <p class="description">
-          {% if post.description %}
-              {{ post.description | strip_html | strip_newlines | truncate: 250 }}
-          {% else %}
-              {{ post.content | strip_html | strip_newlines | truncate: 250 }}
-          {% endif %}
+          {{ post.content | strip_html | strip_newlines | truncate: 250 }}
         </p>
       </li>
-    {% endfor %}
-  </ul>
+      {% endfor %}
+    </ul>
+    {% if paginator.total_indexes > 1 %}
+    <div class="pagination">
+      {% if paginator.previous_index %}
+      <a href="/{{ paginator.previous_index_permalink }}" class="prev">Newer Posts</a>
+      {% endif %}
+  
+      {% if paginator.next_index %}
+      <a href="/{{ paginator.next_index_permalink }}" class="next">Older Posts</a>
+      {% endif %}
+    </div>
+    {% endif %}
+  {% endif %}
 </div>
-{% if paginator.total_pages > 1 %}<!-- Pagination links -->
-  <div class="pagination">
-    {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path | prepend: site.baseurl }}" class="prev">Newer Posts</a>
-    {% endif %}
-
-    {% if paginator.next_page %}
-    <a href="{{ paginator.next_page_path | prepend: site.baseurl }}" class="next">Older Posts</a>
-    {% endif %}
-  </div>
-{% endif %}

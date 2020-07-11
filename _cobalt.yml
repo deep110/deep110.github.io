@@ -1,0 +1,31 @@
+template_extensions:
+  - md
+  - liquid
+  - html
+
+site:
+  title: Deepankar
+  description: Welcome to my awesome blog
+  base_url: https://deep110.github.io
+  data:
+    last_gen_time: "2020-07-12 00:00:00+05:30"
+
+assets:
+  sass:
+    style: Nested
+
+default:
+  data:
+    scripts: []
+    css: []
+    github_url: "#"
+
+posts:
+  rss: rss.xml
+
+pages:
+  default: {}
+
+ignore:
+  - "LICENSE.md"
+  - "README.md"

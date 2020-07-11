@@ -1,7 +1,7 @@
 ---
-layout: post
+layout: blog.liquid
 title:  "Hello World!"
-date:   2018-04-17 09:40:00 +0530
+categories: ["blog"]
 ---
 Finally, I have done it, my first blog has been compiled successfully.
 

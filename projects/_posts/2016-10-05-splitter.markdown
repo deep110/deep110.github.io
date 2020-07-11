@@ -1,9 +1,0 @@
----
-layout: default
-title:  "Splitter - Android Game"
-hidden: true
----
-It is a endless 2D mobile game, where aim is to just avoid the all the spikes and climb higher. Game is developed on Unity Engine, so it can be build for both Android and IOS.
-
-Interested. You can play the game [here](https://play.google.com/store/apps/details?id=com.mdg.splitter).
-<br>Also, feel free to view source on [Github](https://github.com/deep110/Splitter).
