@@ -10,6 +10,10 @@ site:
   data:
     last_gen_time: "2020-07-12 00:00:00+05:30"
 
+syntax_highlight:
+  theme: "base16-ocean.dark"
+  enabled: true
+
 assets:
   sass:
     style: Nested

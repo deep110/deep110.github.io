@@ -8,6 +8,9 @@ dl, dd, ol, ul, figure {
     padding: 0;
 }
 
+html {
+    height: 100%;
+}
 
 
 /**
@@ -23,6 +26,9 @@ body {
     -o-font-feature-settings: "kern" 1;
     font-feature-settings: "kern" 1;
     font-kerning: normal;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 
     @include media-query($on-palm) {
         &.exp {

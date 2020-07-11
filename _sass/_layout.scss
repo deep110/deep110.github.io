@@ -109,8 +109,9 @@
  * Site footer
  */
 .site-footer {
+    flex-shrink: 0;
     border-top: 1px solid $grey-color-light;
-    padding: $spacing-unit 0;
+    padding: $spacing-unit*0.8 0;
     background-color: #eee;
     text-align: center;
 }
@@ -124,6 +125,7 @@
  */
 .page-content {
     padding: $spacing-unit*2 0;
+    flex: 1 0 auto;
 }
 
 .page-heading {
@@ -253,5 +255,3 @@
     }
   }
 }
-
-
