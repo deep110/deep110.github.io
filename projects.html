@@ -3,7 +3,11 @@ layout: default.liquid
 title: Projects
 permalink: /projects.html
 ---
-<ul class="post-list">
+
+<h2>Projects</h2>
+<p>This is a curated list of projects that I have worked on over the years.</p>
+
+<ul class="post-list" style="margin-top: 20px">
   {% for post in collections.posts.pages %}
     {% if post.categories contains "project" %}
       <li>
