@@ -244,9 +244,10 @@ if (abs(jf) < μ<sub>s</sub>jn) {
 </code></pre>
 
 <br>
+
 Hopefully you can now begin to understand the basics of writing a game engine, and again you can find the code [here](https://github.com/deep110/LucidEngine). I have tried to include most of the topics that are absolutely required to implement a working demo. Now you can read up articles for specific topics to understand them more and how it will benefit your implementation.
 
-#### Image and Other Credits
+### Image and Other Credits
 * Wikipedia
 * [ResearchGate](https://www.researchgate.net/figure/Spatial-partition-of-a-2D-scene-using-a-quadtree-subdivision_fig2_236611845)
 * [GameDevTuts](https://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169)

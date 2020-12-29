@@ -26,6 +26,9 @@ default:
 
 posts:
   rss: rss.xml
+  default: {
+    "permalink": "/posts/{{name}}{{ext}}"
+  }
 
 pages:
   default: {}
