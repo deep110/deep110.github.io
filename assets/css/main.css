@@ -262,7 +262,7 @@ table {
  * Page content
  */
 .page-content {
-  padding: 60px 0;
+  padding: 42px 0;
   flex: 1 0 auto; }
 
 .page-heading {
@@ -354,6 +354,9 @@ table {
     font-size: 0.3em; }
     .not-found a + a {
       margin-left: 10px; }
+
+.utterances {
+  margin-top: 90px; }
 
 .archive-header {
   width: 100%;
