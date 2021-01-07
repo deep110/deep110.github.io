@@ -5,7 +5,7 @@
     {% include "header.liquid" %}
     <div class="page-content">
       <div class="wrapper">
-        
+
         <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
           <header class="post-header">
             <h1 class="post-title" itemprop="name headline">{{ page.title }}</h1>
@@ -27,9 +27,8 @@
           <div class="post-content" itemprop="articleBody">
             {{ page.content }}
           </div>
-          <footer class="post-footer">
-          
-            <!-- Post Navigation -->
+          <!-- Post Navigation -->
+          <div class="post-navigation">
             {% assign is_next_post_found = false %}
             {% assign find_prev_post = false %}
 
@@ -49,21 +48,30 @@
                   {% endif %}
                 {% endif %}
             {% endfor %}
+            {% if prev_post %}
+              <a class="next" href="{{ prev_post | prepend: '/' | prepend: site.base_url }}">←&nbsp;Prev Post</a>
+            {% endif %}
+            {% if next_post %}
+              <a class="prev" href="{{ next_post | prepend: '/' | prepend: site.base_url }}">Next Post&nbsp;→</a>
+            {% endif %}
+          </div>
 
-            <div class="post-navigation">
-              {% if prev_post %}
-                <a class="next" href="{{ prev_post | prepend: '/' | prepend: site.base_url }}">←&nbsp;Prev Post</a>
-              {% endif %}
-              {% if next_post %}
-                <a class="prev" href="{{ next_post | prepend: '/' | prepend: site.base_url }}">Next Post&nbsp;→</a>
-              {% endif %}
-            </div>
-          </footer>
-        
+          <div>
+            <script src="https://utteranc.es/client.js"
+              repo="deep110/deep110.github.io"
+              issue-term="pathname"
+              label="comment"
+              theme="github-light"
+              crossorigin="anonymous"
+              async>
+            </script>
+          </div>
+
         </article>
 
       </div>
     </div>
+
     {% include "footer.liquid" %}
     {% include "scripts.liquid" %}
   </body>
