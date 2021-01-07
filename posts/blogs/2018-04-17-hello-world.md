@@ -9,4 +9,4 @@ I have been there, when the first line of code was written in my company. I have
 
 So I will be writing about problems that kept me awake for days or solutions that should be present on first link.
 
-Apart from that I also love experimenting with game physics and shader graphics in Unity. So yes you may find some blogs on that too.
+Apart from that I also love experimenting with game physics and shader graphics in Unity. So you may find some blogs on that too.

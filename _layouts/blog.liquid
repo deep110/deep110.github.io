@@ -30,18 +30,23 @@
           <footer class="post-footer">
           
             <!-- Post Navigation -->
+            {% assign is_next_post_found = false %}
+            {% assign find_prev_post = false %}
+
             {% for post in collections.posts.pages %}
-                {% if post.permalink == page.permalink and post.categories contains "blog" %}
-                    {% assign post_index0 = forloop.index0 %}
-                    {% assign post_index1 = forloop.index %}
-                {% endif %}
-            {% endfor %}
-            {% for post in collections.posts.pages %}
-                {% if post_index0 == forloop.index and post.categories contains "blog" %}
-                    {% assign next_post = post.permalink %}
-                {% endif %}
-                {% if post_index1 == forloop.index0 and post.categories contains "blog" %}
-                    {% assign prev_post = post.permalink %}
+              {% if post.categories contains "blog" %}
+                  {% if post.permalink == page.permalink %}
+                    {% assign is_next_post_found = true %}
+                    {% assign find_prev_post = true %}
+                  {% else %}
+                    {% if is_next_post_found == false %}
+                      {% assign next_post = post.permalink %}
+                    {% endif %}
+                    {% if find_prev_post %}
+                      {% assign prev_post = post.permalink %}
+                      {% assign find_prev_post = false %}
+                    {% endif %}
+                  {% endif %}
                 {% endif %}
             {% endfor %}
 
