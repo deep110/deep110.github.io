@@ -11,7 +11,7 @@ site:
     last_gen_time: "2020-12-29 00:00:00+05:30"
 
 syntax_highlight:
-  theme: "base16-ocean.dark"
+  theme: "base16-ocean.light"
   enabled: true
 
 assets:

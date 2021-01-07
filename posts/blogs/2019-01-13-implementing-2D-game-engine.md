@@ -235,8 +235,7 @@ But wait there is a catch, friction acts differently for static and dynamic obje
 <pre><code>j<sub>f</sub> <= μj<sub>n</sub></code></pre>
 
 Let us understand this definition, if our solved `jf` (representing the force of friction ) is less than μ<sub>static</sub> times the normal force (`jn`), then we can use our `jf` magnitude as friction. If not, then we must use our normal force times μ<sub>dynamic</sub> instead.
-<pre><code>
-if (abs(jf) < μ<sub>s</sub>jn) {
+<pre><code>if (abs(jf) < μ<sub>s</sub>jn) {
     // no change
 } else {
     jf = μ<sub>d</sub>jn
