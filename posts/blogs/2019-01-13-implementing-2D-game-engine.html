@@ -105,14 +105,14 @@ dt = time elapsed since last execution (1\60 if 60 fps)
 </ol>
 <p>Implicit euler gives us more accurate results than explicit euler and is much closer to RK4. <a href="https://gafferongames.com/post/integration_basics/">Here</a> is a more detailed comparison of all three methods and is explained why implicit euler is okay for game engines.</p>
 <p>So using implicit euler we will get:</p>
-<pre style="background-color:#2b303b;">
-<span style="color:#c0c5ce;"> v += (</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">/m * F) * dt   </span><span style="color:#65737e;"># velocity
-</span><span style="color:#c0c5ce;"> x += v * dt           </span><span style="color:#65737e;"># position
+<pre style="background-color:#eff1f5;">
+<span style="color:#4f5b66;"> v += (</span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">/m * F) * dt   </span><span style="color:#a7adba;"># velocity
+</span><span style="color:#4f5b66;"> x += v * dt           </span><span style="color:#a7adba;"># position
 </span></pre>
 <p>If we take rotation into account,</p>
-<pre style="background-color:#2b303b;">
-<span style="color:#c0c5ce;">ω += (</span><span style="color:#d08770;">1</span><span style="color:#c0c5ce;">/I * τ) * dt
-</span><span style="color:#c0c5ce;">θ += ω * dt
+<pre style="background-color:#eff1f5;">
+<span style="color:#4f5b66;">ω += (</span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">/I * τ) * dt
+</span><span style="color:#4f5b66;">θ += ω * dt
 </span></pre>
 <p>where,<br />
 I = Moment of Inertia<br />
@@ -147,24 +147,24 @@ I = Moment of Inertia<br />
 <li>
 <p>Circle-Circle:</p>
 <p>For this, test is easy - Distance between circles should be less than sum of their radii</p>
-<pre style="background-color:#2b303b;">
-<span style="color:#65737e;">// distance must be less for overlap
-</span><span style="color:#c0c5ce;">isColliding = </span><span style="color:#8fa1b3;">distance</span><span style="color:#c0c5ce;">(circle1, circle2) &lt;= circle1.radius + circle2.radius
+<pre style="background-color:#eff1f5;">
+<span style="color:#a7adba;">// distance must be less for overlap
+</span><span style="color:#4f5b66;">isColliding = </span><span style="color:#8fa1b3;">distance</span><span style="color:#4f5b66;">(circle1, circle2) &lt;= circle1.radius + circle2.radius
 </span></pre></li>
 <li>
 <p>Circle-AABB</p>
 <p>We will first find the nearest point of contact on AABB between AABB and circle.</p>
-<pre style="background-color:#2b303b;">
-<span style="color:#c0c5ce;">positionDiff = </span><span style="color:#d08770;">AABB</span><span style="color:#c0c5ce;">.pos - circle.pos
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// on x-axis take the point which is near, the bounds or diff
-</span><span style="color:#c0c5ce;">nearestPoint.x = </span><span style="color:#8fa1b3;">clamp</span><span style="color:#c0c5ce;">(-</span><span style="color:#d08770;">AABB</span><span style="color:#c0c5ce;">.width/</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">AABB</span><span style="color:#c0c5ce;">.width/</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">, positionDiff.x)
-</span><span style="color:#65737e;">// same for y-axis
-</span><span style="color:#c0c5ce;">nearestPoint.y = </span><span style="color:#8fa1b3;">clamp</span><span style="color:#c0c5ce;">(-</span><span style="color:#d08770;">AABB</span><span style="color:#c0c5ce;">.height/</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">, </span><span style="color:#d08770;">AABB</span><span style="color:#c0c5ce;">.height/</span><span style="color:#d08770;">2</span><span style="color:#c0c5ce;">, positionDiff.y)
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// distance between nearest point on rectangle and circle&#39;s center should
-</span><span style="color:#65737e;">// be less than circle&#39;s radius
-</span><span style="color:#c0c5ce;">isColliding = </span><span style="color:#8fa1b3;">distance</span><span style="color:#c0c5ce;">(circle1, nearestPoint) &lt;= circle.radius
+<pre style="background-color:#eff1f5;">
+<span style="color:#4f5b66;">positionDiff = </span><span style="color:#d08770;">AABB</span><span style="color:#4f5b66;">.pos - circle.pos
+</span><span style="color:#4f5b66;">
+</span><span style="color:#a7adba;">// on x-axis take the point which is near, the bounds or diff
+</span><span style="color:#4f5b66;">nearestPoint.x = </span><span style="color:#8fa1b3;">clamp</span><span style="color:#4f5b66;">(-</span><span style="color:#d08770;">AABB</span><span style="color:#4f5b66;">.width/</span><span style="color:#d08770;">2</span><span style="color:#4f5b66;">, </span><span style="color:#d08770;">AABB</span><span style="color:#4f5b66;">.width/</span><span style="color:#d08770;">2</span><span style="color:#4f5b66;">, positionDiff.x)
+</span><span style="color:#a7adba;">// same for y-axis
+</span><span style="color:#4f5b66;">nearestPoint.y = </span><span style="color:#8fa1b3;">clamp</span><span style="color:#4f5b66;">(-</span><span style="color:#d08770;">AABB</span><span style="color:#4f5b66;">.height/</span><span style="color:#d08770;">2</span><span style="color:#4f5b66;">, </span><span style="color:#d08770;">AABB</span><span style="color:#4f5b66;">.height/</span><span style="color:#d08770;">2</span><span style="color:#4f5b66;">, positionDiff.y)
+</span><span style="color:#4f5b66;">
+</span><span style="color:#a7adba;">// distance between nearest point on rectangle and circle&#39;s center should
+</span><span style="color:#a7adba;">// be less than circle&#39;s radius
+</span><span style="color:#4f5b66;">isColliding = </span><span style="color:#8fa1b3;">distance</span><span style="color:#4f5b66;">(circle1, nearestPoint) &lt;= circle.radius
 </span></pre></li>
 <li>
 <p>AABB-Circle</p>
@@ -172,15 +172,15 @@ I = Moment of Inertia<br />
 </li>
 <li>
 <p>AABB-AABB</p>
-<pre style="background-color:#2b303b;">
-<span style="color:#c0c5ce;">positionDiff = </span><span style="color:#d08770;">AABB2</span><span style="color:#c0c5ce;">.pos - </span><span style="color:#d08770;">AABB1</span><span style="color:#c0c5ce;">.pos
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// find overlap values
-</span><span style="color:#c0c5ce;">xOverlap = </span><span style="color:#d08770;">AABB1</span><span style="color:#c0c5ce;">.width/</span><span style="color:#d08770;">2 </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">AABB2</span><span style="color:#c0c5ce;">.width/</span><span style="color:#d08770;">2 </span><span style="color:#c0c5ce;">- </span><span style="color:#8fa1b3;">abs</span><span style="color:#c0c5ce;">(positionDiff.x) </span><span style="color:#65737e;">// x-axis overlap
-</span><span style="color:#c0c5ce;">yOverlap = </span><span style="color:#d08770;">AABB1</span><span style="color:#c0c5ce;">.height/</span><span style="color:#d08770;">2 </span><span style="color:#c0c5ce;">+ </span><span style="color:#d08770;">AABB2</span><span style="color:#c0c5ce;">.height/</span><span style="color:#d08770;">2 </span><span style="color:#c0c5ce;">- </span><span style="color:#8fa1b3;">abs</span><span style="color:#c0c5ce;">(positionDiff.y) </span><span style="color:#65737e;">// y-axis overlap
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// for bodies to be colliding both axis must overlap
-</span><span style="color:#c0c5ce;">isColliding = xOverlap &gt; </span><span style="color:#d08770;">0 </span><span style="color:#c0c5ce;">&amp;&amp; yOverlap &gt; </span><span style="color:#d08770;">0
+<pre style="background-color:#eff1f5;">
+<span style="color:#4f5b66;">positionDiff = </span><span style="color:#d08770;">AABB2</span><span style="color:#4f5b66;">.pos - </span><span style="color:#d08770;">AABB1</span><span style="color:#4f5b66;">.pos
+</span><span style="color:#4f5b66;">
+</span><span style="color:#a7adba;">// find overlap values
+</span><span style="color:#4f5b66;">xOverlap = </span><span style="color:#d08770;">AABB1</span><span style="color:#4f5b66;">.width/</span><span style="color:#d08770;">2 </span><span style="color:#4f5b66;">+ </span><span style="color:#d08770;">AABB2</span><span style="color:#4f5b66;">.width/</span><span style="color:#d08770;">2 </span><span style="color:#4f5b66;">- </span><span style="color:#8fa1b3;">abs</span><span style="color:#4f5b66;">(positionDiff.x) </span><span style="color:#a7adba;">// x-axis overlap
+</span><span style="color:#4f5b66;">yOverlap = </span><span style="color:#d08770;">AABB1</span><span style="color:#4f5b66;">.height/</span><span style="color:#d08770;">2 </span><span style="color:#4f5b66;">+ </span><span style="color:#d08770;">AABB2</span><span style="color:#4f5b66;">.height/</span><span style="color:#d08770;">2 </span><span style="color:#4f5b66;">- </span><span style="color:#8fa1b3;">abs</span><span style="color:#4f5b66;">(positionDiff.y) </span><span style="color:#a7adba;">// y-axis overlap
+</span><span style="color:#4f5b66;">
+</span><span style="color:#a7adba;">// for bodies to be colliding both axis must overlap
+</span><span style="color:#4f5b66;">isColliding = xOverlap &gt; </span><span style="color:#d08770;">0 </span><span style="color:#4f5b66;">&amp;&amp; yOverlap &gt; </span><span style="color:#d08770;">0
 </span></pre></li>
 </ul>
 <p>For a convex polygon its implementation will be more complex, there is a good <a href="https://gdcvault.com/play/1017646/Physics-for-Game-Programmers-The">video</a> in GDC Vault explaining the process. Also you can go through the <a href="https://github.com/erincatto/Box2D">Box2D</a> code for the same. It is next in my list for implementation.</p>
@@ -218,8 +218,8 @@ j<sub>B</sub> = change in momentum of B
 n = normal vector in direction of collision normal (n.n = 1)
 </code></pre>
 <p>According to Newton's law of restitution,</p>
-<pre style="background-color:#2b303b;">
-<span style="color:#c0c5ce;">e = relative final velocity / relative initial velocity
+<pre style="background-color:#eff1f5;">
+<span style="color:#4f5b66;">e = relative final velocity / relative initial velocity
 </span></pre>
 <p>Since momentum is conserved change in momentum of Body A will be opposite to the change in momentum of body B i.e j<sub>A</sub> . n = -j<sub>B</sub> . n. Taking a dot product with <code>n</code> since we are interested only in normal direction.</p>
 <p class="equation">
@@ -240,11 +240,11 @@ v_{B} - v_{A} = eu_{AB} = -u_{AB} - j_{A}n \big(\dfrac {1}{m_{A}} + \dfrac {1}{m
 </p>
 <p>Whew, that's a lot of equations, but don't worry that's just rearranging the terms to get what we need, you can work it out yourself.</p>
 <p>If you want to rotational motion into account, its easy, like linear momentum, angular momentum is also <a href="https://en.wikipedia.org/wiki/Angular_momentum#Conservation_of_angular_momentum">conserved</a>. Let us define more terms so that further equation can be clear.</p>
-<pre style="background-color:#2b303b;">
-<span style="color:#c0c5ce;">L = angular momentum
-</span><span style="color:#c0c5ce;">p = linear momentum
-</span><span style="color:#c0c5ce;">I = Moment of Inertial about Center of Mass (COM)
-</span><span style="color:#c0c5ce;">r = radius vector perpendicular to COM
+<pre style="background-color:#eff1f5;">
+<span style="color:#4f5b66;">L = angular momentum
+</span><span style="color:#4f5b66;">p = linear momentum
+</span><span style="color:#4f5b66;">I = Moment of Inertial about Center of Mass (COM)
+</span><span style="color:#4f5b66;">r = radius vector perpendicular to COM
 </span></pre>
 <p>Some basic definitions,</p>
 <p class="equation">
@@ -272,8 +272,7 @@ t = -[V_{AB} − (V_{AB}⋅n)∗n]
 But wait there is a catch, friction acts differently for static and dynamic objects, that is why two coefficients of friction. How to use them can be determined using [Coulomb's Law](https://en.wikipedia.org/wiki/Friction#Dry_friction).
 <pre><code>j<sub>f</sub> <= μj<sub>n</sub></code></pre>
 <p>Let us understand this definition, if our solved <code>jf</code> (representing the force of friction ) is less than μ<sub>static</sub> times the normal force (<code>jn</code>), then we can use our <code>jf</code> magnitude as friction. If not, then we must use our normal force times μ<sub>dynamic</sub> instead.</p>
-<pre><code>
-if (abs(jf) < μ<sub>s</sub>jn) {
+<pre><code>if (abs(jf) < μ<sub>s</sub>jn) {
     // no change
 } else {
     jf = μ<sub>d</sub>jn
@@ -300,6 +299,8 @@ if (abs(jf) < μ<sub>s</sub>jn) {
                 
             
                 
+            
+                
                     
                     
                 
@@ -312,6 +313,9 @@ if (abs(jf) < μ<sub>s</sub>jn) {
             
                 
             
+            
+                
+                
             
                 
                 

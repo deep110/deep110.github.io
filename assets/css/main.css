@@ -104,7 +104,7 @@ code {
   font-size: 14px;
   border: 1px solid #e8e8e8;
   border-radius: 3px;
-  background-color: #eef; }
+  background-color: #eff1f5; }
 
 code {
   padding: 1px 5px; }
@@ -380,52 +380,6 @@ table {
       padding: 2px 0 5px 50px; }
       .archive-lists .by-year li .date {
         padding: 0 5px; }
-
-.toggle-search {
-  cursor: pointer; }
-
-.search {
-  position: absolute;
-  width: 100%;
-  left: 0;
-  background: rgba(75, 112, 24, 0.04);
-  top: 0px;
-  height: 100vh;
-  z-index: 1;
-  display: none; }
-  .search.open {
-    display: block; }
-    .search.open .icon {
-      border-radius: 4px;
-      position: absolute;
-      top: 0;
-      right: 0; }
-      .search.open .icon svg {
-        width: 40px;
-        height: 40px; }
-  .search .wrapper {
-    background: #fff;
-    padding: 30px;
-    top: 70px;
-    position: relative;
-    z-index: 7;
-    border-radius: 3px; }
-
-.search-input {
-  width: calc(100% - 50px);
-  height: 30px;
-  border: 0;
-  padding: 2px 25px;
-  outline: none;
-  margin-bottom: 20px;
-  font-size: 1.3em;
-  background: transparent;
-  border-bottom: 3px solid #ccc; }
-
-#results-container {
-  margin: 0; }
-  #results-container li {
-    margin-left: 30px; }
 
 span.last-update {
   font-size: 12px;

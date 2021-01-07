@@ -63,80 +63,80 @@
 <p>Now let us see how we can use these credential objects.</p>
 <h2>Client Side TLS/SSL Authentication</h2>
 <p>gRPC provides a way to establish a connection without any secure connection i.e just like HTTP.</p>
-<pre style="background-color:#2b303b;">
-<span style="color:#65737e;">// client.go
-</span><span style="color:#bf616a;">conn</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">_ </span><span style="color:#c0c5ce;">:= grpc.</span><span style="color:#8fa1b3;">Dial</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">localhost:5000</span><span style="color:#c0c5ce;">&quot;, grpc.</span><span style="color:#8fa1b3;">WithInsecure</span><span style="color:#c0c5ce;">())
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// server.go
-</span><span style="color:#bf616a;">lis</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">err </span><span style="color:#c0c5ce;">:= net.</span><span style="color:#8fa1b3;">Listen</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">tcp</span><span style="color:#c0c5ce;">&quot;, &quot;</span><span style="color:#a3be8c;">:5000</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#bf616a;">s </span><span style="color:#c0c5ce;">:= grpc.</span><span style="color:#8fa1b3;">NewServer</span><span style="color:#c0c5ce;">()
-</span><span style="color:#65737e;">// ... register gRPC services ...
-</span><span style="color:#c0c5ce;">s.</span><span style="color:#8fa1b3;">Serve</span><span style="color:#c0c5ce;">(lis)
+<pre style="background-color:#eff1f5;">
+<span style="color:#a7adba;">// client.go
+</span><span style="color:#bf616a;">conn</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">_ </span><span style="color:#4f5b66;">:= grpc.</span><span style="color:#8fa1b3;">Dial</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">localhost:5000</span><span style="color:#4f5b66;">&quot;, grpc.</span><span style="color:#8fa1b3;">WithInsecure</span><span style="color:#4f5b66;">())
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">
+</span><span style="color:#a7adba;">// server.go
+</span><span style="color:#bf616a;">lis</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">err </span><span style="color:#4f5b66;">:= net.</span><span style="color:#8fa1b3;">Listen</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">tcp</span><span style="color:#4f5b66;">&quot;, &quot;</span><span style="color:#a3be8c;">:5000</span><span style="color:#4f5b66;">&quot;)
+</span><span style="color:#bf616a;">s </span><span style="color:#4f5b66;">:= grpc.</span><span style="color:#8fa1b3;">NewServer</span><span style="color:#4f5b66;">()
+</span><span style="color:#a7adba;">// ... register gRPC services ...
+</span><span style="color:#4f5b66;">s.</span><span style="color:#8fa1b3;">Serve</span><span style="color:#4f5b66;">(lis)
 </span></pre>
 <p>For secure communication we will create <strong>TransportCredentials</strong> which is a type of ChannelCredential object.</p>
-<pre style="background-color:#2b303b;">
-<span style="color:#65737e;">// client.go
-</span><span style="color:#bf616a;">creds</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">_ </span><span style="color:#c0c5ce;">:= credentials.</span><span style="color:#8fa1b3;">NewClientTLSFromFile</span><span style="color:#c0c5ce;">(certFile, &quot;&quot;)
-</span><span style="color:#bf616a;">conn</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">_ </span><span style="color:#c0c5ce;">:= grpc.</span><span style="color:#8fa1b3;">Dial</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">localhost:5000</span><span style="color:#c0c5ce;">&quot;, grpc.</span><span style="color:#8fa1b3;">WithTransportCredentials</span><span style="color:#c0c5ce;">(creds))
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// server.go
-</span><span style="color:#bf616a;">lis</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">_ </span><span style="color:#c0c5ce;">:= net.</span><span style="color:#8fa1b3;">Listen</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">tcp</span><span style="color:#c0c5ce;">&quot;, &quot;</span><span style="color:#a3be8c;">localhost:50051</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#bf616a;">creds</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">_ </span><span style="color:#c0c5ce;">:= credentials.</span><span style="color:#8fa1b3;">NewServerTLSFromFile</span><span style="color:#c0c5ce;">(certFile, keyFile)
-</span><span style="color:#bf616a;">s </span><span style="color:#c0c5ce;">:= grpc.</span><span style="color:#8fa1b3;">NewServer</span><span style="color:#c0c5ce;">(grpc.</span><span style="color:#8fa1b3;">Creds</span><span style="color:#c0c5ce;">(creds))
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#c0c5ce;">s.</span><span style="color:#8fa1b3;">Serve</span><span style="color:#c0c5ce;">(lis)
+<pre style="background-color:#eff1f5;">
+<span style="color:#a7adba;">// client.go
+</span><span style="color:#bf616a;">creds</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">_ </span><span style="color:#4f5b66;">:= credentials.</span><span style="color:#8fa1b3;">NewClientTLSFromFile</span><span style="color:#4f5b66;">(certFile, &quot;&quot;)
+</span><span style="color:#bf616a;">conn</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">_ </span><span style="color:#4f5b66;">:= grpc.</span><span style="color:#8fa1b3;">Dial</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">localhost:5000</span><span style="color:#4f5b66;">&quot;, grpc.</span><span style="color:#8fa1b3;">WithTransportCredentials</span><span style="color:#4f5b66;">(creds))
+</span><span style="color:#4f5b66;">
+</span><span style="color:#a7adba;">// server.go
+</span><span style="color:#bf616a;">lis</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">_ </span><span style="color:#4f5b66;">:= net.</span><span style="color:#8fa1b3;">Listen</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">tcp</span><span style="color:#4f5b66;">&quot;, &quot;</span><span style="color:#a3be8c;">localhost:50051</span><span style="color:#4f5b66;">&quot;)
+</span><span style="color:#bf616a;">creds</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">_ </span><span style="color:#4f5b66;">:= credentials.</span><span style="color:#8fa1b3;">NewServerTLSFromFile</span><span style="color:#4f5b66;">(certFile, keyFile)
+</span><span style="color:#bf616a;">s </span><span style="color:#4f5b66;">:= grpc.</span><span style="color:#8fa1b3;">NewServer</span><span style="color:#4f5b66;">(grpc.</span><span style="color:#8fa1b3;">Creds</span><span style="color:#4f5b66;">(creds))
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">s.</span><span style="color:#8fa1b3;">Serve</span><span style="color:#4f5b66;">(lis)
 </span></pre>
 <p>You can read more about generating own ssl certificates <a href="https://www.linuxjournal.com/content/understanding-public-key-infrastructure-and-x509-certificates">here</a>.</p>
 <p>In case where you don't own the client, means you are creating a gRPC API for public use, you cannot give your certificate to every one using your client. In that case we rely on well known <a href="https://en.wikipedia.org/wiki/Certificate_authority">Certificate Authority</a> like LetsEncrypt, Amazon, etc. to generate us a certificate. So let us change our client code a little.</p>
-<pre style="background-color:#2b303b;">
-<span style="color:#65737e;">// client.go
-</span><span style="color:#bf616a;">config </span><span style="color:#c0c5ce;">:= &amp;tls.</span><span style="color:#bf616a;">Config</span><span style="color:#c0c5ce;">{
-</span><span style="color:#c0c5ce;">	InsecureSkipVerify: </span><span style="color:#d08770;">false</span><span style="color:#c0c5ce;">,
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#bf616a;">conn</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">err </span><span style="color:#c0c5ce;">:= grpc.</span><span style="color:#8fa1b3;">Dial</span><span style="color:#c0c5ce;">(address, grpc.</span><span style="color:#8fa1b3;">WithTransportCredentials</span><span style="color:#c0c5ce;">(credentials.</span><span style="color:#8fa1b3;">NewTLS</span><span style="color:#c0c5ce;">(config)))
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// server code remains the same
+<pre style="background-color:#eff1f5;">
+<span style="color:#a7adba;">// client.go
+</span><span style="color:#bf616a;">config </span><span style="color:#4f5b66;">:= &amp;tls.</span><span style="color:#bf616a;">Config</span><span style="color:#4f5b66;">{
+</span><span style="color:#4f5b66;">	InsecureSkipVerify: </span><span style="color:#d08770;">false</span><span style="color:#4f5b66;">,
+</span><span style="color:#4f5b66;">}
+</span><span style="color:#bf616a;">conn</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">err </span><span style="color:#4f5b66;">:= grpc.</span><span style="color:#8fa1b3;">Dial</span><span style="color:#4f5b66;">(address, grpc.</span><span style="color:#8fa1b3;">WithTransportCredentials</span><span style="color:#4f5b66;">(credentials.</span><span style="color:#8fa1b3;">NewTLS</span><span style="color:#4f5b66;">(config)))
+</span><span style="color:#4f5b66;">
+</span><span style="color:#a7adba;">// server code remains the same
 </span></pre>
 <p>In this case what happens is that grpc loads the certificates of well known Certificate Authorities from the OS and send it to server, hence no need to manually provide a certificate.</p>
 <h2>Token Based Authentication / OAuth2</h2>
 <p>Many a times we want to differentiate a client by issuing them different tokens. TLS Authentication is good way to secure your connection but it does not tell us from which client the request is coming from. We will send the token in request metadata just like HTTP Headers.</p>
 <p>gRPC has <code>&quot;google.golang.org/grpc/metadata&quot;</code> package to send and receive metadata with a RPC request. </p>
-<pre style="background-color:#2b303b;">
-<span style="color:#65737e;">// client.go
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// add metadata to request context
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#bf616a;">md </span><span style="color:#c0c5ce;">:= metadata.</span><span style="color:#8fa1b3;">Pairs</span><span style="color:#c0c5ce;">(&quot;</span><span style="color:#a3be8c;">Authorization</span><span style="color:#c0c5ce;">&quot;, &quot;</span><span style="color:#a3be8c;">Bearer xxx-xxx-xxx</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#bf616a;">ctx </span><span style="color:#c0c5ce;">:= metadata.</span><span style="color:#8fa1b3;">NewContext</span><span style="color:#c0c5ce;">(context.</span><span style="color:#8fa1b3;">Background</span><span style="color:#c0c5ce;">(), md)
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// use this context to call rpc
-</span><span style="color:#c0c5ce;">_, err = client.</span><span style="color:#8fa1b3;">CallRPC</span><span style="color:#c0c5ce;">(ctx, requestObject)
+<pre style="background-color:#eff1f5;">
+<span style="color:#a7adba;">// client.go
+</span><span style="color:#4f5b66;">
+</span><span style="color:#a7adba;">// add metadata to request context
+</span><span style="color:#4f5b66;">
+</span><span style="color:#bf616a;">md </span><span style="color:#4f5b66;">:= metadata.</span><span style="color:#8fa1b3;">Pairs</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">Authorization</span><span style="color:#4f5b66;">&quot;, &quot;</span><span style="color:#a3be8c;">Bearer xxx-xxx-xxx</span><span style="color:#4f5b66;">&quot;)
+</span><span style="color:#bf616a;">ctx </span><span style="color:#4f5b66;">:= metadata.</span><span style="color:#8fa1b3;">NewContext</span><span style="color:#4f5b66;">(context.</span><span style="color:#8fa1b3;">Background</span><span style="color:#4f5b66;">(), md)
+</span><span style="color:#4f5b66;">
+</span><span style="color:#a7adba;">// use this context to call rpc
+</span><span style="color:#4f5b66;">_, err = client.</span><span style="color:#8fa1b3;">CallRPC</span><span style="color:#4f5b66;">(ctx, requestObject)
 </span></pre>
 <p>We will use <strong>UnaryInterceptor</strong> on server which acts like a middleware and checks for the token for all the requests.</p>
-<pre style="background-color:#2b303b;">
-<span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// create a middleware 
-</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">AuthInterceptor</span><span style="color:#c0c5ce;">(</span><span style="color:#bf616a;">ctx</span><span style="color:#c0c5ce;"> context.Context, </span><span style="color:#bf616a;">req </span><span style="color:#b48ead;">interface</span><span style="color:#c0c5ce;">{}, </span><span style="color:#bf616a;">info </span><span style="color:#c0c5ce;">*grpc.UnaryServerInfo, </span><span style="color:#bf616a;">handler</span><span style="color:#c0c5ce;"> grpc.UnaryHandler) (</span><span style="color:#b48ead;">interface</span><span style="color:#c0c5ce;">{}, </span><span style="color:#b48ead;">error</span><span style="color:#c0c5ce;">) {
-</span><span style="color:#c0c5ce;">    </span><span style="color:#bf616a;">meta</span><span style="color:#c0c5ce;">, </span><span style="color:#bf616a;">ok </span><span style="color:#c0c5ce;">:= metadata.</span><span style="color:#8fa1b3;">FromContext</span><span style="color:#c0c5ce;">(ctx)
-</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">if </span><span style="color:#c0c5ce;">!ok {
-</span><span style="color:#c0c5ce;">        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">nil</span><span style="color:#c0c5ce;">, grpc.</span><span style="color:#8fa1b3;">Errorf</span><span style="color:#c0c5ce;">(codes.</span><span style="color:#bf616a;">Unauthenticated</span><span style="color:#c0c5ce;">, &quot;</span><span style="color:#a3be8c;">missing context metadata</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#c0c5ce;">    }
-</span><span style="color:#c0c5ce;">    </span><span style="color:#65737e;">// Take care: grpc internally reduce key values to lowercase
-</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">if </span><span style="color:#96b5b4;">len</span><span style="color:#c0c5ce;">(meta[&quot;</span><span style="color:#a3be8c;">authorization</span><span style="color:#c0c5ce;">&quot;]) != </span><span style="color:#d08770;">1 </span><span style="color:#c0c5ce;">{
-</span><span style="color:#c0c5ce;">        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">nil</span><span style="color:#c0c5ce;">, grpc.</span><span style="color:#8fa1b3;">Errorf</span><span style="color:#c0c5ce;">(codes.</span><span style="color:#bf616a;">Unauthenticated</span><span style="color:#c0c5ce;">, &quot;</span><span style="color:#a3be8c;">invalid token</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#c0c5ce;">    }
-</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">if</span><span style="color:#c0c5ce;"> meta[&quot;</span><span style="color:#a3be8c;">authorization</span><span style="color:#c0c5ce;">&quot;][</span><span style="color:#d08770;">0</span><span style="color:#c0c5ce;">] != &quot;</span><span style="color:#a3be8c;">xxx-xxx-xxx</span><span style="color:#c0c5ce;">&quot; {
-</span><span style="color:#c0c5ce;">        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">nil</span><span style="color:#c0c5ce;">, grpc.</span><span style="color:#8fa1b3;">Errorf</span><span style="color:#c0c5ce;">(codes.</span><span style="color:#bf616a;">Unauthenticated</span><span style="color:#c0c5ce;">, &quot;</span><span style="color:#a3be8c;">invalid token</span><span style="color:#c0c5ce;">&quot;)
-</span><span style="color:#c0c5ce;">    }
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#c0c5ce;">    </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">handler</span><span style="color:#c0c5ce;">(ctx, req)
-</span><span style="color:#c0c5ce;">}
-</span><span style="color:#c0c5ce;">
-</span><span style="color:#65737e;">// pass this when creating server
-</span><span style="color:#bf616a;">server </span><span style="color:#c0c5ce;">:= grpc.</span><span style="color:#8fa1b3;">NewServer</span><span style="color:#c0c5ce;">(
-</span><span style="color:#c0c5ce;">    grpc.</span><span style="color:#8fa1b3;">UnaryInterceptor</span><span style="color:#c0c5ce;">(AuthInterceptor),
-</span><span style="color:#c0c5ce;">)
+<pre style="background-color:#eff1f5;">
+<span style="color:#4f5b66;">
+</span><span style="color:#a7adba;">// create a middleware 
+</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">AuthInterceptor</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">ctx</span><span style="color:#4f5b66;"> context.Context, </span><span style="color:#bf616a;">req </span><span style="color:#b48ead;">interface</span><span style="color:#4f5b66;">{}, </span><span style="color:#bf616a;">info </span><span style="color:#4f5b66;">*grpc.UnaryServerInfo, </span><span style="color:#bf616a;">handler</span><span style="color:#4f5b66;"> grpc.UnaryHandler) (</span><span style="color:#b48ead;">interface</span><span style="color:#4f5b66;">{}, </span><span style="color:#b48ead;">error</span><span style="color:#4f5b66;">) {
+</span><span style="color:#4f5b66;">    </span><span style="color:#bf616a;">meta</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">ok </span><span style="color:#4f5b66;">:= metadata.</span><span style="color:#8fa1b3;">FromContext</span><span style="color:#4f5b66;">(ctx)
+</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">!ok {
+</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">nil</span><span style="color:#4f5b66;">, grpc.</span><span style="color:#8fa1b3;">Errorf</span><span style="color:#4f5b66;">(codes.</span><span style="color:#bf616a;">Unauthenticated</span><span style="color:#4f5b66;">, &quot;</span><span style="color:#a3be8c;">missing context metadata</span><span style="color:#4f5b66;">&quot;)
+</span><span style="color:#4f5b66;">    }
+</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// Take care: grpc internally reduce key values to lowercase
+</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#96b5b4;">len</span><span style="color:#4f5b66;">(meta[&quot;</span><span style="color:#a3be8c;">authorization</span><span style="color:#4f5b66;">&quot;]) != </span><span style="color:#d08770;">1 </span><span style="color:#4f5b66;">{
+</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">nil</span><span style="color:#4f5b66;">, grpc.</span><span style="color:#8fa1b3;">Errorf</span><span style="color:#4f5b66;">(codes.</span><span style="color:#bf616a;">Unauthenticated</span><span style="color:#4f5b66;">, &quot;</span><span style="color:#a3be8c;">invalid token</span><span style="color:#4f5b66;">&quot;)
+</span><span style="color:#4f5b66;">    }
+</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if</span><span style="color:#4f5b66;"> meta[&quot;</span><span style="color:#a3be8c;">authorization</span><span style="color:#4f5b66;">&quot;][</span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">] != &quot;</span><span style="color:#a3be8c;">xxx-xxx-xxx</span><span style="color:#4f5b66;">&quot; {
+</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">nil</span><span style="color:#4f5b66;">, grpc.</span><span style="color:#8fa1b3;">Errorf</span><span style="color:#4f5b66;">(codes.</span><span style="color:#bf616a;">Unauthenticated</span><span style="color:#4f5b66;">, &quot;</span><span style="color:#a3be8c;">invalid token</span><span style="color:#4f5b66;">&quot;)
+</span><span style="color:#4f5b66;">    }
+</span><span style="color:#4f5b66;">
+</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">handler</span><span style="color:#4f5b66;">(ctx, req)
+</span><span style="color:#4f5b66;">}
+</span><span style="color:#4f5b66;">
+</span><span style="color:#a7adba;">// pass this when creating server
+</span><span style="color:#bf616a;">server </span><span style="color:#4f5b66;">:= grpc.</span><span style="color:#8fa1b3;">NewServer</span><span style="color:#4f5b66;">(
+</span><span style="color:#4f5b66;">    grpc.</span><span style="color:#8fa1b3;">UnaryInterceptor</span><span style="color:#4f5b66;">(AuthInterceptor),
+</span><span style="color:#4f5b66;">)
 </span></pre>
 <p>But above code only works for non-streaming RPCs. For Streaming RPCs you can implement <strong>StreamInterceptor</strong>. Instead of implementing it again you can use <a href="https://github.com/grpc-ecosystem/go-grpc-middleware">this</a> package.</p>
 <p>Hope this article helps you with authentication in gRPC.</p>
@@ -148,6 +148,8 @@
             <!-- Post Navigation -->
             
                 
+            
+                
                     
                     
                 
@@ -166,6 +168,11 @@
             
                 
             
+            
+                
+                    
+                
+                
             
                 
                 
@@ -194,6 +201,8 @@
 
             <div class="post-navigation">
               
+              
+                <a class="prev" href="https://deep110.github.io/posts/blogs/2020-12-29-tls-with-apr.html">Next Post&nbsp;→</a>
               
             </div>
           </footer>
