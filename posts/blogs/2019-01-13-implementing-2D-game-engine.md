@@ -231,6 +231,7 @@ Now we just need to calculate `t`. For that we will get normal component of rela
 <p class="equation">
 t = -[V_{AB} − (V_{AB}⋅n)∗n]
 </p>
+
 But wait there is a catch, friction acts differently for static and dynamic objects, that is why two coefficients of friction. How to use them can be determined using [Coulomb's Law](https://en.wikipedia.org/wiki/Friction#Dry_friction).
 <pre><code>j<sub>f</sub> <= μj<sub>n</sub></code></pre>
 

@@ -20,8 +20,10 @@ function toggleClass(element, toggleClass) {
 function inflateKatex() {
   var classes = document.getElementsByClassName("equation");
   for (var i = 0; i < classes.length; i++) {
-    classes[i].innerHTML = katex.renderToString(classes[i].innerHTML.trim(), {
-      throwOnError: false
+    katex.render(classes[i].innerHTML.trim(), classes[i], {
+      output: "html",
+      throwOnError: false,
+      displayMode: true
     });
   }
 }
