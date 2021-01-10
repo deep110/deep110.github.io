@@ -56,9 +56,14 @@
             <p>First of all, you would think that when there are so many game engines out there why
 would you want to implement your own. Well it may be that you don't like any of them, or just thinking of starting a game and implementing your own engine might be a good idea, then please don't do it and this article might not be for you. But if you (like me), want to learn nitty-gritty of a physics engine, this could be a good exercise.</p>
 <p>Here is the demo of the end result and you can find the code <a href="https://github.com/deep110/LucidEngine">here</a> on my github.</p>
-<div style="text-align:center"><img src="/assets/images/2019-01/game_engine_demo.gif"/></div>
-<br><br>
-In this article I won't be providing any code snippets since you can find that in the github link I have provided above, but more of an explanation of how things are pieced together.
+<div style="text-align:center">
+  <video autoplay muted loop width="auto" height="auto">
+      <source src="/assets/images/2019-01/game_engine_demo.webm" type="video/webm">
+      Sorry, your browser doesn't support embedded videos.
+  </video>
+</div>
+<p><br><br>
+In this article I won't be providing any code snippets since you can find that in the github link I have provided above, but more of an explanation of how things are pieced together.</p>
 <p>First, we will start with some basic assumptions:</p>
 <ol>
 <li>All bodies are <a href="https://en.wikipedia.org/wiki/Rigid_body">rigid bodies</a> means they cannot deform on impact.</li>
@@ -269,7 +274,7 @@ Now we just need to calculate `t`. For that we will get normal component of rela
 <p class="equation">
 t = -[V_{AB} − (V_{AB}⋅n)∗n]
 </p>
-But wait there is a catch, friction acts differently for static and dynamic objects, that is why two coefficients of friction. How to use them can be determined using [Coulomb's Law](https://en.wikipedia.org/wiki/Friction#Dry_friction).
+<p>But wait there is a catch, friction acts differently for static and dynamic objects, that is why two coefficients of friction. How to use them can be determined using <a href="https://en.wikipedia.org/wiki/Friction#Dry_friction">Coulomb's Law</a>.</p>
 <pre><code>j<sub>f</sub> <= μj<sub>n</sub></code></pre>
 <p>Let us understand this definition, if our solved <code>jf</code> (representing the force of friction ) is less than μ<sub>static</sub> times the normal force (<code>jn</code>), then we can use our <code>jf</code> magnitude as friction. If not, then we must use our normal force times μ<sub>dynamic</sub> instead.</p>
 <pre><code>if (abs(jf) < μ<sub>s</sub>jn) {
@@ -313,6 +318,15 @@ But wait there is a catch, friction acts differently for static and dynamic obje
                 
             
               
+                  
+                    
+                      
+                    
+                    
+                  
+                
+            
+              
             
               
             
@@ -331,14 +345,6 @@ But wait there is a catch, friction acts differently for static and dynamic obje
                     
                       
                       
-                    
-                  
-                
-            
-              
-            
-              
-            
             
               <a class="next" href="https://deep110.github.io/posts/blogs/2018-04-17-hello-world.html">←&nbsp;Prev Post</a>
             
@@ -347,6 +353,7 @@ But wait there is a catch, friction acts differently for static and dynamic obje
             
           </div>
 
+          
           <div>
             <script src="https://utteranc.es/client.js"
               repo="deep110/deep110.github.io"
@@ -357,6 +364,7 @@ But wait there is a catch, friction acts differently for static and dynamic obje
               async>
             </script>
           </div>
+          
 
         </article>
 

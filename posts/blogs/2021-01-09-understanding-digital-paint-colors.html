@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>
     
-      Hello World!
+      Understanding difference between Digital and Paint Colors
     
   </title>
 
@@ -40,23 +40,84 @@
 
         <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
           <header class="post-header">
-            <h1 class="post-title" itemprop="name headline">Hello World!</h1>
+            <h1 class="post-title" itemprop="name headline">Understanding difference between Digital and Paint Colors</h1>
             <p class="post-meta">
-               <time datetime="2018-04-17 00:00:00 +0000" itemprop="datePublished">
-                  Apr 17, 2018
+               <time datetime="2021-01-09 00:00:00 +0000" itemprop="datePublished">
+                  Jan 9, 2021
                </time>
                
                 | <span class="time">
-                    0
+                    4
                   </span>
                    Minute Read
             </p>
           </header>
           <div class="post-content" itemprop="articleBody">
-            <p>Finally, I have done it, my first blog has been compiled successfully.</p>
-<p>I have been there, when the first line of code was written in my company. I have seen my company grow from 6 members to a team of 20+ members. I have seen microservices abused, deployments gone wrong, dreams of CI and CD crushed, servers blowing up, and of course piling server bills. So, working as a fullstack engineer and a guy who had been responsible for <a href="https://landing.google.com/sre/">SRE</a> partly, I have faced numerous challenges along the way. I found solution to many of those problems in the types of blogs that I am aiming to write.</p>
-<p>So I will be writing about problems that kept me awake for days or solutions that should be present on first link.</p>
-<p>Apart from that I also love experimenting with game physics and shader graphics in Unity. So you may find some blogs on that too.</p>
+            <p>Before going into the any of this I would like to talk about why I wrote this:</p>
+<ul>
+<li>I have also been little confused a little with color theory and models in the past</li>
+<li>I came across an excellent <a href="https://www.reddit.com/r/askscience/comments/ksgy8l/why_if_i_mix_green_and_red_paints_in_equal/">thread</a> on reddit regarding this and I loved the explanation there.</li>
+<li>Few years back I wasted a lot of money to get right color prints of some photos</li>
+</ul>
+<p>Anyways, I thought let me also take a shot at this.</p>
+<p>The question the person asked was this:</p>
+<blockquote>
+<p>Why if I mix green and red paints in equal proportions, I see a desaturated brown, but if I mix green and red light in equal proportions like in an LCD screen, I get pure yellow?</p>
+</blockquote>
+<p>To answer this it is important to understand difference between colors we directly see because of light and paint colors.</p>
+<h3>Light and RGB Color Model</h3>
+<p>We all know that <a href="https://en.wikipedia.org/wiki/Visible_spectrum">visible spectrum</a> [390nm - 750nm] is the range of wavelength that human eye can see and this gives us the colors.
+But why is that Red, Green and Blue are the primary colors for the light. It is because eye have three <a href="https://en.wikipedia.org/wiki/Color#Color_in_the_eye">types of cones</a>, each sensitive to range of wavelength corresponding to those colors. <a href="https://en.wikipedia.org/wiki/Photoreceptor_cell">Here</a> is a detailed explanation on photoceptor cells in our eyes.</p>
+<div style="text-align:center"><img src="/assets/images/2021-01/cones-responses.png"/></div>
+<div style="text-align:center">Source: <a href="https://en.wikipedia.org/wiki/Color#Color_in_the_eye">wikipedia</a></div>
+<br>
+So for example if you take yellow light [wavelength = 580nm], it will be sensitive to both Red and Green cones in the eye and thus gives us the perception of yellow color.
+<blockquote>
+<p>Fun fact: Our eyes being more sensitive to warm colors than cold can easily be seen from the graph.</p>
+</blockquote>
+<p>This is exactly how we also see colors on a display screen. You can read more about how we see colors on a screen <a href="https://www.chem.purdue.edu/gchelp/cchem/RGBColors/body_rgbcolors.html">here</a>.</p>
+<p>Now let us talk about mixing of monochromatic light. You can roughly get a final color by this formula:</p>
+<pre style="background-color:#eff1f5;">
+<span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">mix_color_light</span><span style="color:#4f5b66;">(Color c1, Color c2) {
+</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return </span><span style="color:#4f5b66;">new </span><span style="color:#bf616a;">Color</span><span style="color:#4f5b66;">(
+</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">min</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">c1</span><span style="color:#4f5b66;">.r+</span><span style="color:#bf616a;">c2</span><span style="color:#4f5b66;">.r, </span><span style="color:#d08770;">255</span><span style="color:#4f5b66;">),
+</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">min</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">c1</span><span style="color:#4f5b66;">.g+</span><span style="color:#bf616a;">c2</span><span style="color:#4f5b66;">.g, </span><span style="color:#d08770;">255</span><span style="color:#4f5b66;">),
+</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">min</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">c1</span><span style="color:#4f5b66;">.b+</span><span style="color:#bf616a;">c2</span><span style="color:#4f5b66;">.b, </span><span style="color:#d08770;">255</span><span style="color:#4f5b66;">),
+</span><span style="color:#4f5b66;">    );
+</span><span style="color:#4f5b66;">}
+</span></pre>
+<p>Let us think what this formula will give,</p>
+<pre style="background-color:#eff1f5;">
+<span style="color:#4f5b66;">Red + Black        = Red
+</span><span style="color:#4f5b66;">Red + Green        = Yellow
+</span><span style="color:#4f5b66;">Red + Green + Blue = White
+</span><span style="color:#4f5b66;">Red + White        = White
+</span></pre>
+<p>Black is nothing but absence of light, which makes sense right, if you add red light into nothing you should see red light.
+Similarly white light is a mixture of all three light components, hence adding more red, or green or blue won't change the color of final light produced.</p>
+<p>Because of this, RGB color model is called as <strong>Additive Color Model</strong>. Mixing lights of all colors will eventually get you to white.</p>
+<p>Now think of above table in terms of paints, it is completely weird right? Red and Black color paint should produce what - darker shade of red.</p>
+<h3>Paint and CMYK Color Space</h3>
+<p>The basis for understanding paints is how we see color of objects. So for a object to appear green, it should absorb all visible wavelengths except for green light. Hence green light will reach the eyes and we will perceive that object as green. Similarly for an object to appear,</p>
+<ul>
+<li>White - It has to absorb no visible wavelength</li>
+<li>Black - It has to absorb all visible wavelength</li>
+</ul>
+<p>That is why primary colors for paints are as follows:</p>
+<pre style="background-color:#eff1f5;">
+<span style="color:#4f5b66;">Cyan =&gt; Reflects all color except Red
+</span><span style="color:#4f5b66;">Magenta =&gt; Reflects all color except Green
+</span><span style="color:#4f5b66;">Yellow =&gt; Reflects all color except Blue
+</span></pre>
+<p>This is thus called <strong>Subtractive Model</strong> because paint color subtracts that color from white light.</p>
+<blockquote>
+<p>Then what about K in CMYK?</p>
+</blockquote>
+<p>This model is primarily used for printing, <code>K</code> stands for key which is usually black ink in printers. This is needed because when mixing CMY color inks you get a dark grey or faded black color. Thus to produce perfect black in printing, black colored ink is directly used. Also a lot of times it is cheaper to make dark shades of lot of colors using black ink rather than mixing CMY colors.</p>
+<div style="text-align:center"><img src="/assets/images/2021-01/CMYK_subtractive_color_mixing.png"/></div>
+<div style="text-align:center">Source: <a href="https://en.wikipedia.org/wiki/CMYK_color_model">wikipedia</a></div>
+<p>In the above picture, as you can see that you can make primary colors for RGB model from mixing primary colors of CMYK. For example if we mix yellow [which only absorbs blue light] and cyan [which only absorbs red light], we get a paint that absorbs both blue &amp; red light but reflect everything that is left i.e green light.</p>
+<p>Obviously CMYK model used in printing industry is not very straight forward, because it is hard to produce the all the colors with pigments, but more or less the idea remains the same. </p>
 
           </div>
           <!-- Post Navigation -->
@@ -68,8 +129,6 @@
               
                   
                     
-                      
-                    
                     
                   
                 
@@ -77,50 +136,12 @@
               
                   
                     
-                      
-                    
-                    
-                  
-                
-            
-              
-                  
                     
                       
-                    
-                    
-                  
-                
-            
-              
-            
-              
-            
-              
-                  
-                    
                       
-                    
-                    
-                  
-                
             
-              
+              <a class="next" href="https://deep110.github.io/posts/blogs/2020-12-29-tls-with-apr.html">←&nbsp;Prev Post</a>
             
-              
-                  
-                    
-                    
-                  
-                
-            
-              
-            
-              
-            
-            
-            
-              <a class="prev" href="https://deep110.github.io/posts/blogs/2019-01-13-implementing-2D-game-engine.html">Next Post&nbsp;→</a>
             
           </div>
 
