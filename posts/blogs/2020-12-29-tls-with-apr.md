@@ -332,4 +332,4 @@ openssl s_client -connect localhost:8000
 ```
 
 You can also find the full code [here](https://gist.github.com/deep110/a7e5fbc31dea6989907d3dc595efdc4e).
-Hope this helps people to understand openssl and APR library and how they can be used to build a fully functional TCP server with TLS support.
+Hope this helps people to start with openssl and APR library and how they can be used to build a fully functional TCP server with TLS support.

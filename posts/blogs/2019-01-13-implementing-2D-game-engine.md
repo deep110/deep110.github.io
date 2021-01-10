@@ -12,7 +12,13 @@ would you want to implement your own. Well it may be that you don't like any of 
 Here is the demo of the end result and you can find the code [here](https://github.com/deep110/LucidEngine) on my github.
 
 
-<div style="text-align:center"><img src="/assets/images/2019-01/game_engine_demo.gif"/></div>
+<div style="text-align:center">
+  <video autoplay muted loop width="auto" height="auto">
+      <source src="/assets/images/2019-01/game_engine_demo.webm" type="video/webm">
+      Sorry, your browser doesn't support embedded videos.
+  </video>
+</div>
+
 <br><br>
 In this article I won't be providing any code snippets since you can find that in the github link I have provided above, but more of an explanation of how things are pieced together.
 
