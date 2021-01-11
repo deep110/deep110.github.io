@@ -160,7 +160,7 @@ table {
  */
 .icon > svg {
   display: inline-block;
-  width: 32px;
+  width: 33px;
   height: 32px;
   vertical-align: middle;
   padding: 5px; }
@@ -207,7 +207,7 @@ table {
   line-height: 56px;
   letter-spacing: -1px;
   margin-bottom: 0; }
-  .site-title, .site-title:visited {
+  .site-title, .site-title:hover, .site-title:visited {
     color: #fdfdfd; }
 
 .site-nav {
