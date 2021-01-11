@@ -48,6 +48,7 @@
     margin-bottom: 0;
 
     &,
+    &:hover,
     &:visited {
         color: $background-color;
     }
