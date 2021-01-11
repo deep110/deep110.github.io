@@ -14,18 +14,18 @@ Anyways, I thought let me also take a shot at this.
 The question the person asked was this:
 > Why if I mix green and red paints in equal proportions, I see a desaturated brown, but if I mix green and red light in equal proportions like in an LCD screen, I get pure yellow?
 
-To answer this it is important to understand difference between colors we directly see because of light and paint colors.
+To answer this it is important to understand difference between colors we see directly because of light and paint colors.
 
 ### Light and RGB Color Model
 
-We all know that [visible spectrum](https://en.wikipedia.org/wiki/Visible_spectrum) [390nm - 750nm] is the range of wavelength that human eye can see and this gives us the colors.
-But why is that Red, Green and Blue are the primary colors for the light. It is because eye have three [types of cones](https://en.wikipedia.org/wiki/Color#Color_in_the_eye), each sensitive to range of wavelength corresponding to those colors. [Here](https://en.wikipedia.org/wiki/Photoreceptor_cell) is a detailed explanation on photoceptor cells in our eyes.
+We know that [visible spectrum](https://en.wikipedia.org/wiki/Visible_spectrum) [390nm - 750nm] is the range of wavelength that human eye can see and this gives us the colors.
+But why is that Red, Green and Blue are the primary colors for the light. It is because eye have three [types of cones](https://en.wikipedia.org/wiki/Color#Color_in_the_eye), each sensitive to range of wavelength corresponding to those colors. You can read more about the photoceptor cells in our eyes [here](https://en.wikipedia.org/wiki/Photoreceptor_cell).
 
 <div style="text-align:center"><img src="/assets/images/2021-01/cones-responses.png"/></div>
 <div style="text-align:center">Source: <a href="https://en.wikipedia.org/wiki/Color#Color_in_the_eye">wikipedia</a></div>
 
 <br>
-So for example if you take yellow light [wavelength = 580nm], it will be sensitive to both Red and Green cones in the eye and thus gives us the perception of yellow color.
+So for example if you take yellow light [wavelength = 580nm], it will be sensitive to both Red and Green cones in the eye and thus gives us the perception of color yellow.
 
 > Fun fact: Our eyes being more sensitive to warm colors than cold can easily be seen from the graph.
 
@@ -50,7 +50,7 @@ Red + Green + Blue = White
 Red + White        = White
 ```
 
-Black is nothing but absence of light, which makes sense right, if you add red light into nothing you should see red light.
+Black is nothing but absence of light, which makes sense, if you add red light into nothing you should see red light.
 Similarly white light is a mixture of all three light components, hence adding more red, or green or blue won't change the color of final light produced.
 
 Because of this, RGB color model is called as **Additive Color Model**. Mixing lights of all colors will eventually get you to white.
@@ -59,7 +59,7 @@ Now think of above table in terms of paints, it is completely weird right? Red a
 
 ### Paint and CMYK Color Space
 
-The basis for understanding paints is how we see color of objects. So for a object to appear green, it should absorb all visible wavelengths except for green light. Hence green light will reach the eyes and we will perceive that object as green. Similarly for an object to appear,
+The basis for understanding paints is how we see color of objects. So for a object to appear green, it should absorb all visible wavelengths except for green light, which then will enter our eyes and we will perceive that object as green. Similarly for an object to appear,
 
 - White - It has to absorb no visible wavelength
 - Black - It has to absorb all visible wavelength
@@ -81,4 +81,4 @@ This model is primarily used for printing, `K` stands for key which is usually b
 
 In the above picture, as you can see that you can make primary colors for RGB model from mixing primary colors of CMYK. For example if we mix yellow [which only absorbs blue light] and cyan [which only absorbs red light], we get a paint that absorbs both blue & red light but reflect everything that is left i.e green light.
 
-Obviously CMYK model used in printing industry is not very straight forward, because it is hard to produce the all the colors with pigments, but more or less the idea remains the same. 
+Obviously CMYK model used in printing industry is little complex, because it is hard to produce all the colors with pigments, but more or less the idea remains the same.
