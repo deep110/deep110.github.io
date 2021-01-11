@@ -33,3 +33,4 @@ pages:
 ignore:
   - "LICENSE.md"
   - "README.md"
+  - "Makefile"
