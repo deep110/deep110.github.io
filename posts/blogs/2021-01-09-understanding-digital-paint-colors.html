@@ -29,6 +29,7 @@
             <div class="trigger">
                 <a class="page-link" href="https://deep110.github.io/about.html">About Me</a>
                 <a class="page-link" href="https://deep110.github.io/archive.html">Archive</a>
+                <a class="page-link" href="https://deep110.github.io/log.html">Logs</a>
                 <a class="page-link" href="https://deep110.github.io/projects.html">Projects</a>
             </div>
         </nav>
@@ -64,14 +65,14 @@
 <blockquote>
 <p>Why if I mix green and red paints in equal proportions, I see a desaturated brown, but if I mix green and red light in equal proportions like in an LCD screen, I get pure yellow?</p>
 </blockquote>
-<p>To answer this it is important to understand difference between colors we directly see because of light and paint colors.</p>
+<p>To answer this it is important to understand difference between colors we see directly because of light and paint colors.</p>
 <h3>Light and RGB Color Model</h3>
-<p>We all know that <a href="https://en.wikipedia.org/wiki/Visible_spectrum">visible spectrum</a> [390nm - 750nm] is the range of wavelength that human eye can see and this gives us the colors.
-But why is that Red, Green and Blue are the primary colors for the light. It is because eye have three <a href="https://en.wikipedia.org/wiki/Color#Color_in_the_eye">types of cones</a>, each sensitive to range of wavelength corresponding to those colors. <a href="https://en.wikipedia.org/wiki/Photoreceptor_cell">Here</a> is a detailed explanation on photoceptor cells in our eyes.</p>
+<p>We know that <a href="https://en.wikipedia.org/wiki/Visible_spectrum">visible spectrum</a> [390nm - 750nm] is the range of wavelength that human eye can see and this gives us the colors.
+But why is that Red, Green and Blue are the primary colors for the light. It is because eye have three <a href="https://en.wikipedia.org/wiki/Color#Color_in_the_eye">types of cones</a>, each sensitive to range of wavelength corresponding to those colors. You can read more about the photoceptor cells in our eyes <a href="https://en.wikipedia.org/wiki/Photoreceptor_cell">here</a>.</p>
 <div style="text-align:center"><img src="/assets/images/2021-01/cones-responses.png"/></div>
 <div style="text-align:center">Source: <a href="https://en.wikipedia.org/wiki/Color#Color_in_the_eye">wikipedia</a></div>
 <br>
-So for example if you take yellow light [wavelength = 580nm], it will be sensitive to both Red and Green cones in the eye and thus gives us the perception of yellow color.
+So for example if you take yellow light [wavelength = 580nm], it will be sensitive to both Red and Green cones in the eye and thus gives us the perception of color yellow.
 <blockquote>
 <p>Fun fact: Our eyes being more sensitive to warm colors than cold can easily be seen from the graph.</p>
 </blockquote>
@@ -93,12 +94,12 @@ So for example if you take yellow light [wavelength = 580nm], it will be sensiti
 </span><span style="color:#4f5b66;">Red + Green + Blue = White
 </span><span style="color:#4f5b66;">Red + White        = White
 </span></pre>
-<p>Black is nothing but absence of light, which makes sense right, if you add red light into nothing you should see red light.
+<p>Black is nothing but absence of light, which makes sense, if you add red light into nothing you should see red light.
 Similarly white light is a mixture of all three light components, hence adding more red, or green or blue won't change the color of final light produced.</p>
 <p>Because of this, RGB color model is called as <strong>Additive Color Model</strong>. Mixing lights of all colors will eventually get you to white.</p>
 <p>Now think of above table in terms of paints, it is completely weird right? Red and Black color paint should produce what - darker shade of red.</p>
 <h3>Paint and CMYK Color Space</h3>
-<p>The basis for understanding paints is how we see color of objects. So for a object to appear green, it should absorb all visible wavelengths except for green light. Hence green light will reach the eyes and we will perceive that object as green. Similarly for an object to appear,</p>
+<p>The basis for understanding paints is how we see color of objects. So for a object to appear green, it should absorb all visible wavelengths except for green light, which then will enter our eyes and we will perceive that object as green. Similarly for an object to appear,</p>
 <ul>
 <li>White - It has to absorb no visible wavelength</li>
 <li>Black - It has to absorb all visible wavelength</li>
@@ -117,7 +118,7 @@ Similarly white light is a mixture of all three light components, hence adding m
 <div style="text-align:center"><img src="/assets/images/2021-01/CMYK_subtractive_color_mixing.png"/></div>
 <div style="text-align:center">Source: <a href="https://en.wikipedia.org/wiki/CMYK_color_model">wikipedia</a></div>
 <p>In the above picture, as you can see that you can make primary colors for RGB model from mixing primary colors of CMYK. For example if we mix yellow [which only absorbs blue light] and cyan [which only absorbs red light], we get a paint that absorbs both blue &amp; red light but reflect everything that is left i.e green light.</p>
-<p>Obviously CMYK model used in printing industry is not very straight forward, because it is hard to produce the all the colors with pigments, but more or less the idea remains the same. </p>
+<p>Obviously CMYK model used in printing industry is little complex, because it is hard to produce all the colors with pigments, but more or less the idea remains the same.</p>
 
           </div>
           <!-- Post Navigation -->
@@ -129,9 +130,20 @@ Similarly white light is a mixture of all three light components, hence adding m
               
                   
                     
+                      
+                    
                     
                   
                 
+            
+              
+                  
+                    
+                    
+                  
+                
+            
+              
             
               
                   
@@ -142,6 +154,8 @@ Similarly white light is a mixture of all three light components, hence adding m
             
               <a class="next" href="https://deep110.github.io/posts/blogs/2020-12-29-tls-with-apr.html">←&nbsp;Prev Post</a>
             
+            
+              <a class="prev" href="https://deep110.github.io/posts/blogs/2021-02-06-simulating-warp-speed-html5.html">Next Post&nbsp;→</a>
             
           </div>
 
