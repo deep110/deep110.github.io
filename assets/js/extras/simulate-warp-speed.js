@@ -45,7 +45,8 @@ class Star {
 
         ctx.moveTo(spx, spy);
         ctx.lineTo(sx, sy);
-        ctx.strokeStyle = "#0000FF";
+        ctx.strokeStyle = "#FFFFFFF0";
+        ctx.lineWidth = 2;
         ctx.stroke();
 
         this.pz = this.z;
@@ -84,12 +85,10 @@ function init() {
         stars[i] = new Star();
     }
 
-    setInterval(draw, 20)
+    GameLoopController.loop(draw, 60);
 }
 
 function draw() {
-    console.log(canvas.width, canvas.height)
-
     context.clearRect(0, 0, canvas.width, canvas.height);
 
     for (let i=0; i < stars.length; i++) {
