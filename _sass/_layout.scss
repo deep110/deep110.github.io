@@ -4,7 +4,7 @@
 .site-header {
     border-bottom: 1px solid $grey-color-light;
     min-height: 56px;
-    background-color: #515865;
+    background-color: $theme-color;
 
     #menu-icon {
         display: none;
@@ -78,7 +78,7 @@
         top: 0;
         left: -200px;
         z-index: 7;
-        background-color: #515865;
+        background-color: $theme-color;
 
         .trigger {
             clear: both;
@@ -250,7 +250,7 @@
     }
 }
 
-.not-found{
+.not-found {
   text-align: center;
 
   h1{
@@ -263,7 +263,7 @@
   }
 
   a{
-    background: #515865;
+    background: $theme-color;
     padding: 7px 12px;
     border-radius: 3px;
     border: 1px solid #eee;
@@ -276,6 +276,47 @@
       margin-left: 10px;
     }
   }
+}
+
+.archive-header {
+    width: 100%;
+    overflow: hidden;
+    h2 {
+        float: left;
+    }
+    .icon {
+        float: right;
+        padding: 5px 10px;
+        border: 1px solid #ddd;
+        svg {
+            width: 20px;
+            height: 17px;
+        }
+    }
+
+}
+.archive-lists {
+    list-style: none;
+    margin: 0;
+    h3 {
+        margin: 0;
+        float: left;
+    }
+    .by-year {
+        padding: 9px 0;
+        li {
+            padding: 2px 0 5px 50px;
+            .date {
+                padding: 0 5px;
+            }
+        }
+    }
+}
+
+span.last-update {
+    font-size: 12px;
+    padding-top: 30px;
+    float: right;
 }
 
 .utterances {
