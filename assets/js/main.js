@@ -11,9 +11,9 @@ window.onload = function () {
 }
 
 function setTheme() {
-  // TODO: maybe check user settings preference
   if (localStorage.getItem("theme") === "dark") {
     document.getElementsByTagName("body")[0].setAttribute("theme", "dark");
+    document.getElementById("dark-theme-icon").setAttribute("title", "Switch to light theme");
   }
 }
 
@@ -23,12 +23,12 @@ function toggleTheme() {
     localStorage.setItem("theme", "dark");
     document.getElementsByTagName("body")[0].setAttribute("theme", "dark");
 
-    // $("#dark-mode").attr("title", "Switch to light theme");
+    document.getElementById("dark-theme-icon").setAttribute("title", "Switch to light theme");
   } else {
     localStorage.setItem("theme", "light");
     document.getElementsByTagName("body")[0].removeAttribute("theme");
 
-    // $("#dark-mode").attr("title", "Switch to dark theme");
+    document.getElementById("dark-theme-icon").setAttribute("title", "Switch to dark theme");
   }
 }
 

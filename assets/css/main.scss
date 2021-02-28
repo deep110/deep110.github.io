@@ -51,6 +51,10 @@ body[theme="dark"] {
     code {
         background-color: #{$brown-color};
     }
+
+    pre {
+        filter: invert(1) hue-rotate(180deg);
+    }
 }
 
 // Width of the content area
