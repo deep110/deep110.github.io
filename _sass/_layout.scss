@@ -2,9 +2,8 @@
  * Site header
  */
 .site-header {
-    border-bottom: 1px solid $grey-color-light;
     min-height: 56px;
-    background-color: $theme-color;
+    background-color: var(--color-theme-light);
 
     #menu-icon {
         display: none;
@@ -19,18 +18,34 @@
             padding-top: 10px;
             text-align: center;
 
-                > svg {
-                    width: 18px;
-                    height: 15px;
+            > svg {
+                width: 18px;
+                height: 15px;
 
-                    path {
-                        fill: #fff;
-
+                path {
+                    fill: var(--color-theme);
                 }
             }
         }
     }
+
+    #dark-theme-icon {
+        float: right;
+        line-height: 56px;
+        margin-left: 20px;
+
+        > svg {
+            width: 18px;
+            height: 18px;
+            vertical-align: middle;
+
+            path {
+                fill: var(--color-theme);
+            }
+        }
+    }
 }
+
 .exp #menu-icon::before {
     content: "";
     width: 100%;
@@ -40,6 +55,7 @@
     left: 0;
     z-index: 2;
 }
+
 .site-title {
     font-size: 26px;
     font-weight: 300;
@@ -50,15 +66,16 @@
     &,
     &:hover,
     &:visited {
-        color: $background-color;
+        color: var(--color-theme);
     }
 }
+
 .site-nav {
     float: right;
     line-height: 56px;
 
     .page-link {
-        color: $background-color;
+        color: var(--color-theme);
         line-height: $base-line-height;
         font-weight: 700;
 
@@ -66,9 +83,6 @@
         &:not(:last-child) {
             margin-right: 20px;
         }
-            @include media-query($on-palm) {
-                color: $text-color;
-            }
     }
 
     @include media-query($on-palm) {
@@ -77,8 +91,8 @@
         height: 100%;
         top: 0;
         left: -200px;
-        z-index: 7;
-        background-color: $theme-color;
+        z-index: 2;
+        background-color: var(--color-theme-light);
 
         .trigger {
             clear: both;
@@ -92,14 +106,13 @@
         .page-link {
             display: block;
             padding: 15px 25px;
-            color: #fff;
-            border-bottom: 2px solid #5D6471;
+            border-bottom: 1px solid $border-color;
 
             &:not(:last-child) {
                 margin-right: 0;
             }
             &:hover{
-                background-color: #5D6471;
+                background-color: var(--color-hover);
             }
         }
     }
@@ -111,14 +124,25 @@
  */
 .site-footer {
     flex-shrink: 0;
-    border-top: 1px solid $grey-color-light;
     padding: $spacing-unit*0.8 0;
-    background-color: #eee;
+    background-color: var(--color-theme-light);
     text-align: center;
 }
 
 .footer-icon {
-  text-decoration: none !important;
+    text-decoration: none !important;
+
+    > svg {
+        display: inline-block;
+        width: 33px;
+        height: 32px;
+        vertical-align: middle;
+        padding: 5px;
+
+        path {
+            fill: var(--color-theme);
+        }
+    }
 }
 
 
@@ -150,7 +174,7 @@
 /**
  * Clearfix
  */
- %clearfix {
+%clearfix {
 
     &:after {
         content: "";
@@ -178,13 +202,19 @@
     }
 }
 
-.post-meta {
-    font-size: $small-font-size;
-    color: $grey-color;
-}
-
 .post-link {
     font-size: 24px;
+    font-weight: bold;
+    color: var(--color-theme);
+
+    &:visited {
+        color: var(--color-theme);
+    }
+}
+
+.post-meta {
+    font-size: $small-font-size;
+    color: var(--color-text-light);
 }
 
 
@@ -240,7 +270,8 @@
 .pagination, .post-navigation {
   a{
     padding: 5px 10px;
-    border: 1px solid #ddd;
+    color: var(--color-theme);
+    border: 1px solid var(--color-theme);
   }
     .prev{
         float: right;
@@ -263,13 +294,11 @@
   }
 
   a{
-    background: $theme-color;
-    padding: 7px 12px;
+    background: var(--color-theme);
+    padding: 12px;
     border-radius: 3px;
-    border: 1px solid #eee;
     text-decoration: none;
-    color: #fff;
-    display: inline-block;
+    color: var(--color-theme-light);
     font-size: 0.3em;
 
     &+a{
@@ -284,16 +313,6 @@
     h2 {
         float: left;
     }
-    .icon {
-        float: right;
-        padding: 5px 10px;
-        border: 1px solid #ddd;
-        svg {
-            width: 20px;
-            height: 17px;
-        }
-    }
-
 }
 .archive-lists {
     list-style: none;

@@ -8,6 +8,11 @@
             </svg>
         </a>
         <a class="site-title" href="{{ site.base_url }}/">{{ site.title }}</a>
+        <a href="#" id="dark-theme-icon" class="icon">
+            <svg viewBox="0 0 512 512">
+                <path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/>
+            </svg>
+        </a>
         <nav class="site-nav">
             <div class="trigger">
                 <a class="page-link" href="{{'/about.html' | prepend:site.base_url }}">About Me</a>
@@ -16,5 +21,7 @@
                 <a class="page-link" href="{{'/projects.html' | prepend:site.base_url }}">Projects</a>
             </div>
         </nav>
+        
+        
     </div>
 </header>

@@ -18,8 +18,8 @@ html {
  */
 body {
     font: $base-font-weight #{$base-font-size}/#{$base-line-height} $base-font-family;
-    color: $text-color;
-    background-color: $background-color;
+    color: var(--color-text);
+    background-color: var(--color-background);
     -webkit-text-size-adjust: 100%;
     -webkit-font-feature-settings: "kern" 1;
     -moz-font-feature-settings: "kern" 1;
@@ -86,7 +86,7 @@ ul, ol {
 li {
     > ul,
     > ol {
-         margin-bottom: 0;
+        margin-bottom: 0;
     }
 }
 
@@ -113,7 +113,7 @@ a {
     }
 
     &:hover {
-        color: $text-color;
+        color: var(--color-text);
         text-decoration: underline;
     }
 }
@@ -124,8 +124,8 @@ a {
  * Blockquotes
  */
 blockquote {
-    color: $grey-color;
-    border-left: 4px solid $grey-color-light;
+    color: var(--color-text-light);
+    border-left: 4px solid $border-color;
     padding-left: $spacing-unit / 2;
     font-size: 18px;
     letter-spacing: -1px;
@@ -137,16 +137,14 @@ blockquote {
 }
 
 
-
 /**
  * Code formatting
  */
 pre,
 code {
     font-size: 14px;
-    border: 1px solid $grey-color-light;
+    border: 1px solid $border-color;
     border-radius: 3px;
-    background-color: #eff1f5;
 }
 
 code {
@@ -169,36 +167,26 @@ pre {
  */
 table {
   margin-bottom: 1rem;
-  border: 1px solid #e5e5e5;
+  border: 1px solid $border-color;
   border-collapse: collapse;
   td,
   th {
     padding: .25rem .5rem;
-    border: 1px solid #e5e5e5;
+    border: 1px solid $border-color;
   }
   tbody{
       tr:nth-child(odd){
         td,th{
-            background-color: #f9f9f9;
+            background-color: var(--color-theme-light);
         }
       }
   }
 }
 
-/**
- * Icons
- */
-.icon {
-
+.icon:hover {
     > svg {
-        display: inline-block;
-        width: 33px;
-        height: 32px;
-        vertical-align: middle;
-        padding: 5px;
-
         path {
-            fill: $theme-color;
+            fill: $link-color !important;
         }
     }
 }

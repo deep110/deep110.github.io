@@ -10,17 +10,51 @@ $base-line-height: 1.5;
 
 $spacing-unit:     30px;
 
-$theme-color:      #515865;
-$text-color:       #111;
-$background-color: #fdfdfd;
-$link-color:       #2a7ae2;
+// common colors
+$link-color:   #1a7bbb;
+$border-color: #e3e3e3;
 
-$grey-color:       #828282;
-$grey-color-light: lighten($grey-color, 40%);
+// colors
+$white-color:#fdfdfd;
+$brown-color: #4a4a4a;
+$brown-color-d5: darken($brown-color, 5%);
+$brown-color-d10: darken($brown-color, 10%);
+$brown-color-l25: lighten($brown-color, 25%);
+$brown-color-l55: lighten($brown-color, 55%);
+$brown-color-l65: lighten($brown-color, 65%);
+
+$white-color-d10: darken($white-color, 10%);
+$white-color-d20: darken($white-color, 20%);
+$white-color-d30: darken($white-color, 30%);
+
+body {
+    --color-theme: #{$brown-color};
+    --color-theme-light: #{$brown-color-l65};
+    --color-background: #{$white-color};
+    --color-text: #{$brown-color-d10};
+    --color-text-light: #{$brown-color-l25};
+    --color-hover: #{$brown-color-l55};
+
+    code {
+        background-color: #eff1f5;
+    }
+}
+
+body[theme="dark"] {
+    --color-theme: #{$white-color-d20};
+    --color-theme-light: #{$brown-color-d5};
+    --color-background: #{$brown-color-d10};
+    --color-text: #{$white-color-d10};
+    --color-text-light: #{$white-color-d30};
+    --color-hover: #{$brown-color};
+
+    code {
+        background-color: #{$brown-color};
+    }
+}
 
 // Width of the content area
 $content-width:    800px;
-
 $on-palm:          600px;
 $on-laptop:        800px;
 

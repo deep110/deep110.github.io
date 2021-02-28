@@ -1,8 +1,35 @@
+setTheme();
+
 window.onload = function () {
   document.getElementById("menu-icon").onclick = function () {
     toggleClass(document.body, "exp");
   }
+  document.getElementById("dark-theme-icon").onclick = function () {
+    toggleTheme();
+  }
   inflateKatex();
+}
+
+function setTheme() {
+  // TODO: maybe check user settings preference
+  if (localStorage.getItem("theme") === "dark") {
+    document.getElementsByTagName("body")[0].setAttribute("theme", "dark");
+  }
+}
+
+function toggleTheme() {
+  var currentTheme = localStorage.getItem("theme");
+  if (currentTheme == null || currentTheme == "light") {
+    localStorage.setItem("theme", "dark");
+    document.getElementsByTagName("body")[0].setAttribute("theme", "dark");
+
+    // $("#dark-mode").attr("title", "Switch to light theme");
+  } else {
+    localStorage.setItem("theme", "light");
+    document.getElementsByTagName("body")[0].removeAttribute("theme");
+
+    // $("#dark-mode").attr("title", "Switch to dark theme");
+  }
 }
 
 // util functions
