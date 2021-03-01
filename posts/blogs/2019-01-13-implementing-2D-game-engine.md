@@ -5,11 +5,12 @@ categories: ["blog"]
 data:
   scripts: [katex.min.js]
   css: [katex.min.css]
+  keywords: "physics, engine, collision, detection, euler, friction, rigidbody"
 ---
 First of all, you would think that when there are so many game engines out there why
 would you want to implement your own. Well it may be that you don't like any of them, or just thinking of starting a game and implementing your own engine might be a good idea, then please don't do it and this article might not be for you. But if you (like me), want to learn nitty-gritty of a physics engine, this could be a good exercise.
 
-Here is the demo of the end result and you can find the code [here](https://github.com/deep110/LucidEngine) on my github.
+Here is the demo of the end result and you can find the [code](https://github.com/deep110/LucidEngine) on my github.
 
 
 <div style="text-align:center">
@@ -50,7 +51,7 @@ dt = time elapsed since last execution (1\60 if 60 fps)
 To solve these differential equations for games, we widely come across these three integrator:
 1. [Explicit Euler method](https://en.wikipedia.org/wiki/Euler_method)
 
-    <div style="text-align:center"><img src="/assets/images/2019-01/euler-method.png"/></div>
+    <div style="text-align:center"><img src="/assets/images/2019-01/euler-method.png" alt="Euler Method"/></div>
     It is the most basic method to solve this first order differential equation. It is just adding the curve values at small intervals.
     <p class="equation" style="text-align:center">x_{n+1} = x_n + v(t_n) * dt\\v_{n+1} = v_n + a(t_n) * dt</p>
 2. [Implicit (Symplectic) Euler](https://en.wikipedia.org/wiki/Backward_Euler_method)
@@ -93,7 +94,7 @@ So first we use a process called **BroadPhase calculation** to narrow down the n
 * The basic idea is that you divide the whole region into grids (in volumes for 3D) and assign every body to a position in the grid.
 
 * Now, the body is added to each cell it is overlapping, so at last we iterate through grid and make pair of overlapping bodies. Objects are stored in data structures like [k-d tree](https://en.wikipedia.org/wiki/K-d_tree) or [BSP tree](https://en.wikipedia.org/wiki/BSP_tree) for efficiency. It generally reduces the iterate time from O(N<sup>2</sup>) to logarithmic times.
-[Here](http://buildnewgames.com/broad-phase-collision-detection/) is a nice blog explaining the broadphase implementation in more detail, like choice of grid size, etc. My demo was just for a small scope, so I have not implemented this part.
+You can find more in depth details of the [broadphase implementation](http://buildnewgames.com/broad-phase-collision-detection/), like choice of grid size, etc. My demo was just for a small scope, so I have not implemented this part.
 
 
 Then we proceed to **NarrowPhase calculation** i.e which actually determines which bodies are colliding. Aim of Narrowphase is to calculate three things for every pair of colliding bodies:
@@ -169,7 +170,7 @@ During the time of contact we will consider two impulses acting on them:
 
 Impulse (j) is calculated using [Momentum Conservation](https://en.wikipedia.org/wiki/Momentum#Conservation) and [Newton's law of restitution](https://en.wikipedia.org/wiki/Coefficient_of_restitution).
 
-<div style="text-align:center"><img src="/assets/images/2019-01/object-collision.png"/></div>
+<div style="text-align:center"><img src="/assets/images/2019-01/object-collision.png" alt="Object Collision"/></div>
 
 #### Normal Impulse
 Let us define some variables,
@@ -225,7 +226,7 @@ When considering the change in linear momentum also add angular momentum giving 
 
 #### Frictional Impulse
 Frictional Impulse is applied perpendicular to collision normal.
-<div style="text-align:center"><img src="/assets/images/2019-01/tangent-normal-rv.png"/></div>
+<div style="text-align:center"><img src="/assets/images/2019-01/tangent-normal-rv.png" alt="Frictional Impulse Direction"/></div>
 
 Frictional impulse can be calculated by just substituting normal vector with the tangential magnitude of relative velocity and in opposite direction.
 
@@ -251,7 +252,7 @@ Let us understand this definition, if our solved `jf` (representing the force of
 
 <br>
 
-Hopefully you can now begin to understand the basics of writing a game engine, and again you can find the code [here](https://github.com/deep110/LucidEngine). I have tried to include most of the topics that are absolutely required to implement a working demo. Now you can read up articles for specific topics to understand them more and how it will benefit your implementation.
+Hopefully you can now begin to understand the basics of writing a game engine, and again you can find the [code](https://github.com/deep110/LucidEngine) on github. I have tried to include most of the topics that are absolutely required to implement a working demo. Now you can read up articles for specific topics to understand them more and how it will benefit your implementation.
 
 ### Image and Other Credits
 * Wikipedia

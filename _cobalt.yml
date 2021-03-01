@@ -23,6 +23,7 @@ default:
     scripts: []
     css: []
     github_url: "#"
+    keywords: ""
 
 posts:
   rss: rss.xml

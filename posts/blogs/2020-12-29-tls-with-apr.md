@@ -2,11 +2,13 @@
 layout: blog.liquid
 title:  "Adding TLS/SSL support with APR Network library and OpenSSL"
 categories: ["blog"]
+data:
+    keywords: "ssl, apr, mrcp, openssl, tls"
 ---
 
 During my work at [vernacular.ai](https://vernacular.ai) I came across a problem in our telephony setup. Some of our clients wanted TLS support even if the setup runs on premise without any internet access.
 
-[Unimrcp](https://github.com/unispeech/unimrcp) uses apr library for MRCP and SIP. APR does not have out of box support for TLS, hence the blog. Instructions on installing APR can be found [here](https://apr.apache.org/compiling_unix.html).
+[Unimrcp](https://github.com/unispeech/unimrcp) uses apr library for MRCP and SIP. APR does not have out of box support for TLS, hence the blog. Instructions on installing APR can be found their [homepage](https://apr.apache.org/compiling_unix.html).
 
 
 ### Creating a simple TCP server

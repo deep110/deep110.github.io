@@ -5,6 +5,7 @@ categories: ["blog"]
 data:
   scripts: [extras/simulate-warp-speed.js]
   css: [extras/simulate-warp-speed.css]
+  keywords: "html5, canvas, warp, starwars"
 ---
 
 While rewatching the star wars series, I really liked the warp speed effect, and thought maybe I should give it a try in HTML5. So lo and behold I got it working in mostly an hour or so without using any library, just plain old canvas.
@@ -14,12 +15,12 @@ You can click on the start button to start the simulation. Use the slider to cha
 <div id="canvas-container">
     <canvas id="myCanvas"></canvas>
     <div id="overlay">
-        <img src="/assets/images/2021-02/icon-play.png" id="icon-play"></img>
+        <img src="/assets/images/2021-02/icon-play.png" id="icon-play" alt="icon play"></img>
     </div>
 </div>
 
 <div class="slider-container">
-    <div>WarpSpeed</div>
+    <label for="myRange">Warp Speed</label>
     <input type="range" min="10" max="100" value="60" class="slider" id="myRange">
 </div>
 

@@ -2,6 +2,8 @@
 layout: blog.liquid
 title:  "Understanding difference between Digital and Paint Colors"
 categories: ["blog"]
+data:
+    keywords: "rgb, cmyk, digital, paint"
 ---
 
 Before going into the any of this I would like to talk about why I wrote this:
@@ -16,12 +18,12 @@ The question the person asked was this:
 
 To answer this it is important to understand difference between colors we see directly because of light and paint colors.
 
-### Light and RGB Color Model
+## Light and RGB Color Model
 
 We know that [visible spectrum](https://en.wikipedia.org/wiki/Visible_spectrum) [390nm - 750nm] is the range of wavelength that human eye can see and this gives us the colors.
-But why is that Red, Green and Blue are the primary colors for the light. It is because eye have three [types of cones](https://en.wikipedia.org/wiki/Color#Color_in_the_eye), each sensitive to range of wavelength corresponding to those colors. You can read more about the photoceptor cells in our eyes [here](https://en.wikipedia.org/wiki/Photoreceptor_cell).
+But why is that Red, Green and Blue are the primary colors for the light. It is because eye have three [types of cones](https://en.wikipedia.org/wiki/Color#Color_in_the_eye), each sensitive to range of wavelength corresponding to those colors. You can read more about the [photoceptor cells](https://en.wikipedia.org/wiki/Photoreceptor_cell) in our eyes.
 
-<div style="text-align:center"><img src="/assets/images/2021-01/cones-responses.png"/></div>
+<div style="text-align:center"><img src="/assets/images/2021-01/cones-responses.png" alt="Cones Response vs Wavelength"/></div>
 <div style="text-align:center">Source: <a href="https://en.wikipedia.org/wiki/Color#Color_in_the_eye">wikipedia</a></div>
 
 <br>
@@ -29,7 +31,7 @@ So for example if you take yellow light [wavelength = 580nm], it will be sensiti
 
 > Fun fact: Our eyes being more sensitive to warm colors than cold can easily be seen from the graph.
 
-This is exactly how we also see colors on a display screen. You can read more about how we see colors on a screen [here](https://www.chem.purdue.edu/gchelp/cchem/RGBColors/body_rgbcolors.html).
+This is exactly how we also see colors on a display screen. You can read more about how we [see colors on a screen](https://www.chem.purdue.edu/gchelp/cchem/RGBColors/body_rgbcolors.html).
 
 Now let us talk about mixing of monochromatic light. You can roughly get a final color by this formula:
 ```js
@@ -57,7 +59,7 @@ Because of this, RGB color model is called as **Additive Color Model**. Mixing l
 
 Now think of above table in terms of paints, it is completely weird right? Red and Black color paint should produce what - darker shade of red.
 
-### Paint and CMYK Color Space
+## Paint and CMYK Color Space
 
 The basis for understanding paints is how we see color of objects. So for a object to appear green, it should absorb all visible wavelengths except for green light, which then will enter our eyes and we will perceive that object as green. Similarly for an object to appear,
 
@@ -76,7 +78,7 @@ This is thus called **Subtractive Model** because paint color subtracts that col
 
 This model is primarily used for printing, `K` stands for key which is usually black ink in printers. This is needed because when mixing CMY color inks you get a dark grey or faded black color. Thus to produce perfect black in printing, black colored ink is directly used. Also a lot of times it is cheaper to make dark shades of lot of colors using black ink rather than mixing CMY colors.
 
-<div style="text-align:center"><img src="/assets/images/2021-01/CMYK_subtractive_color_mixing.png"/></div>
+<div style="text-align:center"><img src="/assets/images/2021-01/CMYK_subtractive_color_mixing.png" alt="CMYK Color Mixing"/></div>
 <div style="text-align:center">Source: <a href="https://en.wikipedia.org/wiki/CMYK_color_model">wikipedia</a></div>
 
 In the above picture, as you can see that you can make primary colors for RGB model from mixing primary colors of CMYK. For example if we mix yellow [which only absorbs blue light] and cyan [which only absorbs red light], we get a paint that absorbs both blue & red light but reflect everything that is left i.e green light.

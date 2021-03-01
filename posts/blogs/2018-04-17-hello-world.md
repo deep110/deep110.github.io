@@ -2,6 +2,8 @@
 layout: blog.liquid
 title:  "Hello World!"
 categories: ["blog"]
+data:
+    keywords: "blog, hello, world"
 ---
 Finally, I have done it, my first blog has been compiled successfully.
 
