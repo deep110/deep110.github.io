@@ -12,6 +12,11 @@
 
   <link rel="stylesheet" href="https://deep110.github.io/assets/css/main.css">
 
+  <script>
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.setAttribute("theme", "dark");
+    }
+  </script>
 </head>
 
   <body>
@@ -85,21 +90,21 @@ So for example if you take yellow light [wavelength = 580nm], it will be sensiti
 </blockquote>
 <p>This is exactly how we also see colors on a display screen. You can read more about how we see colors on a screen <a href="https://www.chem.purdue.edu/gchelp/cchem/RGBColors/body_rgbcolors.html">here</a>.</p>
 <p>Now let us talk about mixing of monochromatic light. You can roughly get a final color by this formula:</p>
-<pre style="background-color:#eff1f5;">
-<span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">mix_color_light</span><span style="color:#4f5b66;">(Color c1, Color c2) {
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return </span><span style="color:#4f5b66;">new </span><span style="color:#bf616a;">Color</span><span style="color:#4f5b66;">(
-</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">min</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">c1</span><span style="color:#4f5b66;">.r+</span><span style="color:#bf616a;">c2</span><span style="color:#4f5b66;">.r, </span><span style="color:#d08770;">255</span><span style="color:#4f5b66;">),
-</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">min</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">c1</span><span style="color:#4f5b66;">.g+</span><span style="color:#bf616a;">c2</span><span style="color:#4f5b66;">.g, </span><span style="color:#d08770;">255</span><span style="color:#4f5b66;">),
-</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">min</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">c1</span><span style="color:#4f5b66;">.b+</span><span style="color:#bf616a;">c2</span><span style="color:#4f5b66;">.b, </span><span style="color:#d08770;">255</span><span style="color:#4f5b66;">),
-</span><span style="color:#4f5b66;">    );
-</span><span style="color:#4f5b66;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">function </span><span style="color:#4078f2;">mix_color_light</span><span style="color:#383a42;">(Color c1, Color c2) {
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#0184bc;">new </span><span style="color:#e45649;">Color</span><span style="color:#383a42;">(
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">min</span><span style="color:#383a42;">(</span><span style="color:#e45649;">c1</span><span style="color:#383a42;">.r</span><span style="color:#0184bc;">+</span><span style="color:#e45649;">c2</span><span style="color:#383a42;">.r, </span><span style="color:#986801;">255</span><span style="color:#383a42;">),
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">min</span><span style="color:#383a42;">(</span><span style="color:#e45649;">c1</span><span style="color:#383a42;">.g</span><span style="color:#0184bc;">+</span><span style="color:#e45649;">c2</span><span style="color:#383a42;">.g, </span><span style="color:#986801;">255</span><span style="color:#383a42;">),
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">min</span><span style="color:#383a42;">(</span><span style="color:#e45649;">c1</span><span style="color:#383a42;">.b</span><span style="color:#0184bc;">+</span><span style="color:#e45649;">c2</span><span style="color:#383a42;">.b, </span><span style="color:#986801;">255</span><span style="color:#383a42;">),
+</span><span style="color:#383a42;">    );
+</span><span style="color:#383a42;">}
 </span></pre>
 <p>Let us think what this formula will give,</p>
-<pre style="background-color:#eff1f5;">
-<span style="color:#4f5b66;">Red + Black        = Red
-</span><span style="color:#4f5b66;">Red + Green        = Yellow
-</span><span style="color:#4f5b66;">Red + Green + Blue = White
-</span><span style="color:#4f5b66;">Red + White        = White
+<pre style="background-color:#fafafa;">
+<span style="color:#383a42;">Red + Black        = Red
+</span><span style="color:#383a42;">Red + Green        = Yellow
+</span><span style="color:#383a42;">Red + Green + Blue = White
+</span><span style="color:#383a42;">Red + White        = White
 </span></pre>
 <p>Black is nothing but absence of light, which makes sense, if you add red light into nothing you should see red light.
 Similarly white light is a mixture of all three light components, hence adding more red, or green or blue won't change the color of final light produced.</p>
@@ -112,10 +117,10 @@ Similarly white light is a mixture of all three light components, hence adding m
 <li>Black - It has to absorb all visible wavelength</li>
 </ul>
 <p>That is why primary colors for paints are as follows:</p>
-<pre style="background-color:#eff1f5;">
-<span style="color:#4f5b66;">Cyan =&gt; Reflects all color except Red
-</span><span style="color:#4f5b66;">Magenta =&gt; Reflects all color except Green
-</span><span style="color:#4f5b66;">Yellow =&gt; Reflects all color except Blue
+<pre style="background-color:#fafafa;">
+<span style="color:#383a42;">Cyan =&gt; Reflects all color except Red
+</span><span style="color:#383a42;">Magenta =&gt; Reflects all color except Green
+</span><span style="color:#383a42;">Yellow =&gt; Reflects all color except Blue
 </span></pre>
 <p>This is thus called <strong>Subtractive Model</strong> because paint color subtracts that color from white light.</p>
 <blockquote>

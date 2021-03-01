@@ -12,6 +12,11 @@
 
   <link rel="stylesheet" href="https://deep110.github.io/assets/css/main.css">
 
+  <script>
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.setAttribute("theme", "dark");
+    }
+  </script>
 </head>
 
   <body>
@@ -79,131 +84,131 @@
 <ol>
 <li>First define some constants. We will consider a <code>2000 * 2000 * 2000</code> cube in 3d space. You can choose any number, it doesn't matter.</li>
 </ol>
-<pre style="background-color:#eff1f5;">
-<span style="color:#b48ead;">const </span><span style="color:#bf616a;">MAX_DISTANCE </span><span style="color:#4f5b66;">= </span><span style="color:#d08770;">1000
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">NUM_STARS </span><span style="color:#4f5b66;">= </span><span style="color:#d08770;">300
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">STAR_SPEED </span><span style="color:#4f5b66;">= </span><span style="color:#d08770;">50
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">const </span><span style="color:#986801;">MAX_DISTANCE </span><span style="color:#0184bc;">= </span><span style="color:#986801;">1000
+</span><span style="color:#a626a4;">const </span><span style="color:#986801;">NUM_STARS </span><span style="color:#0184bc;">= </span><span style="color:#986801;">300
+</span><span style="color:#a626a4;">const </span><span style="color:#986801;">STAR_SPEED </span><span style="color:#0184bc;">= </span><span style="color:#986801;">50
 </span></pre>
 <ol start="2">
 <li>Create a class <code>Star</code> to store its position at any given point of time.</li>
 </ol>
 <p>I am considering that a star will travel from <code>(x, y, 1000)</code> to <code>(x, y, 0)</code>. So it does not move in x and y direction, just the z direction. Also I have initialized z coordinate as a random number to create some randomness in animation.</p>
-<pre style="background-color:#eff1f5;">
-<span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">random</span><span style="color:#4f5b66;">(min, max) {
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">Math</span><span style="color:#4f5b66;">.</span><span style="color:#8fa1b3;">random</span><span style="color:#4f5b66;">() * (</span><span style="color:#bf616a;">max </span><span style="color:#4f5b66;">- </span><span style="color:#bf616a;">min</span><span style="color:#4f5b66;">) + </span><span style="color:#bf616a;">min
-</span><span style="color:#4f5b66;">}
-</span><span style="color:#4f5b66;">
-</span><span style="color:#b48ead;">class </span><span style="color:#d08770;">Star </span><span style="color:#343d46;">{
-</span><span style="color:#343d46;">    </span><span style="color:#8fa1b3;">constructor</span><span style="color:#343d46;">() {
-</span><span style="color:#343d46;">        </span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.x </span><span style="color:#4f5b66;">= </span><span style="color:#8fa1b3;">random</span><span style="color:#343d46;">(</span><span style="color:#4f5b66;">-</span><span style="color:#bf616a;">MAX_DISTANCE</span><span style="color:#343d46;">, </span><span style="color:#bf616a;">MAX_DISTANCE</span><span style="color:#343d46;">);
-</span><span style="color:#343d46;">        </span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.y </span><span style="color:#4f5b66;">= </span><span style="color:#8fa1b3;">random</span><span style="color:#343d46;">(</span><span style="color:#4f5b66;">-</span><span style="color:#bf616a;">MAX_DISTANCE</span><span style="color:#343d46;">, </span><span style="color:#bf616a;">MAX_DISTANCE</span><span style="color:#343d46;">);
-</span><span style="color:#343d46;">        </span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.z </span><span style="color:#4f5b66;">= </span><span style="color:#8fa1b3;">random</span><span style="color:#343d46;">(</span><span style="color:#d08770;">100</span><span style="color:#343d46;">, </span><span style="color:#bf616a;">MAX_DISTANCE</span><span style="color:#343d46;">);
-</span><span style="color:#343d46;">    }
-</span><span style="color:#343d46;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">function </span><span style="color:#4078f2;">random</span><span style="color:#383a42;">(min, max) {
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#c18401;">Math</span><span style="color:#383a42;">.</span><span style="color:#e45649;">random</span><span style="color:#383a42;">() </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">(max </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">min) </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">min
+</span><span style="color:#383a42;">}
+</span><span style="color:#383a42;">
+</span><span style="color:#a626a4;">class </span><span style="color:#c18401;">Star {
+</span><span style="color:#c18401;">    </span><span style="color:#4078f2;">constructor</span><span style="color:#c18401;">() {
+</span><span style="color:#c18401;">        </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">x </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">random</span><span style="color:#c18401;">(</span><span style="color:#0184bc;">-</span><span style="color:#986801;">MAX_DISTANCE</span><span style="color:#383a42;">, </span><span style="color:#986801;">MAX_DISTANCE</span><span style="color:#c18401;">)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">        </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">y </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">random</span><span style="color:#c18401;">(</span><span style="color:#0184bc;">-</span><span style="color:#986801;">MAX_DISTANCE</span><span style="color:#383a42;">, </span><span style="color:#986801;">MAX_DISTANCE</span><span style="color:#c18401;">)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">        </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">z </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">random</span><span style="color:#c18401;">(</span><span style="color:#986801;">100</span><span style="color:#383a42;">, </span><span style="color:#986801;">MAX_DISTANCE</span><span style="color:#c18401;">)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">    }
+</span><span style="color:#c18401;">}
 </span></pre>
 <ol start="3">
 <li>Now create the <code>update</code> method. It just decreases the star's z position by the given speed. Also you can reuse the star objects once they go out of bounds, just reinitialize its position.</li>
 </ol>
-<pre style="background-color:#eff1f5;">
-<span style="color:#b48ead;">class </span><span style="color:#d08770;">Star </span><span style="color:#343d46;">{
-</span><span style="color:#343d46;">    ...
-</span><span style="color:#343d46;">
-</span><span style="color:#343d46;">    </span><span style="color:#8fa1b3;">update</span><span style="color:#343d46;">() {
-</span><span style="color:#343d46;">        </span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.z </span><span style="color:#4f5b66;">= </span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.z</span><span style="color:#4f5b66;">-</span><span style="color:#bf616a;">STAR_SPEED
-</span><span style="color:#343d46;">
-</span><span style="color:#343d46;">        </span><span style="color:#a7adba;">// reinitialize the position
-</span><span style="color:#343d46;">        </span><span style="color:#b48ead;">if </span><span style="color:#343d46;">(</span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.z </span><span style="color:#4f5b66;">&lt; </span><span style="color:#d08770;">1</span><span style="color:#343d46;">) {
-</span><span style="color:#343d46;">            </span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.x </span><span style="color:#4f5b66;">= </span><span style="color:#8fa1b3;">random</span><span style="color:#343d46;">(</span><span style="color:#4f5b66;">-</span><span style="color:#bf616a;">MAX_DISTANCE</span><span style="color:#343d46;">, </span><span style="color:#bf616a;">MAX_DISTANCE</span><span style="color:#343d46;">);
-</span><span style="color:#343d46;">            </span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.y </span><span style="color:#4f5b66;">= </span><span style="color:#8fa1b3;">random</span><span style="color:#343d46;">(</span><span style="color:#4f5b66;">-</span><span style="color:#bf616a;">MAX_DISTANCE</span><span style="color:#343d46;">, </span><span style="color:#bf616a;">MAX_DISTANCE</span><span style="color:#343d46;">);
-</span><span style="color:#343d46;">            </span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.z </span><span style="color:#4f5b66;">= </span><span style="color:#8fa1b3;">random</span><span style="color:#343d46;">(</span><span style="color:#d08770;">100</span><span style="color:#343d46;">, </span><span style="color:#bf616a;">MAX_DISTANCE</span><span style="color:#343d46;">);
-</span><span style="color:#343d46;">        }
-</span><span style="color:#343d46;">    }
-</span><span style="color:#343d46;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">class </span><span style="color:#c18401;">Star {
+</span><span style="color:#c18401;">    ...
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">    </span><span style="color:#4078f2;">update</span><span style="color:#c18401;">() {
+</span><span style="color:#c18401;">        </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">z </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">z</span><span style="color:#0184bc;">-</span><span style="color:#986801;">STAR_SPEED
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">        </span><span style="font-style:italic;color:#a0a1a7;">// reinitialize the position
+</span><span style="color:#c18401;">        </span><span style="color:#a626a4;">if </span><span style="color:#c18401;">(</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">z </span><span style="color:#0184bc;">&lt; </span><span style="color:#986801;">1</span><span style="color:#c18401;">) {
+</span><span style="color:#c18401;">            </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">x </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">random</span><span style="color:#c18401;">(</span><span style="color:#0184bc;">-</span><span style="color:#986801;">MAX_DISTANCE</span><span style="color:#383a42;">, </span><span style="color:#986801;">MAX_DISTANCE</span><span style="color:#c18401;">)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">            </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">y </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">random</span><span style="color:#c18401;">(</span><span style="color:#0184bc;">-</span><span style="color:#986801;">MAX_DISTANCE</span><span style="color:#383a42;">, </span><span style="color:#986801;">MAX_DISTANCE</span><span style="color:#c18401;">)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">            </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">z </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">random</span><span style="color:#c18401;">(</span><span style="color:#986801;">100</span><span style="color:#383a42;">, </span><span style="color:#986801;">MAX_DISTANCE</span><span style="color:#c18401;">)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">        }
+</span><span style="color:#c18401;">    }
+</span><span style="color:#c18401;">}
 </span></pre>
 <ol start="4">
 <li>Before going on to create <code>draw</code> function for the star, let us initialize the canvas.</li>
 </ol>
 <p>Add a canvas in html</p>
-<pre style="background-color:#eff1f5;">
-<span style="color:#4f5b66;">&lt;</span><span style="color:#bf616a;">canvas </span><span style="color:#8fa1b3;">id</span><span style="color:#4f5b66;">=&quot;</span><span style="color:#a3be8c;">myCanvas</span><span style="color:#4f5b66;">&quot; </span><span style="color:#d08770;">width</span><span style="color:#4f5b66;">=&quot;</span><span style="color:#a3be8c;">500</span><span style="color:#4f5b66;">&quot; </span><span style="color:#d08770;">height</span><span style="color:#4f5b66;">=&quot;</span><span style="color:#a3be8c;">500</span><span style="color:#4f5b66;">&quot;&gt;&lt;/</span><span style="color:#bf616a;">canvas</span><span style="color:#4f5b66;">&gt;
+<pre style="background-color:#fafafa;">
+<span style="color:#383a42;">&lt;</span><span style="color:#e45649;">canvas </span><span style="color:#4078f2;">id</span><span style="color:#383a42;">=</span><span style="color:#50a14f;">&quot;myCanvas&quot; </span><span style="color:#986801;">width</span><span style="color:#383a42;">=</span><span style="color:#50a14f;">&quot;500&quot; </span><span style="color:#986801;">height</span><span style="color:#383a42;">=</span><span style="color:#50a14f;">&quot;500&quot;</span><span style="color:#383a42;">&gt;&lt;/</span><span style="color:#e45649;">canvas</span><span style="color:#383a42;">&gt;
 </span></pre>
 <p>In your <code>script.js</code>,</p>
-<pre style="background-color:#eff1f5;">
-<span style="color:#b48ead;">let </span><span style="color:#bf616a;">canvas</span><span style="color:#4f5b66;">;
-</span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">context</span><span style="color:#4f5b66;">;
-</span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">stars </span><span style="color:#4f5b66;">= [];
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">window.onload = </span><span style="color:#bf616a;">init</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">init</span><span style="color:#4f5b66;">() {
-</span><span style="color:#4f5b66;">    </span><span style="color:#bf616a;">canvas </span><span style="color:#4f5b66;">= document.</span><span style="color:#96b5b4;">getElementById</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">myCanvas</span><span style="color:#4f5b66;">&quot;);
-</span><span style="color:#4f5b66;">    </span><span style="color:#bf616a;">context </span><span style="color:#4f5b66;">= </span><span style="color:#bf616a;">canvas</span><span style="color:#4f5b66;">.</span><span style="color:#8fa1b3;">getContext</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">2d</span><span style="color:#4f5b66;">&quot;);
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">for </span><span style="color:#4f5b66;">(</span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">i</span><span style="color:#4f5b66;">=</span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">; </span><span style="color:#bf616a;">i </span><span style="color:#4f5b66;">&lt; </span><span style="color:#bf616a;">NUM_STARS</span><span style="color:#4f5b66;">; </span><span style="color:#bf616a;">i</span><span style="color:#4f5b66;">++) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#bf616a;">stars</span><span style="color:#4f5b66;">[</span><span style="color:#bf616a;">i</span><span style="color:#4f5b66;">] = new </span><span style="color:#bf616a;">Star</span><span style="color:#4f5b66;">();
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#8fa1b3;">draw</span><span style="color:#4f5b66;">();
-</span><span style="color:#4f5b66;">}
-</span><span style="color:#4f5b66;">
-</span><span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">draw</span><span style="color:#4f5b66;">() {
-</span><span style="color:#4f5b66;">    </span><span style="color:#bf616a;">context</span><span style="color:#4f5b66;">.</span><span style="color:#8fa1b3;">clearRect</span><span style="color:#4f5b66;">(</span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">, </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">canvas</span><span style="color:#4f5b66;">.width, </span><span style="color:#bf616a;">canvas</span><span style="color:#4f5b66;">.height);
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">for </span><span style="color:#4f5b66;">(</span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">i</span><span style="color:#4f5b66;">=</span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">; </span><span style="color:#bf616a;">i </span><span style="color:#4f5b66;">&lt; </span><span style="color:#bf616a;">stars</span><span style="color:#4f5b66;">.length; </span><span style="color:#bf616a;">i</span><span style="color:#4f5b66;">++) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#bf616a;">stars</span><span style="color:#4f5b66;">[</span><span style="color:#bf616a;">i</span><span style="color:#4f5b66;">].</span><span style="color:#8fa1b3;">update</span><span style="color:#4f5b66;">();
-</span><span style="color:#4f5b66;">        </span><span style="color:#bf616a;">stars</span><span style="color:#4f5b66;">[</span><span style="color:#bf616a;">i</span><span style="color:#4f5b66;">].</span><span style="color:#8fa1b3;">draw</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">context</span><span style="color:#4f5b66;">); </span><span style="color:#a7adba;">// next we will create this function
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// call the draw function again
-</span><span style="color:#4f5b66;">    window.</span><span style="color:#8fa1b3;">requestAnimationFrame</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">draw</span><span style="color:#4f5b66;">);
-</span><span style="color:#4f5b66;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">let </span><span style="color:#383a42;">canvas;
+</span><span style="color:#a626a4;">let </span><span style="color:#383a42;">context;
+</span><span style="color:#a626a4;">let </span><span style="color:#383a42;">stars </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">[];
+</span><span style="color:#383a42;">
+</span><span style="color:#0184bc;">window</span><span style="color:#383a42;">.onload </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">init;
+</span><span style="color:#383a42;">
+</span><span style="color:#a626a4;">function </span><span style="color:#4078f2;">init</span><span style="color:#383a42;">() {
+</span><span style="color:#383a42;">    canvas </span><span style="color:#0184bc;">= document</span><span style="color:#383a42;">.</span><span style="color:#0184bc;">getElementById</span><span style="color:#383a42;">(</span><span style="color:#50a14f;">&quot;myCanvas&quot;</span><span style="color:#383a42;">);
+</span><span style="color:#383a42;">    context </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">canvas</span><span style="color:#383a42;">.</span><span style="color:#e45649;">getContext</span><span style="color:#383a42;">(</span><span style="color:#50a14f;">&quot;2d&quot;</span><span style="color:#383a42;">);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">for </span><span style="color:#383a42;">(</span><span style="color:#a626a4;">let </span><span style="color:#383a42;">i</span><span style="color:#0184bc;">=</span><span style="color:#986801;">0</span><span style="color:#383a42;">; i </span><span style="color:#0184bc;">&lt; </span><span style="color:#986801;">NUM_STARS</span><span style="color:#383a42;">; i</span><span style="color:#0184bc;">++</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">stars</span><span style="color:#383a42;">[i] </span><span style="color:#0184bc;">= new </span><span style="color:#e45649;">Star</span><span style="color:#383a42;">();
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">draw</span><span style="color:#383a42;">();
+</span><span style="color:#383a42;">}
+</span><span style="color:#383a42;">
+</span><span style="color:#a626a4;">function </span><span style="color:#4078f2;">draw</span><span style="color:#383a42;">() {
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">context</span><span style="color:#383a42;">.</span><span style="color:#e45649;">clearRect</span><span style="color:#383a42;">(</span><span style="color:#986801;">0</span><span style="color:#383a42;">, </span><span style="color:#986801;">0</span><span style="color:#383a42;">, </span><span style="color:#e45649;">canvas</span><span style="color:#383a42;">.width, </span><span style="color:#e45649;">canvas</span><span style="color:#383a42;">.height);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">for </span><span style="color:#383a42;">(</span><span style="color:#a626a4;">let </span><span style="color:#383a42;">i</span><span style="color:#0184bc;">=</span><span style="color:#986801;">0</span><span style="color:#383a42;">; i </span><span style="color:#0184bc;">&lt; </span><span style="color:#e45649;">stars</span><span style="color:#383a42;">.length; i</span><span style="color:#0184bc;">++</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">stars</span><span style="color:#383a42;">[i].</span><span style="color:#e45649;">update</span><span style="color:#383a42;">();
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">stars</span><span style="color:#383a42;">[i].</span><span style="color:#e45649;">draw</span><span style="color:#383a42;">(context); </span><span style="font-style:italic;color:#a0a1a7;">// next we will create this function
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// call the draw function again
+</span><span style="color:#383a42;">    </span><span style="color:#0184bc;">window</span><span style="color:#383a42;">.</span><span style="color:#e45649;">requestAnimationFrame</span><span style="color:#383a42;">(draw);
+</span><span style="color:#383a42;">}
 </span></pre>
 <ol start="5">
 <li>Now let us create the <code>draw</code> function.</li>
 </ol>
-<pre style="background-color:#eff1f5;">
-<span style="color:#b48ead;">function </span><span style="color:#8fa1b3;">map</span><span style="color:#4f5b66;">(value, low1, high1, low2, high2) {
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">low2 </span><span style="color:#4f5b66;">+ (</span><span style="color:#bf616a;">value </span><span style="color:#4f5b66;">- </span><span style="color:#bf616a;">low1</span><span style="color:#4f5b66;">) * (</span><span style="color:#bf616a;">high2 </span><span style="color:#4f5b66;">- </span><span style="color:#bf616a;">low2</span><span style="color:#4f5b66;">) / (</span><span style="color:#bf616a;">high1 </span><span style="color:#4f5b66;">- </span><span style="color:#bf616a;">low1</span><span style="color:#4f5b66;">)
-</span><span style="color:#4f5b66;">}
-</span><span style="color:#4f5b66;">
-</span><span style="color:#b48ead;">class </span><span style="color:#d08770;">Star </span><span style="color:#343d46;">{
-</span><span style="color:#343d46;">    ...
-</span><span style="color:#343d46;">
-</span><span style="color:#343d46;">    </span><span style="color:#8fa1b3;">draw</span><span style="color:#343d46;">(</span><span style="color:#4f5b66;">ctx</span><span style="color:#343d46;">) {
-</span><span style="color:#343d46;">        </span><span style="color:#bf616a;">ctx</span><span style="color:#343d46;">.</span><span style="color:#8fa1b3;">beginPath</span><span style="color:#343d46;">();
-</span><span style="color:#343d46;">
-</span><span style="color:#343d46;">        </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">sx </span><span style="color:#4f5b66;">= </span><span style="color:#8fa1b3;">map</span><span style="color:#343d46;">(</span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.x</span><span style="color:#4f5b66;">/</span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.z, </span><span style="color:#4f5b66;">-</span><span style="color:#d08770;">1</span><span style="color:#343d46;">, </span><span style="color:#d08770;">1</span><span style="color:#343d46;">, </span><span style="color:#d08770;">0</span><span style="color:#343d46;">, </span><span style="color:#bf616a;">canvas</span><span style="color:#343d46;">.width);
-</span><span style="color:#343d46;">        </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">sy </span><span style="color:#4f5b66;">= </span><span style="color:#8fa1b3;">map</span><span style="color:#343d46;">(</span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.y</span><span style="color:#4f5b66;">/</span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.z, </span><span style="color:#4f5b66;">-</span><span style="color:#d08770;">1</span><span style="color:#343d46;">, </span><span style="color:#d08770;">1</span><span style="color:#343d46;">, </span><span style="color:#d08770;">0</span><span style="color:#343d46;">, </span><span style="color:#bf616a;">canvas</span><span style="color:#343d46;">.height);
-</span><span style="color:#343d46;">        </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">radius </span><span style="color:#4f5b66;">= </span><span style="color:#8fa1b3;">map</span><span style="color:#343d46;">(</span><span style="color:#bf616a;">this</span><span style="color:#343d46;">.z, </span><span style="color:#d08770;">0</span><span style="color:#343d46;">, </span><span style="color:#d08770;">1000</span><span style="color:#343d46;">, </span><span style="color:#8fa1b3;">random</span><span style="color:#343d46;">(</span><span style="color:#d08770;">2</span><span style="color:#343d46;">, </span><span style="color:#d08770;">5</span><span style="color:#343d46;">), </span><span style="color:#d08770;">1</span><span style="color:#343d46;">);
-</span><span style="color:#343d46;">
-</span><span style="color:#343d46;">        </span><span style="color:#bf616a;">ctx</span><span style="color:#343d46;">.fillStyle </span><span style="color:#4f5b66;">= &quot;</span><span style="color:#a3be8c;">#FFF</span><span style="color:#4f5b66;">&quot;</span><span style="color:#343d46;">;
-</span><span style="color:#343d46;">        </span><span style="color:#bf616a;">ctx</span><span style="color:#343d46;">.</span><span style="color:#8fa1b3;">arc</span><span style="color:#343d46;">(</span><span style="color:#bf616a;">sx</span><span style="color:#343d46;">, </span><span style="color:#bf616a;">sy</span><span style="color:#343d46;">, </span><span style="color:#bf616a;">radius</span><span style="color:#343d46;">, </span><span style="color:#d08770;">0</span><span style="color:#343d46;">, </span><span style="color:#d08770;">2 </span><span style="color:#4f5b66;">* </span><span style="color:#d08770;">Math</span><span style="color:#343d46;">.PI);
-</span><span style="color:#343d46;">        </span><span style="color:#bf616a;">ctx</span><span style="color:#343d46;">.</span><span style="color:#96b5b4;">fill</span><span style="color:#343d46;">();
-</span><span style="color:#343d46;">    }
-</span><span style="color:#343d46;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">function </span><span style="color:#4078f2;">map</span><span style="color:#383a42;">(value, low1, high1, low2, high2) {
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#383a42;">low2 </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">(value </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">low1) </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">(high2 </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">low2) </span><span style="color:#0184bc;">/ </span><span style="color:#383a42;">(high1 </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">low1)
+</span><span style="color:#383a42;">}
+</span><span style="color:#383a42;">
+</span><span style="color:#a626a4;">class </span><span style="color:#c18401;">Star {
+</span><span style="color:#c18401;">    ...
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">    </span><span style="color:#4078f2;">draw</span><span style="color:#c18401;">(</span><span style="color:#383a42;">ctx</span><span style="color:#c18401;">) {
+</span><span style="color:#c18401;">        </span><span style="color:#e45649;">ctx</span><span style="color:#383a42;">.</span><span style="color:#e45649;">beginPath</span><span style="color:#c18401;">()</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">        </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">sx </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">map</span><span style="color:#c18401;">(</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">x</span><span style="color:#0184bc;">/</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">z</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#986801;">0</span><span style="color:#383a42;">, </span><span style="color:#e45649;">canvas</span><span style="color:#383a42;">.</span><span style="color:#c18401;">width)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">        </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">sy </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">map</span><span style="color:#c18401;">(</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">y</span><span style="color:#0184bc;">/</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">z</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#986801;">0</span><span style="color:#383a42;">, </span><span style="color:#e45649;">canvas</span><span style="color:#383a42;">.</span><span style="color:#c18401;">height)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">        </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">radius </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">map</span><span style="color:#c18401;">(</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">z</span><span style="color:#383a42;">, </span><span style="color:#986801;">0</span><span style="color:#383a42;">, </span><span style="color:#986801;">1000</span><span style="color:#383a42;">, </span><span style="color:#e45649;">random</span><span style="color:#c18401;">(</span><span style="color:#986801;">2</span><span style="color:#383a42;">, </span><span style="color:#986801;">5</span><span style="color:#c18401;">)</span><span style="color:#383a42;">, </span><span style="color:#986801;">1</span><span style="color:#c18401;">)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">        </span><span style="color:#e45649;">ctx</span><span style="color:#383a42;">.</span><span style="color:#c18401;">fillStyle </span><span style="color:#0184bc;">= </span><span style="color:#50a14f;">&quot;#FFF&quot;</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">        </span><span style="color:#e45649;">ctx</span><span style="color:#383a42;">.</span><span style="color:#e45649;">arc</span><span style="color:#c18401;">(</span><span style="color:#383a42;">sx, sy, radius, </span><span style="color:#986801;">0</span><span style="color:#383a42;">, </span><span style="color:#986801;">2 </span><span style="color:#0184bc;">* </span><span style="color:#c18401;">Math</span><span style="color:#383a42;">.</span><span style="color:#c18401;">PI)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">        </span><span style="color:#e45649;">ctx</span><span style="color:#383a42;">.</span><span style="color:#0184bc;">fill</span><span style="color:#c18401;">()</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">    }
+</span><span style="color:#c18401;">}
 </span></pre>
 <p>What I have done here is basically projected our 3d coordinates to the canvas along <code>z=0</code> plane. Actually this is the basis of <a href="https://en.wikipedia.org/wiki/3D_projection#Weak_perspective_projection">perspective projection</a> and it gives us good approximation of the result we want to obtain.</p>
 <p>I have also applied some randomness to star's initial radius to give it a twinkling effect and mapped star's z position to radius, to give the feeling of it appearing big when closer.</p>
 <ol start="6">
 <li>Now to make the streak behind the star is actually easy. Just save the previous z position of the star and draw the line between previous projected position and the current projected position.</li>
 </ol>
-<pre style="background-color:#eff1f5;">
-<span style="color:#8fa1b3;">draw</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">ctx</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">    ...
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// draw streak
-</span><span style="color:#4f5b66;">    </span><span style="color:#bf616a;">ctx</span><span style="color:#4f5b66;">.</span><span style="color:#8fa1b3;">beginPath</span><span style="color:#4f5b66;">();
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">spx </span><span style="color:#4f5b66;">= </span><span style="color:#8fa1b3;">map</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">this</span><span style="color:#4f5b66;">.x/</span><span style="color:#bf616a;">this</span><span style="color:#4f5b66;">.previous_z, -</span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">, </span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">, </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">canvas</span><span style="color:#4f5b66;">.width);
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">let </span><span style="color:#bf616a;">spy </span><span style="color:#4f5b66;">= </span><span style="color:#8fa1b3;">map</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">this</span><span style="color:#4f5b66;">.y/</span><span style="color:#bf616a;">this</span><span style="color:#4f5b66;">.previous_z, -</span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">, </span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">, </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">canvas</span><span style="color:#4f5b66;">.height);
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#bf616a;">ctx</span><span style="color:#4f5b66;">.</span><span style="color:#8fa1b3;">moveTo</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">spx</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">spy</span><span style="color:#4f5b66;">);
-</span><span style="color:#4f5b66;">    </span><span style="color:#bf616a;">ctx</span><span style="color:#4f5b66;">.</span><span style="color:#8fa1b3;">lineTo</span><span style="color:#4f5b66;">(</span><span style="color:#bf616a;">sx</span><span style="color:#4f5b66;">, </span><span style="color:#bf616a;">sy</span><span style="color:#4f5b66;">);
-</span><span style="color:#4f5b66;">    </span><span style="color:#bf616a;">ctx</span><span style="color:#4f5b66;">.strokeStyle = &quot;</span><span style="color:#a3be8c;">#0000FF</span><span style="color:#4f5b66;">&quot;;
-</span><span style="color:#4f5b66;">    </span><span style="color:#bf616a;">ctx</span><span style="color:#4f5b66;">.</span><span style="color:#8fa1b3;">stroke</span><span style="color:#4f5b66;">();
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// set the current z as previous z for next frame
-</span><span style="color:#4f5b66;">    </span><span style="color:#bf616a;">this</span><span style="color:#4f5b66;">.previous_z = </span><span style="color:#bf616a;">this</span><span style="color:#4f5b66;">.z;   
-</span><span style="color:#4f5b66;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#e45649;">draw</span><span style="color:#383a42;">(ctx) {
+</span><span style="color:#383a42;">    </span><span style="color:#0184bc;">...
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// draw streak
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">ctx</span><span style="color:#383a42;">.</span><span style="color:#e45649;">beginPath</span><span style="color:#383a42;">();
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">spx </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">map</span><span style="color:#383a42;">(</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.x</span><span style="color:#0184bc;">/</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.previous_z, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#986801;">0</span><span style="color:#383a42;">, </span><span style="color:#e45649;">canvas</span><span style="color:#383a42;">.width);
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">spy </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">map</span><span style="color:#383a42;">(</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.y</span><span style="color:#0184bc;">/</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.previous_z, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#986801;">0</span><span style="color:#383a42;">, </span><span style="color:#e45649;">canvas</span><span style="color:#383a42;">.height);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">ctx</span><span style="color:#383a42;">.</span><span style="color:#e45649;">moveTo</span><span style="color:#383a42;">(spx, spy);
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">ctx</span><span style="color:#383a42;">.</span><span style="color:#e45649;">lineTo</span><span style="color:#383a42;">(sx, sy);
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">ctx</span><span style="color:#383a42;">.strokeStyle </span><span style="color:#0184bc;">= </span><span style="color:#50a14f;">&quot;#0000FF&quot;</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">ctx</span><span style="color:#383a42;">.</span><span style="color:#e45649;">stroke</span><span style="color:#383a42;">();
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// set the current z as previous z for next frame
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.previous_z </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.z;   
+</span><span style="color:#383a42;">}
 </span></pre>
 <p>Just remember to reset <code>previous_z</code> along with <code>this.z</code> when star goes out of bounds.</p>
 <p>Ok that's all. This is how you can make a cool warp speed effect.</p>

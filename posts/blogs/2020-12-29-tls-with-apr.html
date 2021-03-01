@@ -12,6 +12,11 @@
 
   <link rel="stylesheet" href="https://deep110.github.io/assets/css/main.css">
 
+  <script>
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.setAttribute("theme", "dark");
+    }
+  </script>
 </head>
 
   <body>
@@ -68,312 +73,312 @@
 <ol>
 <li>Initialize the apr_pool</li>
 </ol>
-<pre style="background-color:#eff1f5;">
-<span style="color:#b48ead;">#include </span><span style="color:#4f5b66;">&quot;</span><span style="color:#a3be8c;">apr.h</span><span style="color:#4f5b66;">&quot;
-</span><span style="color:#b48ead;">#include </span><span style="color:#4f5b66;">&quot;</span><span style="color:#a3be8c;">apr_network_io.h</span><span style="color:#4f5b66;">&quot;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">main</span><span style="color:#4f5b66;">() {
-</span><span style="color:#4f5b66;">    apr_pool_t *pool;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#8fa1b3;">apr_initialize</span><span style="color:#4f5b66;">();
-</span><span style="color:#4f5b66;">    </span><span style="color:#96b5b4;">atexit</span><span style="color:#4f5b66;">(apr_terminate);
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// create apr pool
-</span><span style="color:#4f5b66;">    </span><span style="color:#8fa1b3;">apr_pool_create</span><span style="color:#4f5b66;">(&amp;pool, </span><span style="color:#d08770;">NULL</span><span style="color:#4f5b66;">);
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">#include </span><span style="color:#50a14f;">&quot;apr.h&quot;
+</span><span style="color:#a626a4;">#include </span><span style="color:#50a14f;">&quot;apr_network_io.h&quot;
+</span><span style="color:#383a42;">
+</span><span style="color:#a626a4;">int </span><span style="color:#4078f2;">main</span><span style="color:#383a42;">() {
+</span><span style="color:#383a42;">    apr_pool_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">pool;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">apr_initialize</span><span style="color:#383a42;">();
+</span><span style="color:#383a42;">    </span><span style="color:#0184bc;">atexit</span><span style="color:#383a42;">(apr_terminate);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// create apr pool
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">apr_pool_create</span><span style="color:#383a42;">(</span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">pool, </span><span style="color:#986801;">NULL</span><span style="color:#383a42;">);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#986801;">0</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">}
 </span></pre>
 <ol start="2">
 <li>Create a listening socket on a port.</li>
 </ol>
-<pre style="background-color:#eff1f5;">
-<span style="color:#4f5b66;">apr_status_t </span><span style="color:#8fa1b3;">create_listening_socket</span><span style="color:#4f5b66;">(apr_pool_t *</span><span style="color:#bf616a;">pool</span><span style="color:#4f5b66;">, apr_socket_t **</span><span style="color:#bf616a;">lskt</span><span style="color:#4f5b66;">, </span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">port</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">    apr_sockaddr_t *saddr;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// create a tcp socket
-</span><span style="color:#4f5b66;">    apr_status_t rv = </span><span style="color:#8fa1b3;">apr_socket_create</span><span style="color:#4f5b66;">(lskt, APR_INET, SOCK_STREAM, APR_PROTO_TCP, pool);
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(rv)
-</span><span style="color:#4f5b66;">       </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> rv;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    rv = </span><span style="color:#8fa1b3;">apr_sockaddr_info_get</span><span style="color:#4f5b66;">(&amp;saddr, &quot;</span><span style="color:#a3be8c;">127.0.0.1</span><span style="color:#4f5b66;">&quot;, APR_UNSPEC, port, </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">, pool);
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(rv)
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> rv;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// bind the localhost:&lt;port&gt; to the created listening socket
-</span><span style="color:#4f5b66;">    rv = </span><span style="color:#8fa1b3;">apr_socket_bind</span><span style="color:#4f5b66;">(*lskt, saddr);
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(rv)
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> rv;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// now listen for incoming connections on this socket
-</span><span style="color:#4f5b66;">    rv = </span><span style="color:#8fa1b3;">apr_socket_listen</span><span style="color:#4f5b66;">(*lskt, </span><span style="color:#d08770;">5</span><span style="color:#4f5b66;">);
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(rv)
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> rv;
-</span><span style="color:#4f5b66;">    
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> rv;
-</span><span style="color:#4f5b66;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#383a42;">apr_status_t </span><span style="color:#4078f2;">create_listening_socket</span><span style="color:#383a42;">(apr_pool_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">pool, apr_socket_t </span><span style="color:#a626a4;">**</span><span style="color:#383a42;">lskt, </span><span style="color:#a626a4;">int </span><span style="color:#383a42;">port) {
+</span><span style="color:#383a42;">    apr_sockaddr_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">saddr;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// create a tcp socket
+</span><span style="color:#383a42;">    apr_status_t rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">apr_socket_create</span><span style="color:#383a42;">(lskt, APR_INET, SOCK_STREAM, APR_PROTO_TCP, pool);
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(rv)
+</span><span style="color:#383a42;">       </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> rv;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">apr_sockaddr_info_get</span><span style="color:#383a42;">(</span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">saddr, </span><span style="color:#50a14f;">&quot;127.0.0.1&quot;</span><span style="color:#383a42;">, APR_UNSPEC, port, </span><span style="color:#986801;">0</span><span style="color:#383a42;">, pool);
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(rv)
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> rv;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// bind the localhost:&lt;port&gt; to the created listening socket
+</span><span style="color:#383a42;">    rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">apr_socket_bind</span><span style="color:#383a42;">(</span><span style="color:#a626a4;">*</span><span style="color:#383a42;">lskt, saddr);
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(rv)
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> rv;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// now listen for incoming connections on this socket
+</span><span style="color:#383a42;">    rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">apr_socket_listen</span><span style="color:#383a42;">(</span><span style="color:#a626a4;">*</span><span style="color:#383a42;">lskt, </span><span style="color:#986801;">5</span><span style="color:#383a42;">);
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(rv)
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> rv;
+</span><span style="color:#383a42;">    
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> rv;
+</span><span style="color:#383a42;">}
 </span></pre>
 <ol start="3">
 <li>Now we can implement the part that will handle the incoming connections.</li>
 </ol>
-<pre style="background-color:#eff1f5;">
-<span style="color:#4f5b66;">apr_status_t </span><span style="color:#8fa1b3;">start_server</span><span style="color:#4f5b66;">(apr_pool_t *</span><span style="color:#bf616a;">pool</span><span style="color:#4f5b66;">, </span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">port</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">    apr_status_t rv = APR_SUCCESS;
-</span><span style="color:#4f5b66;">    apr_pool_t *subpool;
-</span><span style="color:#4f5b66;">    apr_socket_t *lskt;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// create listening socket
-</span><span style="color:#4f5b66;">    rv = </span><span style="color:#8fa1b3;">create_listening_socket</span><span style="color:#4f5b66;">(pool, &amp;lskt, port);
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(rv) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> rv;
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#96b5b4;">printf</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">running the server on 127.0.0.1:</span><span style="color:#d08770;">%d</span><span style="color:#96b5b4;">\n</span><span style="color:#4f5b66;">&quot;, port);
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#8fa1b3;">apr_pool_create</span><span style="color:#4f5b66;">(&amp;subpool, pool);
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">for </span><span style="color:#4f5b66;">(;;) {
-</span><span style="color:#4f5b66;">        apr_socket_t *cskt;
-</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">apr_pool_clear</span><span style="color:#4f5b66;">(subpool);
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">        rv = </span><span style="color:#8fa1b3;">apr_socket_accept</span><span style="color:#4f5b66;">(&amp;cskt, lskt, subpool);
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(rv)
-</span><span style="color:#4f5b66;">            </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> rv;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">while</span><span style="color:#4f5b66;">(</span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">            apr_size_t len = </span><span style="color:#d08770;">1024</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">            </span><span style="color:#b48ead;">char</span><span style="color:#4f5b66;"> buf[</span><span style="color:#d08770;">1024</span><span style="color:#4f5b66;">] = {</span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">};
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">            </span><span style="color:#a7adba;">// receive data from client
-</span><span style="color:#4f5b66;">            rv = </span><span style="color:#8fa1b3;">apr_socket_recv</span><span style="color:#4f5b66;">(cskt, &amp;buf, &amp;len);
-</span><span style="color:#4f5b66;">            </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(rv) {
-</span><span style="color:#4f5b66;">                </span><span style="color:#b48ead;">break</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">            }
-</span><span style="color:#4f5b66;">            </span><span style="color:#a7adba;">// echo the same data back
-</span><span style="color:#4f5b66;">            </span><span style="color:#8fa1b3;">apr_socket_send</span><span style="color:#4f5b66;">(cskt, &amp;buf, &amp;len);
-</span><span style="color:#4f5b66;">        }
-</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">apr_socket_close</span><span style="color:#4f5b66;">(cskt);
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> rv;
-</span><span style="color:#4f5b66;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#383a42;">apr_status_t </span><span style="color:#4078f2;">start_server</span><span style="color:#383a42;">(apr_pool_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">pool, </span><span style="color:#a626a4;">int </span><span style="color:#383a42;">port) {
+</span><span style="color:#383a42;">    apr_status_t rv </span><span style="color:#a626a4;">=</span><span style="color:#383a42;"> APR_SUCCESS;
+</span><span style="color:#383a42;">    apr_pool_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">subpool;
+</span><span style="color:#383a42;">    apr_socket_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">lskt;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// create listening socket
+</span><span style="color:#383a42;">    rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">create_listening_socket</span><span style="color:#383a42;">(pool, </span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">lskt, port);
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(rv) {
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> rv;
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#0184bc;">printf</span><span style="color:#383a42;">(</span><span style="color:#50a14f;">&quot;running the server on 127.0.0.1:</span><span style="color:#986801;">%d</span><span style="color:#0184bc;">\n</span><span style="color:#50a14f;">&quot;</span><span style="color:#383a42;">, port);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">apr_pool_create</span><span style="color:#383a42;">(</span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">subpool, pool);
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">for </span><span style="color:#383a42;">(;;) {
+</span><span style="color:#383a42;">        apr_socket_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">cskt;
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">apr_pool_clear</span><span style="color:#383a42;">(subpool);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">        rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">apr_socket_accept</span><span style="color:#383a42;">(</span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">cskt, lskt, subpool);
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(rv)
+</span><span style="color:#383a42;">            </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> rv;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">while</span><span style="color:#383a42;">(</span><span style="color:#986801;">1</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">            apr_size_t len </span><span style="color:#a626a4;">= </span><span style="color:#986801;">1024</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">            </span><span style="color:#a626a4;">char</span><span style="color:#383a42;"> buf[</span><span style="color:#986801;">1024</span><span style="color:#383a42;">] </span><span style="color:#a626a4;">= </span><span style="color:#383a42;">{</span><span style="color:#986801;">0</span><span style="color:#383a42;">};
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">            </span><span style="font-style:italic;color:#a0a1a7;">// receive data from client
+</span><span style="color:#383a42;">            rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">apr_socket_recv</span><span style="color:#383a42;">(cskt, </span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">buf, </span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">len);
+</span><span style="color:#383a42;">            </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(rv) {
+</span><span style="color:#383a42;">                </span><span style="color:#a626a4;">break</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">            }
+</span><span style="color:#383a42;">            </span><span style="font-style:italic;color:#a0a1a7;">// echo the same data back
+</span><span style="color:#383a42;">            </span><span style="color:#e45649;">apr_socket_send</span><span style="color:#383a42;">(cskt, </span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">buf, </span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">len);
+</span><span style="color:#383a42;">        }
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">apr_socket_close</span><span style="color:#383a42;">(cskt);
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> rv;
+</span><span style="color:#383a42;">}
 </span></pre>
 <p>Our server just echoes back whatever data it has read. Now call this function from <code>main</code>.</p>
-<pre style="background-color:#eff1f5;">
-<span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">main</span><span style="color:#4f5b66;">() {
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">//  apr pool creation
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// ...
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    apr_status_t rv = </span><span style="color:#8fa1b3;">start_server</span><span style="color:#4f5b66;">(pool, </span><span style="color:#d08770;">8000</span><span style="color:#4f5b66;">);
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(rv) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">char</span><span style="color:#4f5b66;"> buffer[</span><span style="color:#d08770;">256</span><span style="color:#4f5b66;">] = { </span><span style="color:#d08770;">0 </span><span style="color:#4f5b66;">};
-</span><span style="color:#4f5b66;">        </span><span style="color:#96b5b4;">printf</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">error: </span><span style="color:#d08770;">%s</span><span style="color:#96b5b4;">\n</span><span style="color:#4f5b66;">&quot;, </span><span style="color:#8fa1b3;">apr_strerror</span><span style="color:#4f5b66;">(rv, buffer, sizeof(buffer)));
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">int </span><span style="color:#4078f2;">main</span><span style="color:#383a42;">() {
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">//  apr pool creation
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// ...
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    apr_status_t rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">start_server</span><span style="color:#383a42;">(pool, </span><span style="color:#986801;">8000</span><span style="color:#383a42;">);
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(rv) {
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">char</span><span style="color:#383a42;"> buffer[</span><span style="color:#986801;">256</span><span style="color:#383a42;">] </span><span style="color:#a626a4;">= </span><span style="color:#383a42;">{ </span><span style="color:#986801;">0 </span><span style="color:#383a42;">};
+</span><span style="color:#383a42;">        </span><span style="color:#0184bc;">printf</span><span style="color:#383a42;">(</span><span style="color:#50a14f;">&quot;error: </span><span style="color:#986801;">%s</span><span style="color:#0184bc;">\n</span><span style="color:#50a14f;">&quot;</span><span style="color:#383a42;">, </span><span style="color:#e45649;">apr_strerror</span><span style="color:#383a42;">(rv, buffer, </span><span style="color:#a626a4;">sizeof</span><span style="color:#383a42;">(buffer)));
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#986801;">0</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">}
 </span></pre>
 <p>You can build the server like this:</p>
-<pre style="background-color:#eff1f5;">
-<span style="color:#4f5b66;"># build the server
-</span><span style="color:#4f5b66;">gcc -I/usr/local/apr/include/apr-1/ -Wl,-rpath,/usr/local/apr/lib -o echoserver echoserver.c -L/usr/local/apr/lib -lapr-1
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;"># run the server
-</span><span style="color:#4f5b66;">./echoserver
+<pre style="background-color:#fafafa;">
+<span style="color:#383a42;"># build the server
+</span><span style="color:#383a42;">gcc -I/usr/local/apr/include/apr-1/ -Wl,-rpath,/usr/local/apr/lib -o echoserver echoserver.c -L/usr/local/apr/lib -lapr-1
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;"># run the server
+</span><span style="color:#383a42;">./echoserver
 </span></pre>
 <h3>Adding TLS to TCP Server</h3>
 <p>We will be using <a href="https://github.com/openssl/openssl">OpenSSL</a> library to add TLS support. Let us implement some functions like <code>apr_network_io.c</code> to account for SSL.</p>
 <ol>
 <li>Add functions for initialize &amp; destroy OpenSSL Context.</li>
 </ol>
-<pre style="background-color:#eff1f5;">
-<span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">load_ssl_certificate</span><span style="color:#4f5b66;">(SSL_CTX* </span><span style="color:#bf616a;">ctx</span><span style="color:#4f5b66;">, </span><span style="color:#b48ead;">char</span><span style="color:#4f5b66;">* </span><span style="color:#bf616a;">cert_file</span><span style="color:#4f5b66;">, </span><span style="color:#b48ead;">char</span><span style="color:#4f5b66;">* </span><span style="color:#bf616a;">key_file</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">/* set the local certificate */
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(</span><span style="color:#8fa1b3;">SSL_CTX_use_certificate_file</span><span style="color:#4f5b66;">(ctx, cert_file, SSL_FILETYPE_PEM) &lt;= </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">/* set the private key */
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(</span><span style="color:#8fa1b3;">SSL_CTX_use_PrivateKey_file</span><span style="color:#4f5b66;">(ctx, key_file, SSL_FILETYPE_PEM) &lt;= </span><span style="color:#d08770;">0 </span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">/* verify private key */
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(!</span><span style="color:#8fa1b3;">SSL_CTX_check_private_key</span><span style="color:#4f5b66;">(ctx)) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">}
-</span><span style="color:#4f5b66;">
-</span><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">apr_tls_server_destroy</span><span style="color:#4f5b66;">(SSL_CTX *</span><span style="color:#bf616a;">ssl_ctx</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(ssl_ctx != </span><span style="color:#d08770;">NULL</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">SSL_CTX_free</span><span style="color:#4f5b66;">(ssl_ctx);
-</span><span style="color:#4f5b66;">        ssl_ctx = </span><span style="color:#d08770;">NULL</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">}
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">SSL_CTX* </span><span style="color:#8fa1b3;">apr_tls_server_init</span><span style="color:#4f5b66;">(</span><span style="color:#b48ead;">char</span><span style="color:#4f5b66;">* </span><span style="color:#bf616a;">cert_file_path</span><span style="color:#4f5b66;">, </span><span style="color:#b48ead;">char</span><span style="color:#4f5b66;">* </span><span style="color:#bf616a;">key_file_path</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">    SSL_CTX *ssl_ctx;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#8fa1b3;">SSL_library_init</span><span style="color:#4f5b66;">();
-</span><span style="color:#4f5b66;">    </span><span style="color:#8fa1b3;">SSL_load_error_strings</span><span style="color:#4f5b66;">();   </span><span style="color:#a7adba;">/* load all error messages */
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    ssl_ctx = </span><span style="color:#8fa1b3;">SSL_CTX_new</span><span style="color:#4f5b66;">(</span><span style="color:#8fa1b3;">TLSv1_2_server_method</span><span style="color:#4f5b66;">());   </span><span style="color:#a7adba;">/* create new context from method */
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(ssl_ctx == </span><span style="color:#d08770;">NULL</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">NULL</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(</span><span style="color:#8fa1b3;">load_ssl_certificate</span><span style="color:#4f5b66;">(ssl_ctx, cert_file_path, key_file_path) == </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">apr_tls_server_destroy</span><span style="color:#4f5b66;">(ssl_ctx);
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">NULL</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> ssl_ctx;
-</span><span style="color:#4f5b66;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">int </span><span style="color:#4078f2;">load_ssl_certificate</span><span style="color:#383a42;">(SSL_CTX</span><span style="color:#a626a4;">* </span><span style="color:#383a42;">ctx, </span><span style="color:#a626a4;">char* </span><span style="color:#383a42;">cert_file, </span><span style="color:#a626a4;">char* </span><span style="color:#383a42;">key_file) {
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">/* set the local certificate */
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">SSL_CTX_use_certificate_file</span><span style="color:#383a42;">(ctx, cert_file, SSL_FILETYPE_PEM) </span><span style="color:#a626a4;">&lt;= </span><span style="color:#986801;">0</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return </span><span style="color:#986801;">0</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">/* set the private key */
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">SSL_CTX_use_PrivateKey_file</span><span style="color:#383a42;">(ctx, key_file, SSL_FILETYPE_PEM) </span><span style="color:#a626a4;">&lt;= </span><span style="color:#986801;">0 </span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return </span><span style="color:#986801;">0</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">/* verify private key */
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#a626a4;">!</span><span style="color:#e45649;">SSL_CTX_check_private_key</span><span style="color:#383a42;">(ctx)) {
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return </span><span style="color:#986801;">0</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#986801;">1</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">}
+</span><span style="color:#383a42;">
+</span><span style="color:#a626a4;">int </span><span style="color:#4078f2;">apr_tls_server_destroy</span><span style="color:#383a42;">(SSL_CTX </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">ssl_ctx) {
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(ssl_ctx </span><span style="color:#a626a4;">!= </span><span style="color:#986801;">NULL</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">SSL_CTX_free</span><span style="color:#383a42;">(ssl_ctx);
+</span><span style="color:#383a42;">        ssl_ctx </span><span style="color:#a626a4;">= </span><span style="color:#986801;">NULL</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#986801;">1</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">}
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">SSL_CTX</span><span style="color:#a626a4;">* </span><span style="color:#4078f2;">apr_tls_server_init</span><span style="color:#383a42;">(</span><span style="color:#a626a4;">char* </span><span style="color:#383a42;">cert_file_path, </span><span style="color:#a626a4;">char* </span><span style="color:#383a42;">key_file_path) {
+</span><span style="color:#383a42;">    SSL_CTX </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">ssl_ctx;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">SSL_library_init</span><span style="color:#383a42;">();
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">SSL_load_error_strings</span><span style="color:#383a42;">();   </span><span style="font-style:italic;color:#a0a1a7;">/* load all error messages */
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    ssl_ctx </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">SSL_CTX_new</span><span style="color:#383a42;">(</span><span style="color:#e45649;">TLSv1_2_server_method</span><span style="color:#383a42;">());   </span><span style="font-style:italic;color:#a0a1a7;">/* create new context from method */
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(ssl_ctx </span><span style="color:#a626a4;">== </span><span style="color:#986801;">NULL</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return </span><span style="color:#986801;">NULL</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">load_ssl_certificate</span><span style="color:#383a42;">(ssl_ctx, cert_file_path, key_file_path) </span><span style="color:#a626a4;">== </span><span style="color:#986801;">0</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">apr_tls_server_destroy</span><span style="color:#383a42;">(ssl_ctx);
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return </span><span style="color:#986801;">NULL</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> ssl_ctx;
+</span><span style="color:#383a42;">}
 </span></pre>
 <ol start="2">
 <li>Add functions for socket accept, read and write wrapping around apr functions.</li>
 </ol>
-<pre style="background-color:#eff1f5;">
-<span style="color:#4f5b66;">apr_status_t </span><span style="color:#8fa1b3;">apr_tls_socket_accept</span><span style="color:#4f5b66;">(apr_socket_t **</span><span style="color:#bf616a;">new_sock</span><span style="color:#4f5b66;">, apr_socket_t *</span><span style="color:#bf616a;">sock</span><span style="color:#4f5b66;">,
-</span><span style="color:#4f5b66;">    SSL_CTX *</span><span style="color:#bf616a;">ssl_ctx</span><span style="color:#4f5b66;">, SSL **</span><span style="color:#bf616a;">ssl_sock</span><span style="color:#4f5b66;">, apr_pool_t *connection_pool
-</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">    apr_status_t status = </span><span style="color:#8fa1b3;">apr_socket_accept</span><span style="color:#4f5b66;">(new_sock, sock, connection_pool);
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(status) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> status;
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(ssl_ctx != </span><span style="color:#d08770;">NULL</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">        apr_os_sock_t raw_sock;
-</span><span style="color:#4f5b66;">        status = </span><span style="color:#8fa1b3;">apr_os_sock_get</span><span style="color:#4f5b66;">(&amp;raw_sock, *new_sock);
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(status)
-</span><span style="color:#4f5b66;">            </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> status;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">        </span><span style="color:#a7adba;">// create new ssl state from ssl context
-</span><span style="color:#4f5b66;">        *ssl_sock = </span><span style="color:#8fa1b3;">SSL_new</span><span style="color:#4f5b66;">(ssl_ctx);
-</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">SSL_set_fd</span><span style="color:#4f5b66;">(*ssl_sock, raw_sock);
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">        </span><span style="color:#a7adba;">// do ssl handshake
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(</span><span style="color:#8fa1b3;">SSL_accept</span><span style="color:#4f5b66;">(*ssl_sock) != </span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">            </span><span style="color:#96b5b4;">printf</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">SSL Handshake failed</span><span style="color:#4f5b66;">&quot;);
-</span><span style="color:#4f5b66;">            </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">        }
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> status;
-</span><span style="color:#4f5b66;">}
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">apr_status_t </span><span style="color:#8fa1b3;">apr_tls_socket_recv</span><span style="color:#4f5b66;">(apr_socket_t *</span><span style="color:#bf616a;">sock</span><span style="color:#4f5b66;">, SSL *</span><span style="color:#bf616a;">ssl_sock</span><span style="color:#4f5b66;">, </span><span style="color:#b48ead;">char </span><span style="color:#4f5b66;">*</span><span style="color:#bf616a;">buf</span><span style="color:#4f5b66;">, apr_size_t *</span><span style="color:#bf616a;">len</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(ssl_sock == </span><span style="color:#d08770;">NULL</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">apr_socket_recv</span><span style="color:#4f5b66;">(sock, buf, len);
-</span><span style="color:#4f5b66;">    } </span><span style="color:#b48ead;">else </span><span style="color:#4f5b66;">{
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">int</span><span style="color:#4f5b66;"> bytes_read = </span><span style="color:#8fa1b3;">SSL_read</span><span style="color:#4f5b66;">(ssl_sock, buf, *len);
-</span><span style="color:#4f5b66;">        *len = (apr_size_t)bytes_read;
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(</span><span style="color:#8fa1b3;">SSL_get_error</span><span style="color:#4f5b66;">(ssl_sock, bytes_read) &gt; </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">            </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">        }
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> APR_SUCCESS;
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">}
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">apr_status_t </span><span style="color:#8fa1b3;">apr_tls_socket_send</span><span style="color:#4f5b66;">(apr_socket_t *</span><span style="color:#bf616a;">sock</span><span style="color:#4f5b66;">, SSL *</span><span style="color:#bf616a;">ssl_sock</span><span style="color:#4f5b66;">, </span><span style="color:#b48ead;">const char </span><span style="color:#4f5b66;">*</span><span style="color:#bf616a;">buf</span><span style="color:#4f5b66;">, apr_size_t *</span><span style="color:#bf616a;">len</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(ssl_sock == </span><span style="color:#d08770;">NULL</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">apr_socket_send</span><span style="color:#4f5b66;">(sock,buf,len);
-</span><span style="color:#4f5b66;">    } </span><span style="color:#b48ead;">else </span><span style="color:#4f5b66;">{
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">int</span><span style="color:#4f5b66;"> bytes_wrote = </span><span style="color:#8fa1b3;">SSL_write</span><span style="color:#4f5b66;">(ssl_sock, buf, *len);
-</span><span style="color:#4f5b66;">        *len = (apr_size_t)bytes_wrote;
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(</span><span style="color:#8fa1b3;">SSL_get_error</span><span style="color:#4f5b66;">(ssl_sock, bytes_wrote) &gt; </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">            </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">        }
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> APR_SUCCESS;
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">}
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">apr_status_t </span><span style="color:#8fa1b3;">apr_tls_socket_close</span><span style="color:#4f5b66;">(apr_socket_t *</span><span style="color:#bf616a;">thesocket</span><span style="color:#4f5b66;">, SSL *</span><span style="color:#bf616a;">ssl_sock</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(ssl_sock != </span><span style="color:#d08770;">NULL</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">SSL_free</span><span style="color:#4f5b66;">(ssl_sock);
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return </span><span style="color:#8fa1b3;">apr_socket_close</span><span style="color:#4f5b66;">(thesocket);
-</span><span style="color:#4f5b66;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#383a42;">apr_status_t </span><span style="color:#4078f2;">apr_tls_socket_accept</span><span style="color:#383a42;">(apr_socket_t </span><span style="color:#a626a4;">**</span><span style="color:#383a42;">new_sock, apr_socket_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">sock,
+</span><span style="color:#383a42;">    SSL_CTX </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">ssl_ctx, SSL </span><span style="color:#a626a4;">**</span><span style="color:#383a42;">ssl_sock, apr_pool_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">connection_pool
+</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">    apr_status_t status </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">apr_socket_accept</span><span style="color:#383a42;">(new_sock, sock, connection_pool);
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(status) {
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> status;
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(ssl_ctx </span><span style="color:#a626a4;">!= </span><span style="color:#986801;">NULL</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">        apr_os_sock_t raw_sock;
+</span><span style="color:#383a42;">        status </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">apr_os_sock_get</span><span style="color:#383a42;">(</span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">raw_sock, </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">new_sock);
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(status)
+</span><span style="color:#383a42;">            </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> status;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">        </span><span style="font-style:italic;color:#a0a1a7;">// create new ssl state from ssl context
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">ssl_sock </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">SSL_new</span><span style="color:#383a42;">(ssl_ctx);
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">SSL_set_fd</span><span style="color:#383a42;">(</span><span style="color:#a626a4;">*</span><span style="color:#383a42;">ssl_sock, raw_sock);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">        </span><span style="font-style:italic;color:#a0a1a7;">// do ssl handshake
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">SSL_accept</span><span style="color:#383a42;">(</span><span style="color:#a626a4;">*</span><span style="color:#383a42;">ssl_sock) </span><span style="color:#a626a4;">!= </span><span style="color:#986801;">1</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">            </span><span style="color:#0184bc;">printf</span><span style="color:#383a42;">(</span><span style="color:#50a14f;">&quot;SSL Handshake failed&quot;</span><span style="color:#383a42;">);
+</span><span style="color:#383a42;">            </span><span style="color:#a626a4;">return </span><span style="color:#986801;">1</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">        }
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> status;
+</span><span style="color:#383a42;">}
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">apr_status_t </span><span style="color:#4078f2;">apr_tls_socket_recv</span><span style="color:#383a42;">(apr_socket_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">sock, SSL </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">ssl_sock, </span><span style="color:#a626a4;">char *</span><span style="color:#383a42;">buf, apr_size_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">len) {
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(ssl_sock </span><span style="color:#a626a4;">== </span><span style="color:#986801;">NULL</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return </span><span style="color:#e45649;">apr_socket_recv</span><span style="color:#383a42;">(sock, buf, len);
+</span><span style="color:#383a42;">    } </span><span style="color:#a626a4;">else </span><span style="color:#383a42;">{
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">int</span><span style="color:#383a42;"> bytes_read </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">SSL_read</span><span style="color:#383a42;">(ssl_sock, buf, </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">len);
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">len </span><span style="color:#a626a4;">= </span><span style="color:#383a42;">(apr_size_t)bytes_read;
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">SSL_get_error</span><span style="color:#383a42;">(ssl_sock, bytes_read) </span><span style="color:#a626a4;">&gt; </span><span style="color:#986801;">0</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">            </span><span style="color:#a626a4;">return </span><span style="color:#986801;">1</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">        }
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> APR_SUCCESS;
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">}
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">apr_status_t </span><span style="color:#4078f2;">apr_tls_socket_send</span><span style="color:#383a42;">(apr_socket_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">sock, SSL </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">ssl_sock, </span><span style="color:#a626a4;">const char *</span><span style="color:#383a42;">buf, apr_size_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">len) {
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(ssl_sock </span><span style="color:#a626a4;">== </span><span style="color:#986801;">NULL</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return </span><span style="color:#e45649;">apr_socket_send</span><span style="color:#383a42;">(sock,buf,len);
+</span><span style="color:#383a42;">    } </span><span style="color:#a626a4;">else </span><span style="color:#383a42;">{
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">int</span><span style="color:#383a42;"> bytes_wrote </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">SSL_write</span><span style="color:#383a42;">(ssl_sock, buf, </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">len);
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">len </span><span style="color:#a626a4;">= </span><span style="color:#383a42;">(apr_size_t)bytes_wrote;
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">SSL_get_error</span><span style="color:#383a42;">(ssl_sock, bytes_wrote) </span><span style="color:#a626a4;">&gt; </span><span style="color:#986801;">0</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">            </span><span style="color:#a626a4;">return </span><span style="color:#986801;">1</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">        }
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> APR_SUCCESS;
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">}
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">apr_status_t </span><span style="color:#4078f2;">apr_tls_socket_close</span><span style="color:#383a42;">(apr_socket_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">thesocket, SSL </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">ssl_sock) {
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(ssl_sock </span><span style="color:#a626a4;">!= </span><span style="color:#986801;">NULL</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">SSL_free</span><span style="color:#383a42;">(ssl_sock);
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#e45649;">apr_socket_close</span><span style="color:#383a42;">(thesocket);
+</span><span style="color:#383a42;">}
 </span></pre>
 <p>They have the same function signature as <code>apr_socket_accept</code>, <code>apr_socket_recv</code>, <code>apr_socket_send</code> &amp; <code>apr_socket_close</code> except ssl socket is also added. You can think of it like we are wrapping a another socket around apr_socket to handle SSL encryption/decryption.</p>
 <ol start="3">
 <li>Now we just need to add it to <code>echoserver.c</code> tying everything up.</li>
 </ol>
-<pre style="background-color:#eff1f5;">
-<span style="color:#b48ead;">#include </span><span style="color:#4f5b66;">&quot;</span><span style="color:#a3be8c;">apr.h</span><span style="color:#4f5b66;">&quot;
-</span><span style="color:#b48ead;">#include </span><span style="color:#4f5b66;">&quot;</span><span style="color:#a3be8c;">apr_network_io.h</span><span style="color:#4f5b66;">&quot;
-</span><span style="color:#b48ead;">#include </span><span style="color:#4f5b66;">&quot;</span><span style="color:#a3be8c;">apr_portable.h</span><span style="color:#4f5b66;">&quot;
-</span><span style="color:#b48ead;">#include </span><span style="color:#4f5b66;">&quot;</span><span style="color:#a3be8c;">openssl/ssl.h</span><span style="color:#4f5b66;">&quot;
-</span><span style="color:#b48ead;">#include </span><span style="color:#4f5b66;">&quot;</span><span style="color:#a3be8c;">openssl/err.h</span><span style="color:#4f5b66;">&quot;
-</span><span style="color:#b48ead;">#include </span><span style="color:#4f5b66;">&lt;</span><span style="color:#a3be8c;">stdlib.h</span><span style="color:#4f5b66;">&gt;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">main</span><span style="color:#4f5b66;">() {
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">//  apr pool creation
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// ...
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// init ssl context
-</span><span style="color:#4f5b66;">    SSL_CTX *ssl_ctx = </span><span style="color:#8fa1b3;">apr_tls_server_init</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">/path/to/certificate.pem</span><span style="color:#4f5b66;">&quot;, &quot;</span><span style="color:#a3be8c;">/path/to/keyfile.pem</span><span style="color:#4f5b66;">&quot;);
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    apr_status_t rv = </span><span style="color:#8fa1b3;">start_server</span><span style="color:#4f5b66;">(pool, ssl_context, </span><span style="color:#d08770;">8000</span><span style="color:#4f5b66;">);
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(rv) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">char</span><span style="color:#4f5b66;"> buffer[</span><span style="color:#d08770;">256</span><span style="color:#4f5b66;">] = { </span><span style="color:#d08770;">0 </span><span style="color:#4f5b66;">};
-</span><span style="color:#4f5b66;">        </span><span style="color:#96b5b4;">printf</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">error: </span><span style="color:#d08770;">%s</span><span style="color:#96b5b4;">\n</span><span style="color:#4f5b66;">&quot;, </span><span style="color:#8fa1b3;">apr_strerror</span><span style="color:#4f5b66;">(rv, buffer, sizeof(buffer)));
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// destroy ssl context
-</span><span style="color:#4f5b66;">    </span><span style="color:#8fa1b3;">apr_tls_destroy</span><span style="color:#4f5b66;">(ssl_ctx);
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">#include </span><span style="color:#50a14f;">&quot;apr.h&quot;
+</span><span style="color:#a626a4;">#include </span><span style="color:#50a14f;">&quot;apr_network_io.h&quot;
+</span><span style="color:#a626a4;">#include </span><span style="color:#50a14f;">&quot;apr_portable.h&quot;
+</span><span style="color:#a626a4;">#include </span><span style="color:#50a14f;">&quot;openssl/ssl.h&quot;
+</span><span style="color:#a626a4;">#include </span><span style="color:#50a14f;">&quot;openssl/err.h&quot;
+</span><span style="color:#a626a4;">#include </span><span style="color:#50a14f;">&lt;stdlib.h&gt;
+</span><span style="color:#383a42;">
+</span><span style="color:#a626a4;">int </span><span style="color:#4078f2;">main</span><span style="color:#383a42;">() {
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">//  apr pool creation
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// ...
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// init ssl context
+</span><span style="color:#383a42;">    SSL_CTX </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">ssl_ctx </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">apr_tls_server_init</span><span style="color:#383a42;">(</span><span style="color:#50a14f;">&quot;/path/to/certificate.pem&quot;</span><span style="color:#383a42;">, </span><span style="color:#50a14f;">&quot;/path/to/keyfile.pem&quot;</span><span style="color:#383a42;">);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    apr_status_t rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">start_server</span><span style="color:#383a42;">(pool, ssl_context, </span><span style="color:#986801;">8000</span><span style="color:#383a42;">);
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(rv) {
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">char</span><span style="color:#383a42;"> buffer[</span><span style="color:#986801;">256</span><span style="color:#383a42;">] </span><span style="color:#a626a4;">= </span><span style="color:#383a42;">{ </span><span style="color:#986801;">0 </span><span style="color:#383a42;">};
+</span><span style="color:#383a42;">        </span><span style="color:#0184bc;">printf</span><span style="color:#383a42;">(</span><span style="color:#50a14f;">&quot;error: </span><span style="color:#986801;">%s</span><span style="color:#0184bc;">\n</span><span style="color:#50a14f;">&quot;</span><span style="color:#383a42;">, </span><span style="color:#e45649;">apr_strerror</span><span style="color:#383a42;">(rv, buffer, </span><span style="color:#a626a4;">sizeof</span><span style="color:#383a42;">(buffer)));
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// destroy ssl context
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">apr_tls_destroy</span><span style="color:#383a42;">(ssl_ctx);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#986801;">0</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">}
 </span></pre>
 <p>Now we will implement <code>start_server</code> function with ssl. Just replace apr functions with corresponding <code>apr_tls_*</code> functions.</p>
-<pre style="background-color:#eff1f5;">
-<span style="color:#4f5b66;">apr_status_t </span><span style="color:#8fa1b3;">start_server</span><span style="color:#4f5b66;">(apr_pool_t *</span><span style="color:#bf616a;">pool</span><span style="color:#4f5b66;">, SSL_CTX *</span><span style="color:#bf616a;">ssl_ctx</span><span style="color:#4f5b66;">, </span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">port</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">    apr_status_t rv = APR_SUCCESS;
-</span><span style="color:#4f5b66;">    apr_pool_t *subpool;
-</span><span style="color:#4f5b66;">    apr_socket_t *lskt;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#a7adba;">// creation of listening socket will remain same
-</span><span style="color:#4f5b66;">    rv = </span><span style="color:#8fa1b3;">create_listening_socket</span><span style="color:#4f5b66;">(pool, &amp;lskt, port);
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(rv) {
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> rv;
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#96b5b4;">printf</span><span style="color:#4f5b66;">(&quot;</span><span style="color:#a3be8c;">running the TLS server on 127.0.0.1:</span><span style="color:#d08770;">%d</span><span style="color:#96b5b4;">\n</span><span style="color:#4f5b66;">&quot;, port);
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#8fa1b3;">apr_pool_create</span><span style="color:#4f5b66;">(&amp;subpool, pool);
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">for </span><span style="color:#4f5b66;">(;;) {
-</span><span style="color:#4f5b66;">        apr_socket_t *cskt;
-</span><span style="color:#4f5b66;">        SSL *ssl_socket;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">apr_pool_clear</span><span style="color:#4f5b66;">(subpool);
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">        </span><span style="color:#a7adba;">// connect to an incoming socket connection
-</span><span style="color:#4f5b66;">        rv = </span><span style="color:#8fa1b3;">apr_tls_socket_accept</span><span style="color:#4f5b66;">(&amp;cskt, lskt, ssl_ctx, &amp;ssl_socket, subpool);
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(rv)
-</span><span style="color:#4f5b66;">            </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> rv;
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">        </span><span style="color:#b48ead;">while</span><span style="color:#4f5b66;">(</span><span style="color:#d08770;">1</span><span style="color:#4f5b66;">) {
-</span><span style="color:#4f5b66;">            apr_size_t len = </span><span style="color:#d08770;">1024</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">            </span><span style="color:#b48ead;">char</span><span style="color:#4f5b66;"> buf[</span><span style="color:#d08770;">1024</span><span style="color:#4f5b66;">] = {</span><span style="color:#d08770;">0</span><span style="color:#4f5b66;">};
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">            rv = </span><span style="color:#8fa1b3;">apr_tls_socket_recv</span><span style="color:#4f5b66;">(cskt, ssl_socket, &amp;buf, &amp;len); </span><span style="color:#a7adba;">// read data
-</span><span style="color:#4f5b66;">            </span><span style="color:#b48ead;">if </span><span style="color:#4f5b66;">(rv) {
-</span><span style="color:#4f5b66;">                </span><span style="color:#b48ead;">break</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">            }
-</span><span style="color:#4f5b66;">            rv = </span><span style="color:#8fa1b3;">apr_tls_socket_send</span><span style="color:#4f5b66;">(cskt, ssl_socket, &amp;buf, &amp;len); </span><span style="color:#a7adba;">// write same data back
-</span><span style="color:#4f5b66;">            </span><span style="color:#b48ead;">break</span><span style="color:#4f5b66;">;
-</span><span style="color:#4f5b66;">        }
-</span><span style="color:#4f5b66;">        </span><span style="color:#8fa1b3;">apr_tls_socket_close</span><span style="color:#4f5b66;">(cskt, ssl_socket);
-</span><span style="color:#4f5b66;">    }
-</span><span style="color:#4f5b66;">
-</span><span style="color:#4f5b66;">    </span><span style="color:#b48ead;">return</span><span style="color:#4f5b66;"> rv;
-</span><span style="color:#4f5b66;">}
+<pre style="background-color:#fafafa;">
+<span style="color:#383a42;">apr_status_t </span><span style="color:#4078f2;">start_server</span><span style="color:#383a42;">(apr_pool_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">pool, SSL_CTX </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">ssl_ctx, </span><span style="color:#a626a4;">int </span><span style="color:#383a42;">port) {
+</span><span style="color:#383a42;">    apr_status_t rv </span><span style="color:#a626a4;">=</span><span style="color:#383a42;"> APR_SUCCESS;
+</span><span style="color:#383a42;">    apr_pool_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">subpool;
+</span><span style="color:#383a42;">    apr_socket_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">lskt;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// creation of listening socket will remain same
+</span><span style="color:#383a42;">    rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">create_listening_socket</span><span style="color:#383a42;">(pool, </span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">lskt, port);
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(rv) {
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> rv;
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#0184bc;">printf</span><span style="color:#383a42;">(</span><span style="color:#50a14f;">&quot;running the TLS server on 127.0.0.1:</span><span style="color:#986801;">%d</span><span style="color:#0184bc;">\n</span><span style="color:#50a14f;">&quot;</span><span style="color:#383a42;">, port);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#e45649;">apr_pool_create</span><span style="color:#383a42;">(</span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">subpool, pool);
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">for </span><span style="color:#383a42;">(;;) {
+</span><span style="color:#383a42;">        apr_socket_t </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">cskt;
+</span><span style="color:#383a42;">        SSL </span><span style="color:#a626a4;">*</span><span style="color:#383a42;">ssl_socket;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">apr_pool_clear</span><span style="color:#383a42;">(subpool);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">        </span><span style="font-style:italic;color:#a0a1a7;">// connect to an incoming socket connection
+</span><span style="color:#383a42;">        rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">apr_tls_socket_accept</span><span style="color:#383a42;">(</span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">cskt, lskt, ssl_ctx, </span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">ssl_socket, subpool);
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(rv)
+</span><span style="color:#383a42;">            </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> rv;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">while</span><span style="color:#383a42;">(</span><span style="color:#986801;">1</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">            apr_size_t len </span><span style="color:#a626a4;">= </span><span style="color:#986801;">1024</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">            </span><span style="color:#a626a4;">char</span><span style="color:#383a42;"> buf[</span><span style="color:#986801;">1024</span><span style="color:#383a42;">] </span><span style="color:#a626a4;">= </span><span style="color:#383a42;">{</span><span style="color:#986801;">0</span><span style="color:#383a42;">};
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">            rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">apr_tls_socket_recv</span><span style="color:#383a42;">(cskt, ssl_socket, </span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">buf, </span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">len); </span><span style="font-style:italic;color:#a0a1a7;">// read data
+</span><span style="color:#383a42;">            </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(rv) {
+</span><span style="color:#383a42;">                </span><span style="color:#a626a4;">break</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">            }
+</span><span style="color:#383a42;">            rv </span><span style="color:#a626a4;">= </span><span style="color:#e45649;">apr_tls_socket_send</span><span style="color:#383a42;">(cskt, ssl_socket, </span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">buf, </span><span style="color:#a626a4;">&amp;</span><span style="color:#383a42;">len); </span><span style="font-style:italic;color:#a0a1a7;">// write same data back
+</span><span style="color:#383a42;">            </span><span style="color:#a626a4;">break</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">        }
+</span><span style="color:#383a42;">        </span><span style="color:#e45649;">apr_tls_socket_close</span><span style="color:#383a42;">(cskt, ssl_socket);
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> rv;
+</span><span style="color:#383a42;">}
 </span></pre>
 <h3>Building and Testing the Server</h3>
 <p>You can build the server like this [Take care to include libssl &amp; libcrypto]: </p>
-<pre style="background-color:#eff1f5;">
-<span style="color:#8fa1b3;">gcc</span><span style="color:#bf616a;"> -I</span><span style="color:#4f5b66;">/usr/local/apr/include/apr-1/</span><span style="color:#bf616a;"> -Wl</span><span style="color:#4f5b66;">,-rpath,/usr/local/apr/lib</span><span style="color:#bf616a;"> -o</span><span style="color:#4f5b66;"> echoserver echoserver.c</span><span style="color:#bf616a;"> -L</span><span style="color:#4f5b66;">/usr/local/apr/lib</span><span style="color:#bf616a;"> -lapr-1 -lssl -lcrypto
+<pre style="background-color:#fafafa;">
+<span style="color:#e45649;">gcc</span><span style="color:#383a42;"> -I/usr/local/apr/include/apr-1/ -Wl,-rpath,/usr/local/apr/lib -o echoserver echoserver.c -L/usr/local/apr/lib -lapr-1 -lssl -lcrypto
 </span></pre>
 <p>To test the server use openssl client</p>
-<pre style="background-color:#eff1f5;">
-<span style="color:#8fa1b3;">openssl</span><span style="color:#4f5b66;"> s_client</span><span style="color:#bf616a;"> -connect</span><span style="color:#4f5b66;"> localhost:8000
+<pre style="background-color:#fafafa;">
+<span style="color:#e45649;">openssl</span><span style="color:#383a42;"> s_client -connect localhost:8000
 </span></pre>
 <p>You can also find the full code <a href="https://gist.github.com/deep110/a7e5fbc31dea6989907d3dc595efdc4e">here</a>.
 Hope this helps people to start with openssl and APR library and how they can be used to build a fully functional TCP server with TLS support.</p>

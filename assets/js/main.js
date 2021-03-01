@@ -1,34 +1,35 @@
-setTheme();
-
 window.onload = function () {
   document.getElementById("menu-icon").onclick = function () {
     toggleClass(document.body, "exp");
   }
-  document.getElementById("dark-theme-icon").onclick = function () {
-    toggleTheme();
-  }
+
+  // setup things
+  setTheme();
   inflateKatex();
 }
 
 function setTheme() {
+  var themeToggleButton = document.getElementById("dark-theme-icon");
   if (localStorage.getItem("theme") === "dark") {
-    document.getElementsByTagName("body")[0].setAttribute("theme", "dark");
-    document.getElementById("dark-theme-icon").setAttribute("title", "Switch to light theme");
+    themeToggleButton.setAttribute("title", "Switch to light theme");
+  }
+  themeToggleButton.onclick = function () {
+    toggleTheme(this);
   }
 }
 
-function toggleTheme() {
+function toggleTheme(themeButton) {
   var currentTheme = localStorage.getItem("theme");
   if (currentTheme == null || currentTheme == "light") {
     localStorage.setItem("theme", "dark");
-    document.getElementsByTagName("body")[0].setAttribute("theme", "dark");
+    document.documentElement.setAttribute("theme", "dark");
 
-    document.getElementById("dark-theme-icon").setAttribute("title", "Switch to light theme");
+    themeButton.setAttribute("title", "Switch to light theme");
   } else {
     localStorage.setItem("theme", "light");
-    document.getElementsByTagName("body")[0].removeAttribute("theme");
+    document.documentElement.removeAttribute("theme");
 
-    document.getElementById("dark-theme-icon").setAttribute("title", "Switch to dark theme");
+    themeButton.setAttribute("title", "Switch to dark theme");
   }
 }
 

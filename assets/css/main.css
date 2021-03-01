@@ -1,23 +1,23 @@
-body {
+html {
   --color-theme: #4a4a4a;
   --color-theme-light: #f0f0f0;
   --color-background: #fdfdfd;
   --color-text: #313131;
   --color-text-light: #8a8a8a;
   --color-hover: #d6d6d6; }
-  body code {
+  html code {
     background-color: #eff1f5; }
 
-body[theme="dark"] {
+html[theme="dark"] {
   --color-theme: #cacaca;
   --color-theme-light: #3d3d3d;
   --color-background: #313131;
   --color-text: #e4e4e4;
   --color-text-light: #b1b1b1;
   --color-hover: #4a4a4a; }
-  body[theme="dark"] code {
+  html[theme="dark"] code {
     background-color: #4a4a4a; }
-  body[theme="dark"] pre {
+  html[theme="dark"] pre {
     filter: invert(1) hue-rotate(180deg); }
 
 /**
