@@ -12,4 +12,9 @@
 
   <link rel="stylesheet" href="{{ '/assets/css/main.css' | prepend: site.base_url }}">
 
+  <script>
+    if (localStorage.getItem("theme") === "dark") {
+      document.documentElement.setAttribute("theme", "dark");
+    }
+  </script>
 </head>

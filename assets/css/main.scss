@@ -27,7 +27,7 @@ $white-color-d10: darken($white-color, 10%);
 $white-color-d20: darken($white-color, 20%);
 $white-color-d30: darken($white-color, 30%);
 
-body {
+html {
     --color-theme: #{$brown-color};
     --color-theme-light: #{$brown-color-l65};
     --color-background: #{$white-color};
@@ -40,7 +40,7 @@ body {
     }
 }
 
-body[theme="dark"] {
+html[theme="dark"] {
     --color-theme: #{$white-color-d20};
     --color-theme-light: #{$brown-color-d5};
     --color-background: #{$brown-color-d10};
