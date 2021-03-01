@@ -11,7 +11,7 @@ site:
     last_gen_time: "2021-02-06 00:00:00+05:30"
 
 syntax_highlight:
-  theme: "base16-ocean.light"
+  theme: "OneLight"
   enabled: true
 
 assets:
