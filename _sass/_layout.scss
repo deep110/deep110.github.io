@@ -267,6 +267,18 @@
     }
 }
 
+.footnote-definition {
+    display: flex;
+
+    sup {
+        font-size: unset;
+    }
+
+    p {
+        margin-bottom: 0px;
+    }
+}
+
 .pagination, .post-navigation {
   a{
     padding: 5px 10px;

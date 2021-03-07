@@ -4,11 +4,10 @@ title:  "Simulating Warp Speed in HTML5"
 categories: ["blog"]
 data:
   scripts: [extras/simulate-warp-speed.js]
-  css: [extras/simulate-warp-speed.css]
   keywords: "html5, canvas, warp, starwars"
 ---
 
-While rewatching the star wars series, I really liked the warp speed effect, and thought maybe I should give it a try in HTML5. So lo and behold I got it working in mostly an hour or so without using any library, just plain old canvas.
+While rewatching the star wars series, I really liked the warp speed effect, and thought maybe I should try recreating it for fun. So lo and behold I got it working in mostly an hour or so without using any library, just plain old html5 canvas.
 
 You can click on the start button to start the simulation. Use the slider to change the speed.
 
@@ -23,6 +22,99 @@ You can click on the start button to start the simulation. Use the slider to cha
     <label for="myRange">Warp Speed</label>
     <input type="range" min="10" max="100" value="60" class="slider" id="myRange">
 </div>
+
+<style>
+    #canvas-container {
+        margin: 30px auto;
+        width: 600px;
+        height: 500px;
+        position: relative;
+    }
+
+    #overlay {
+        background-color: #3a3a3a;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        position: absolute;
+        top: 0;
+    }
+
+    #overlay:hover {
+        background-color: rgb(193 193 193 / 40%);
+    }
+
+    #icon-play {
+        width: 96px;
+        height: 96px;
+        transition: all .2s ease-in-out;
+        position: absolute;
+        top: 40%;
+        left: 44%;
+    }
+
+    #icon-play:hover {
+        transform: scale(1.2);
+    }
+
+    canvas {
+        background: #000;
+        display: block;
+        height: 100%; 
+        width: 100%; 
+    }
+
+    .slider-container {
+        display: flex;
+        margin: 0 9%;
+    }
+
+    .slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 20px;
+        border-radius: 5px;
+        background: #d3d3d3;
+        margin-left: 5%;
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+    }
+
+    .slider:hover {
+        opacity: 1;
+    }
+
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 30px;
+        height: 30px;
+        background: #515865;
+        cursor: pointer;
+    }
+
+    .slider::-moz-range-thumb {
+        width: 30px;
+        height: 30px;
+        background: #515865;
+        cursor: pointer;
+    } 
+
+    @media only screen and (max-width: 700px) {
+        #canvas-container {
+            width: calc(100vw - 100px);
+            height: 340px;
+        }
+
+        #icon-play {
+            top: 37%;
+            left: 37%;
+        }
+    }
+</style>
 
 <br>
 <br>
