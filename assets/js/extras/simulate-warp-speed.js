@@ -57,7 +57,7 @@ class Star {
 window.addEventListener('DOMContentLoaded', (_) => {
     document.getElementById("icon-play").addEventListener("click", (_) => {
         document.getElementById("overlay").remove()
-        init();
+        setup();
     });
 });
 
@@ -65,7 +65,7 @@ let canvas;
 let context;
 let stars = [];
 
-function init() {
+function setup() {
     canvas = document.getElementById("myCanvas");
 
     // set canvas width and height

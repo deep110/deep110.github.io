@@ -155,6 +155,12 @@ table {
 .icon:hover > svg path {
   fill: #1a7bbb !important; }
 
+@media screen and (max-width: 600px) {
+  video {
+    width: calc(100vw - 2em); }
+  .katex {
+    font-size: 0.95em !important; } }
+
 /**
  * Site header
  */
@@ -252,10 +258,10 @@ table {
   text-decoration: none !important; }
   .footer-icon > svg {
     display: inline-block;
-    width: 33px;
+    width: 32px;
     height: 32px;
     vertical-align: middle;
-    padding: 5px; }
+    padding: 4px; }
     .footer-icon > svg path {
       fill: var(--color-theme); }
 
@@ -345,6 +351,13 @@ table {
     @media screen and (max-width: 800px) {
       .post-content h4 {
         font-size: 18px; } }
+.footnote-definition {
+  display: flex; }
+  .footnote-definition sup {
+    font-size: unset; }
+  .footnote-definition p {
+    margin-bottom: 0px; }
+
 .pagination a, .post-navigation a {
   padding: 5px 10px;
   color: var(--color-theme);
