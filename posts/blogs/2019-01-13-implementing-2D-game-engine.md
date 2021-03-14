@@ -3,7 +3,6 @@ layout: blog.liquid
 title: "Implementing your Own 2D game engine"
 categories: ["blog"]
 data:
-  scripts: [katex.min.js]
   css: [katex.min.css]
   keywords: "physics, engine, collision, detection, euler, friction, rigidbody"
 ---
@@ -11,7 +10,6 @@ First of all, you would think that when there are so many game engines out there
 would you want to implement your own. Well it may be that you don't like any of them, or just thinking of starting a game and implementing your own engine might be a good idea, then please don't do it and this article might not be for you. But if you (like me), want to learn nitty-gritty of a physics engine, this could be a good exercise.
 
 Here is the demo of the end result and you can find the [code](https://github.com/deep110/LucidEngine) on my github.
-
 
 <div style="text-align:center">
   <video autoplay muted loop width="auto" height="auto">
@@ -38,10 +36,11 @@ For a physics engine to function properly it should perform three basic things:
 
 ### Calculating Properties
 For calculating the properties we basically use Newton's Law of motion.
-<p class="equation">v = \intop{1/m * F \; dt}</p>
+{% equation %}v = \intop{1/m * F \; dt}{% endequation %}
 and,
-<p class="equation">x = \intop{v \; dt}</p>
+{% equation %}x = \intop{v \; dt}{% endequation %}
 where,  
+
 F = force applied  
 v = Velocity  
 m = mass of body  
@@ -53,13 +52,17 @@ To solve these differential equations for games, we widely come across these thr
 
     <div style="text-align:center"><img src="/assets/images/2019-01/euler-method.png" alt="Euler Method"/></div>
     It is the most basic method to solve this first order differential equation. It is just adding the curve values at small intervals.
-    <p class="equation" style="text-align:center">x_{n+1} = x_n + v(t_n) * dt\\v_{n+1} = v_n + a(t_n) * dt</p>
+    {% equation %}
+    x_{n+1} = x_n + v(t_n) * dt\\v_{n+1} = v_n + a(t_n) * dt
+    {% endequation %}
 2. [Implicit (Symplectic) Euler](https://en.wikipedia.org/wiki/Backward_Euler_method)
 
     The difference here is we solve the problem using right [Reimann sum rule](https://en.wikipedia.org/wiki/Riemann_sum) instead of left sum rule. For those who are not going to read wikipedia, reimann sum is used to calculate the area of the region by breaking it into small shapes. In euler methods region is a rectangle.
 
     For example to get position at time t, we will need velocity at time t+1, so instead of starting with zero velocity we compute velocity first and then position.
-    <p class="equation" style="text-align:center">v_{n+1} = v_n + a(t_{n+1}) * dt\\x_{n+1} = x_n + v(t_{n+1}) * dt</p>
+    {% equation %}
+    v_{n+1} = v_n + a(t_{n+1}) * dt\\x_{n+1} = x_n + v(t_{n+1}) * dt
+    {% endequation %}
 
 3. [Runge-Kutta (RK) 4th Order Method](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods)
     
@@ -159,10 +162,10 @@ Each rigidbody apart from dynamic properties also has some physical properties w
 For a pair of bodies we calculate equivalent coefficients.
 * Equivalent coefficient of restitution is `e = min(e1, e2)`.
 * Equivalent coefficients of friction are:
-  <pre><code class="equation">
+  {% equation %}
   μ_s = \sqrt{μ_{s1} * μ_{s1} + μ_{s2} * μ_{s1}}\\
   μ_d = \sqrt{μ_{d1} * μ_{d1} + μ_{d2} * μ_{d1}}
-  </code></pre>
+  {% endequation %}
 
 During the time of contact we will consider two impulses acting on them:
 1. Normal Force (Normal to the plane of contact)
@@ -186,22 +189,25 @@ According to Newton's law of restitution,
 e = relative final velocity / relative initial velocity
 ```
 Since momentum is conserved change in momentum of Body A will be opposite to the change in momentum of body B i.e j<sub>A</sub> . n = -j<sub>B</sub> . n. Taking a dot product with `n` since we are interested only in normal direction.
-<p class="equation">
+
+{% equation %}
 e = \dfrac {-(v_{B} - v_{A})}{u_{B} - u_{A}}
 \\~\\
 j_{A}.n = m_{A} (v_{A} - u_{A})\\
 j_{B}.n = -j_{A}.n = m_{B} (v_{B} - u_{B})\\
 u_{AB} = u_{A} - u_{B}
-</p>
+{% endequation %}
+
 So our aim is to calculate `j` in terms of initial velocity since we don't know the final velocities of bodies after collision. We will just rearrange the terms:
-<p class="equation">
+
+{% equation %}
 v_{A} = u_{A} + \dfrac {j_{A}n}{m_{A}}\\
 v_{B} = u_{B} - \dfrac {j_{A}n}{m_{B}}
 \\~\\
 v_{B} - v_{A} = eu_{AB} = -u_{AB} - j_{A}n \big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}}\big)
 \\~\\
 \boxed{j_{A} = -j_{B} = - \dfrac {(1+e) u_{AB}.n}{\big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}}\big)}}
-</p>
+{% endequation %}
 
 Whew, that's a lot of equations, but don't worry that's just rearranging the terms to get what we need, you can work it out yourself.
 
@@ -213,16 +219,16 @@ I = Moment of Inertial about Center of Mass (COM)
 r = radius vector perpendicular to COM
 ```
 Some basic definitions,
-<p class="equation">
+{% equation %}
 L = I\omega = r x p\\
 v_{A}^{total} = v_{A}^{linear} + r_{A}\omega_{A}
 \\~\\
 \Delta L = I \dfrac{\Delta v_{angular}}{r}
-</p>
+{% endequation %}
 When considering the change in linear momentum also add angular momentum giving us final equation:
-<p class="equation">
+{% equation %}
 \boxed{j_{A} = -j_{B} = - \dfrac {(1+e) u_{AB}.n}{\big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}} \big) + \dfrac {(r_{A}.n)^2}{I_{A}} + \dfrac {(r_{B}.n)^2}{I_{B}}}}
-</p>
+{% endequation %}
 
 #### Frictional Impulse
 Frictional Impulse is applied perpendicular to collision normal.
@@ -231,13 +237,13 @@ Frictional Impulse is applied perpendicular to collision normal.
 Frictional impulse can be calculated by just substituting normal vector with the tangential magnitude of relative velocity and in opposite direction.
 
 Replace `n` with `t`:
-<p class="equation">
+{% equation %}
 \boxed{j_{f} = - \dfrac {(1+e) u_{AB}.t}{\big(\dfrac {1}{m_{A}} + \dfrac {1}{m_{B}} \big) + \dfrac {(r_{A}.n)^2}{I_{A}} + \dfrac {(r_{B}.n)^2}{I_{B}}}}
-</p>
+{% endequation %}
 Now we just need to calculate `t`. For that we will get normal component of relative velocity and subtract from total relative velocity to get tangential component (Vector Math). Negative sign is used since friction is always opposite to the direction of motion.
-<p class="equation">
+{% equation %}
 t = -[V_{AB} − (V_{AB}⋅n)∗n]
-</p>
+{% endequation %}
 
 But wait there is a catch, friction acts differently for static and dynamic objects, that is why two coefficients of friction. How to use them can be determined using [Coulomb's Law](https://en.wikipedia.org/wiki/Friction#Dry_friction).
 <pre><code>j<sub>f</sub> <= μj<sub>n</sub></code></pre>

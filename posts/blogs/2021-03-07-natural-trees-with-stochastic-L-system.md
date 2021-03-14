@@ -2,6 +2,7 @@
 layout: blog.liquid
 title:  "Natural Looking Trees with Stochastic L-Systems"
 categories: ["blog"]
+is_draft: true
 data:
   scripts: [extras/simulate-l-system.js]
 ---

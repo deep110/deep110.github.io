@@ -105,8 +105,8 @@ You can click on the start button to start the simulation. Use the slider to cha
 
     @media only screen and (max-width: 700px) {
         #canvas-container {
-            width: calc(100vw - 100px);
-            height: 340px;
+            width: calc(100vw - 2em);
+            height: 320px;
         }
 
         #icon-play {
@@ -116,7 +116,6 @@ You can click on the start button to start the simulation. Use the slider to cha
     }
 </style>
 
-<br>
 <br>
 
 Now, let us see how we can create it.

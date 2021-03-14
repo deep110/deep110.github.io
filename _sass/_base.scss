@@ -190,3 +190,11 @@ table {
         }
     }
 }
+
+@include media-query($on-palm) {
+    video {
+        width: calc(100vw - 2em);
+    }
+
+    .katex { font-size: 0.95em !important; }
+}

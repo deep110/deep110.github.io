@@ -14,7 +14,7 @@ pagination:
   <h1 class="page-heading">Recent Posts</h1>
   {% if paginator.indexes %}
   {% for ptag in paginator.indexes %}
-    {% if ptag.index_title.first== 'blog' %}
+    {% if ptag.index_title.first == 'blog' %}
       <ul class="post-list">
         {% for post in ptag.pages %}
         <li>

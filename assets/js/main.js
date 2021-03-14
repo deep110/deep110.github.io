@@ -5,7 +5,6 @@ window.onload = function () {
 
   // setup things
   setTheme();
-  inflateKatex();
 }
 
 function setTheme() {
@@ -43,17 +42,6 @@ function toggleClass(element, toggleClass) {
     newClass = currentClass + " " + toggleClass;
   }
   element.className = newClass.trim();
-}
-
-function inflateKatex() {
-  var classes = document.getElementsByClassName("equation");
-  for (var i = 0; i < classes.length; i++) {
-    katex.render(classes[i].innerHTML.trim(), classes[i], {
-      output: "html",
-      throwOnError: false,
-      displayMode: true
-    });
-  }
 }
 
 // create a basic game loop controller to run simulations at target FPS
