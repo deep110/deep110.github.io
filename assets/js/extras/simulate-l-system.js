@@ -11,20 +11,6 @@ var labels = {
 var systems = {
   "context_free": {
     "system1": {
-      "axiom": "F",
-      "axiomAngle": 25,
-      "startLength": 200,
-      "lengthMul": 0.5,
-      "startPositionY": 0.5,
-      "type": 0,
-      "rules": [
-        {
-          "a": 'F',
-          "b": 'FF+[+F-F-F]-[-F+F+F]'
-        },
-      ]
-    },
-    "system2": {
       "axiom": "X",
       "axiomAngle": 25,
       "startLength": 200,
@@ -32,14 +18,19 @@ var systems = {
       "startPositionY": 0.5,
       "type": 0,
       "rules": [
-        {
-          "a": 'F',
-          "b": 'FF'
-        },
-        {
-          "a": 'X',
-          "b": 'F+[-F-XF-X][+FF][--XF[+X]][++F-X]'
-        },
+        { "a": 'F', "b": 'FF' },
+        { "a": 'X', "b": 'F+[-F-XF-X][+FF][--XF[+X]][++F-X]' },
+      ]
+    },
+    "system2": {
+      "axiom": "F",
+      "axiomAngle": 25,
+      "startLength": 200,
+      "lengthMul": 0.5,
+      "startPositionY": 0.5,
+      "type": 0,
+      "rules": [
+        { "a": 'F', "b": 'FF+[+F-F-F]-[-F+F+F]' },
       ]
     },
     "system3": {
@@ -50,18 +41,9 @@ var systems = {
       "startPositionY": 0.3,
       "type": 0,
       "rules": [
-        {
-          "a": 'F',
-          "b": 'FX[FX[+XF]]'
-        },
-        {
-          "a": 'X',
-          "b": 'FF[+XZ++X-F[+ZX]][-X++F-X]'
-        },
-        {
-          "a": 'Z',
-          "b": '[+F-X-F][++ZX]'
-        }
+        { "a": 'F', "b": 'FX[FX[+XF]]' },
+        { "a": 'X', "b": 'FF[+XZ++X-F[+ZX]][-X++F-X]' },
+        { "a": 'Z', "b": '[+F-X-F][++ZX]' }
       ]
     },
     "system4": {
@@ -72,31 +54,61 @@ var systems = {
       "startPositionY": 0.4,
       "type": 0,
       "rules": [
-        {
-          "a": 'X',
-          "b": 'F-[[X]+X]+F[+FX]-X'
-        },
-        {
-          "a": 'F',
-          "b": 'FF'
-        }
+        { "a": 'X', "b": 'F-[[X]+X]+F[+FX]-X' },
+        { "a": 'F', "b": 'FF' },
       ]
     }
   },
   "context_sensitive": {
     "system1": {
-      "axiom": "FYFYFY",
+      "axiom": "FYFXFXFY",
       "axiomAngle": 30,
       "startLength": 100,
-      "lengthMul": 0.85,
+      "lengthMul": 0.87,
       "startPositionY": 0.5,
-      "ignore": "\\+|-|F",
+      "ignore": "F+-",
       "type": 1,
       "rules": [
-        {
-          "a": 'F < F',
-          "b": 'F'
-        }
+        { "a": 'X < X > X', "b": 'Y' },
+        { "a": "X < X > Y", "b": "Y[-FYFY]" },
+        { "a": "Y < X > Y", "b": "YFY" },
+        { "a": "Y < Y > X", "b": "X" },
+        { "a": "Y < Y > Y", "b": "X" },
+        { "a": "+", "b": "-" },
+        { "a": "-", "b": "+" },
+      ]
+    },
+    "system2": {
+      "axiom": "FYFYFYFY",
+      "axiomAngle": 23,
+      "startLength": 100,
+      "lengthMul": 0.88,
+      "startPositionY": 0.5,
+      "ignore": "F+-",
+      "type": 1,
+      "rules": [
+        { "a": "X < X > Y", "b": "Y[+FYFY]" },
+        { "a": "Y < X > Y", "b": "YFY" },
+        { "a": "Y < Y > X", "b": "X" },
+        { "a": "Y < Y > Y", "b": "X" },
+        { "a": "+", "b": "-" },
+        { "a": "-", "b": "+" },
+      ]
+    },
+    "system3": {
+      "axiom": "FYFYFYFY",
+      "axiomAngle": 23,
+      "startLength": 100,
+      "lengthMul": 0.88,
+      "startPositionY": 0.5,
+      "ignore": "F+-",
+      "type": 1,
+      "rules": [
+        { "a": "X < X > Y", "b": "Y[-FYFY]" },
+        { "a": "Y < X > Y", "b": "YFY" },
+        { "a": "Y < Y > Y", "b": "X" },
+        { "a": "+", "b": "-" },
+        { "a": "-", "b": "+" },
       ]
     }
   },
@@ -111,7 +123,11 @@ var systems = {
       "rules": [
         {
           "a": 'F',
-          "b": 'FF+[+F-F-F]-[-F+F+F]'
+          "b": [
+            [0.33, "F[+F]F[-F]F"],
+            [0.33, "F[+F]F"],
+            [0.34, "F[-F]F"],
+          ]
         },
       ]
     }
@@ -120,7 +136,7 @@ var systems = {
 
 class Turtle {
   constructor(axiomAngle, startPosY, startLength) {
-    this.axiomAngle = axiomAngle;
+    this.axiomAngle = axiomAngle * 0.01745;
     this.length = startLength;
     this.startPosY = startPosY;
     this.position = new Vector2(0, 0);
@@ -173,12 +189,47 @@ class LSystem2 {
     this.type = type;
     this.rules = rules;
     this.ignoredSymbols = ignoredSymbols;
-    this.ignoreSymbolRegex = new RegExp(ignoredSymbols, "g");
     this.code = axiom;
+
+    if (type == 1) {
+      for (let i=0; i < this.rules.length; i++) {
+        let rule = this.rules[i];
+        let ruleMod = rule.a.replace(/ /g,'')
+        
+        let left = ruleMod.match(/(.+)<(.)/);
+        let right = ruleMod.match(/(.)>(.+)/);
+
+        if (left == undefined || right == undefined) {
+          rule.toMatch = rule.a;
+        }
+
+        if (left != undefined) {
+          rule.leftCtx = left[1]
+          rule.toMatch = left[2]
+        }
+        if (right != undefined) {
+          rule.rightCtx = right[2]
+          rule.toMatch = right[1]
+        }
+      }
+    } else if (type == 2) {
+      for (var j = 0; j < this.rules.length; j++) {
+        let subs = rules[j].b;
+        let weightSum = 0;
+
+        if (typeof subs !== "object") {
+          continue
+        }
+  
+        for (var k = 0; k < subs.length; k++) {
+          weightSum += subs[k][0];
+        }
+        rules[j].weightSum = weightSum;
+      }
+    }
   }
 
   iterate() {
-    console.log("curr code: ", this.code);
     var nextSentence = '';
     for (var i = 0; i < this.code.length; i++) {
       var current = this.code.charAt(i);
@@ -188,17 +239,14 @@ class LSystem2 {
           nextSentence += this.matchForContextFree(current, this.rules);
           break;
         case 1:
-          nextSentence += this.matchForContextSensitive(i, this.code, this.rules, this.ignoreSymbolRegex);
+          nextSentence += this.matchForContextSensitive(i, this.code, this.rules);
           break;
+        case 2:
+          nextSentence += this.matchStochastic(current, this.rules);
       }
     }
 
     this.code = nextSentence;
-    // this.code = lsystemT.iterate();
-
-    console.log( "next code: ", this.code)
-    // console.log( "truth    : ", lsystemT.iterate())
-    console.log("--------------------------")
     return this.code;
   }
 
@@ -207,22 +255,121 @@ class LSystem2 {
   }
 
   matchForContextFree(codeChar, rules) {
-    for (var j = 0; j < rules.length; j++) {
-      if (codeChar == rules[j].a) {
-        return rules[j].b;
+    for (var i = 0; i < rules.length; i++) {
+      if (codeChar == rules[i].a) {
+        return rules[i].b;
       }
     }
     return codeChar;
   }
-  
-  matchForContextSensitive(index, code, rules, ignoreStringReg) {
-    var pre = code.substring(0, index).replace(ignoreStringReg, '')
-    var post = code.substring(index+1, code.length).replace(ignoreStringReg, '')
-  
-    // console.log( "pre: ", pre)
-    // console.log( "post: ", post)
-  
+
+  matchForContextSensitive(index, code, rules) {
+    for (let i=0; i < rules.length; i++) {
+      let rule = rules[i];
+      if (rule.toMatch == code[index]) {
+        if (rule.leftCtx !== undefined && rule.rightCtx !== undefined) {
+          if (this.matchContext(code, rule.leftCtx, index-1, 0, this.ignoredSymbols)
+               && this.matchContext(code, rule.rightCtx, index+1, code.length-1, this.ignoredSymbols)) {
+            return rule.b;
+          }
+        } else if (rule.leftCtx !== undefined) {
+          if (this.matchContext(code, rule.leftCtx, index-1, 0, this.ignoredSymbols)) {
+            return rule.b;
+          }
+        } else if (rule.rightCtx !== undefined) {
+          if (this.matchContext(code, rule.rightCtx, index+1, code.length-1, this.ignoredSymbols)) {
+            return rule.b;
+          }
+        } else {
+          return rule.b
+        }
+      }
+    }
+
     return code[index]
+  }
+
+  matchStochastic(codeChar, rules) {
+    for (var j = 0; j < rules.length; j++) {
+      if (codeChar == rules[j].a) {
+        let subs = rules[j].b;
+
+        let randomWeight = Math.random() * rules[j].weightSum;
+        let cumulativeWeight = 0;
+        for (var k = 0; k < subs.length; k++) {
+          cumulativeWeight += subs[k][0];
+          if (randomWeight <= cumulativeWeight) {
+            return subs[k][1];
+          }
+        }
+      }
+    }
+    return codeChar;
+  }
+
+  matchContext(code, toMatch, startIndex, endIndex, ignoredSymbols) {
+    let branchCount = 0;
+    let explicitBranchCount = 0;
+    let matchIndex, matchIndexOverflow;
+    let inc, branchStart, branchEnd;
+
+    if (startIndex > endIndex) { // left dir match
+      inc = -1
+      matchIndex = toMatch.length - 1
+      matchIndexOverflow = -1
+      branchStart = "]"
+      branchEnd = "["
+    } else {
+      inc = 1
+      matchIndex = 0
+      matchIndexOverflow = toMatch.length
+      branchStart = "["
+      branchEnd = "]"
+    }
+    let codeIndex = startIndex - inc;
+
+    while(codeIndex !== endIndex) {
+      codeIndex += inc
+      let axiomSymbol = code[codeIndex];
+      let matchSymbol = toMatch[matchIndex];
+
+      if (axiomSymbol == matchSymbol) {
+        if (branchCount === 0 || explicitBranchCount > 0) {
+          // if its a match and previously NOT inside branch (branchCount===0) or in explicitly wanted branch (explicitBranchCount > 0)
+          // if a bracket was explicitly stated in match axiom
+          if (axiomSymbol === branchStart) {
+            explicitBranchCount++;
+            branchCount++;
+            matchIndex += inc;
+          } else if (axiomSymbol === branchEnd) {
+            explicitBranchCount = Math.max(0, explicitBranchCount - 1);
+            branchCount = Math.max(0, branchCount - 1); // only increase match if we are out of explicit branch
+
+            if (explicitBranchCount === 0) {
+              matchIndex += inc;
+            }
+          } else {
+            matchIndex += inc;
+          }
+        }
+
+        if (matchIndex == matchIndexOverflow) {
+          return true;
+        }
+      } else if (axiomSymbol === branchStart) {
+        branchCount++;
+        if (explicitBranchCount > 0) explicitBranchCount++;
+      } else if (axiomSymbol === branchEnd) {
+        branchCount = Math.max(0, branchCount - 1);
+        if (explicitBranchCount > 0) explicitBranchCount = Math.max(0, explicitBranchCount - 1);
+      } else if ((branchCount === 0 || explicitBranchCount > 0 && matchSymbol !== branchEnd) && ignoredSymbols.includes(axiomSymbol) === false) {
+        // not in branchSymbols/branch? or if in explicit branch, and not at the very end of
+        // condition (at the ]), and symbol not in ignoredSymbols ? then false
+        return false;
+      }
+    }
+
+    return false
   }
 
   reset() {
@@ -243,6 +390,22 @@ function render(code) {
   context.stroke();
 }
 
+function drawTurtle(context, turtle, angle) {
+  context.beginPath();
+  var l = 10 * Math.pow(2, 0.5);
+  var cp = turtle.position;
+
+  var cp1 = cp.subtract(new Vector2(l * Math.sin((45 + angle) * 0.01745), l * Math.cos((45 + angle) * 0.01745)))
+  var cp2 = cp.add(new Vector2(l * Math.sin((45 - angle ) * 0.01745), -1 * l * Math.cos((45 - angle) * 0.01745)))
+
+  context.moveTo(cp.x, turtle.cartToScreen(cp.y));
+
+  context.lineTo(cp1.x, turtle.cartToScreen(cp1.y));
+  context.lineTo(cp2.x, turtle.cartToScreen(cp2.y));
+  context.closePath();
+  context.stroke();
+}
+
 function setupInteractiveSystem() {
   let select = document.getElementById("system-selector");
   for (const sys_name in systems) {
@@ -260,7 +423,7 @@ function setupInteractiveSystem() {
   fillDescription(currentSystem);
 
   select.addEventListener("change", () => {
-	  var optgroupId = select.options[select.selectedIndex].parentNode.id;
+    var optgroupId = select.options[select.selectedIndex].parentNode.id;
     currentSystem = systems[optgroupId][select.value]
 
     fillDescription(currentSystem);
@@ -282,7 +445,7 @@ function fillDescription(cs) {
 
   var ruleStr = "Rules: "
   var rules = cs["rules"]
-  for (let i=0; i < rules.length; i++) {
+  for (let i = 0; i < rules.length; i++) {
     ruleStr += "<br>" + rules[i]["a"] + " -> " + rules[i]["b"]
   }
 
@@ -293,7 +456,7 @@ window.addEventListener('DOMContentLoaded', (_) => {
   // setup
   canvas = document.getElementById("canvas");
   context = canvas.getContext("2d");
-  currentSystem = systems["context_sensitive"]["system1"];
+  currentSystem = systems["context_free"]["system1"];
 
   turtle = new Turtle(currentSystem.axiomAngle, currentSystem.startPositionY, currentSystem.startLength);
   lsystem = new LSystem2(
@@ -304,27 +467,9 @@ window.addEventListener('DOMContentLoaded', (_) => {
   );
 
   setupInteractiveSystem();
+  render(lsystem.getString());
 
-  lsystemT = new LSystem({
-    axiom: "FYFYFY",
-    productions: {
-      "X<X>X": "Y",
-      "X<X>Y": "Y[-FYFY]",
-      "X<Y>X": "Y",
-      "X<Y>Y": "Y",
-      "Y<X>X": "X",
-      "Y<X>Y": "YFY",
-      "Y<Y>X": "X",
-      "Y<Y>Y": "X",
-      "+": "-",
-      "-": "+",
-    },
-    "ignoredSymbols": "+-F&^/|\\"
-  })
-
-  // lsystemT.iterate(4)
-
-  document.getElementById("generate").addEventListener("click", function() {
+  document.getElementById("generate").addEventListener("click", function () {
     // generate next iteration
     var code = lsystem.iterate();
 
@@ -332,7 +477,7 @@ window.addEventListener('DOMContentLoaded', (_) => {
     render(code);
   });
 
-  document.getElementById("reset").addEventListener("click", function() {
+  document.getElementById("reset").addEventListener("click", function () {
     turtle.reset(currentSystem.axiomAngle, currentSystem.startPositionY, currentSystem.startLength);
     lsystem.reset();
     render(lsystem.getString());
