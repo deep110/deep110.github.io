@@ -7,7 +7,7 @@ data:
 ---
 
 Before going into the any of this I would like to talk about why I wrote this:
-- I have also been little confused a little with color theory and models in the past
+- I have always been little confused with color theory and models in the past
 - I came across an excellent [thread](https://www.reddit.com/r/askscience/comments/ksgy8l/why_if_i_mix_green_and_red_paints_in_equal/) on reddit regarding this and I loved the explanation there.
 - Few years back I wasted a lot of money to get right color prints of some photos
 
@@ -83,4 +83,4 @@ This model is primarily used for printing, `K` stands for key which is usually b
 
 In the above picture, as you can see that you can make primary colors for RGB model from mixing primary colors of CMYK. For example if we mix yellow [which only absorbs blue light] and cyan [which only absorbs red light], we get a paint that absorbs both blue & red light but reflect everything that is left i.e green light.
 
-Obviously CMYK model used in printing industry is little complex, because it is hard to produce all the colors with pigments, but more or less the idea remains the same.
+Obviously CMYK model used in printing industry is little more complex, because it is hard to produce all the colors with pigments, but more or less the idea remains the same.
