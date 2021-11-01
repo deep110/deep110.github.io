@@ -4,7 +4,7 @@ title:  "Natural Looking Trees with Stochastic L-Systems"
 categories: ["blog"]
 data:
   css: [katex.min.css]
-  scripts: [extras/simulate-l-system.js, extras/lindenmayer.js]
+  scripts: [extras/simulate-l-system.js]
 ---
 
 [No Man's Sky](https://www.nomanssky.com/) is built around a procedurally generated deterministic open world universe with too many planets to be explored realistically. It is claimed that they used [Superformula](https://en.wikipedia.org/wiki/Superformula) and [L-Systems](https://en.wikipedia.org/wiki/L-system) for generating flora and  fauna procedurally. So, I tried playing around with L systems and see if I can create some realistic looking trees.
@@ -79,7 +79,7 @@ In context free grammar, each token is evaluated in the isolation. For example:
 
     Rules &: \\
     F &\rightarrow FF\\
-    X &\rightarrow F+[-F-XF-X][+FF][--XF[+X]][++F-X]
+    X &\rightarrow F-[[X]+X]+F[+FX]-X
   \end{align*}
 {% endequation %}
 

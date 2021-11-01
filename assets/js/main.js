@@ -62,7 +62,6 @@ var GameLoopController = {
           loopFunc(dt);
           GameLoopController.loop(loopFunc, targetFps);
       });
-
   },
   stamp: undefined
 };
