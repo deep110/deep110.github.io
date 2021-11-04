@@ -104,6 +104,10 @@ Vector2.prototype = {
 		return (this.x * vector.x + this.y + vector.y);
 	},
 
+	cross: function (vector) {
+		return (this.x * vector.y - vector.x * this.y);
+	},
+
 	moveTowards: function (vector, t) {
 		// Linearly interpolates between vectors A and B by t.
 		// t = 0 returns A, t = 1 returns B
@@ -156,3 +160,10 @@ Vector2.prototype = {
 		return vector;
 	},
 };
+
+class MathUtil {
+	/* random number between min and max [included] */
+	static random(min, max) {
+		return Math.floor(Math.random() * (max - min + 1) + min)
+	}
+}

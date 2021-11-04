@@ -2,28 +2,24 @@ const NUM_STARS = 300;
 const PI2 = 2 * Math.PI;
 let SPEED = 60;
 
-function random(min, max) {
-    return Math.random() * (max - min) + min
-}
-
 function map(value, low1, high1, low2, high2) {
     return low2 + (value - low1) * (high2 - low2) / (high1 - low1)
 }
 
 class Star {
     constructor() {
-        this.x = random(-1000, 1000);
-        this.y = random(-1000, 1000);
-        this.z = random(100, 1000);
+        this.x = MathUtil.random(-1000, 1000);
+        this.y = MathUtil.random(-1000, 1000);
+        this.z = MathUtil.random(100, 1000);
         this.pz = this.z;
     }
 
     update() {
         this.z = this.z-SPEED
         if (this.z < 1) {
-            this.x = random(-1000, 1000);
-            this.y = random(-1000, 1000);
-            this.z = random(100, 1000);
+            this.x = MathUtil.random(-1000, 1000);
+            this.y = MathUtil.random(-1000, 1000);
+            this.z = MathUtil.random(100, 1000);
             this.pz = this.z;
         }
     }
@@ -33,7 +29,7 @@ class Star {
 
         let sx = map(this.x/this.z, -1, 1, 0, canvas.width);
         let sy = map(this.y/this.z, -1, 1, 0, canvas.height);
-        let r = map(this.z, 100, 1000, random(2, 5), 1);
+        let r = map(this.z, 100, 1000, MathUtil.random(2, 5), 1);
 
         ctx.fillStyle = "#FFF";
         ctx.arc(sx, sy, r, 0, PI2);

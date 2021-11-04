@@ -21,7 +21,15 @@ pagination:
           <h2>
             <a class="post-link" href="/{{ post.permalink }}">{{ post.title }}</a>
           </h2>
-          <span class="post-meta">{{ post.published_date | date: "%b %-d, %Y" }}</span>
+          <p class="post-meta">
+            <time datetime="{{ post.published_date }}" itemprop="datePublished">
+               {{ post.published_date | date: "%b %-d, %Y" }}
+            </time>
+             | <span class="time">
+                 {{ post.content | split:" " | size | divided_by:180 }}
+               </span>
+                Minute Read
+         </p>
           <p class="description">
             {{ post.content | strip_html | strip_newlines | truncate: 250 }}
           </p>
@@ -51,7 +59,15 @@ pagination:
         <h2>
           <a class="post-link" href="/{{ post.permalink }}">{{ post.title }}</a>
         </h2>
-        <span class="post-meta">{{ post.published_date | date: "%b %-d, %Y" }}</span>
+        <p class="post-meta">
+          <time datetime="{{ post.published_date }}" itemprop="datePublished">
+             {{ post.published_date | date: "%b %-d, %Y" }}
+          </time>
+           | <span class="time">
+               {{ post.content | split:" " | size | divided_by:180 }}
+             </span>
+              Minute Read
+       </p>
         <p class="description">
           {{ post.content | strip_html | strip_newlines | truncate: 250 }}
         </p>

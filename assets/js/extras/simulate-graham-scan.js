@@ -13,17 +13,20 @@ function distSq(p1, p2) {
   return p2.subtract(p1).distanceSqr();
 }
 
-// To find orientation of ordered triplet (p, q, r). 
-// The function returns following values 
-// 0 --> p, q and r are colinear 
-// 1 --> Clockwise 
-// 2 --> Counterclockwise 
+/**
+ * To find orientation of ordered triplet (p, q, r).
+ *
+ * @param {Vector2} p, q, r
+ * @return {number} wether points are clockwise, counter-clockwise or colinear
+ *
+ *  0 => colinear, 1 => clockwise and 2 => counter-clockwise
+ */
 function getOrientation(p, q, r) {
   let val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
   val = Math.trunc(val);
 
-  if (val == 0) return 0;  // colinear 
-  return (val > 0) ? 1 : 2; // clock or counter-clock wise 
+  if (val == 0) return 0;  // colinear
+  return (val > 0) ? 1 : 2; // clock or counter-clock wise
 }
 
 function partialSort(arr, start, end, sortF) {
@@ -57,7 +60,7 @@ function* GrahamScan() {
   partialSort(pointsSorted, 1, pointsSorted.length, (a, b) => {
     let o = getOrientation(points[pInitialIndex], points[a], points[b]);
     if (o == 0) {
-      return (distSq(points[pInitialIndex], points[b]) >= distSq(points[pInitialIndex], points[b])) ? -1 : 1;
+      return (distSq(points[pInitialIndex], points[a]) >= distSq(points[pInitialIndex], points[b])) ? -1 : 1;
     }
     return (o == 2) ? -1 : 1;
   })
@@ -93,6 +96,7 @@ function* GrahamScan() {
     // a non-left turn 
     while (getOrientation(points[hull[hull.length - 2]], points[hull[hull.length - 1]], points[pointsSorted[i]]) != 2) {
       hull.pop();
+      yield 3;
     }
     hull.push(pointsSorted[i]);
     yield 3;
@@ -104,7 +108,9 @@ window.addEventListener('DOMContentLoaded', (_) => {
   context = canvas.getContext("2d");
 
   setup();
-  GameLoopController.loop(draw, 10);
+  context.translate(0, canvas.height);
+  context.scale(1, -1);
+  GameLoopController.loop(draw, 8);
 });
 
 function setup() {
@@ -118,8 +124,8 @@ function setup() {
   let buffer = 20;
   for (let i = 0; i < 30; i++) {
     points.push(new Vector2(
-      Math.random() * (canvas.width - buffer),
-      Math.random() * (canvas.height - buffer),
+      MathUtil.random(buffer, canvas.width - buffer),
+      MathUtil.random(buffer, canvas.height - buffer),
     ));
   }
 

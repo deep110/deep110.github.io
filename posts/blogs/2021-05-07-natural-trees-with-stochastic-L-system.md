@@ -33,6 +33,10 @@ There are mainly three types of L systems:
     display: inline-block;
   }
 
+  #desc-rules {
+    text-align: left;
+  }
+
   @media only screen and (max-width: 600px) {
     #container {
       flex-direction: column;

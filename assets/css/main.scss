@@ -34,10 +34,6 @@ html {
     --color-text: #{$brown-color-d10};
     --color-text-light: #{$brown-color-l25};
     --color-hover: #{$brown-color-l55};
-
-    code {
-        background-color: #eff1f5;
-    }
 }
 
 html[theme="dark"] {
@@ -50,10 +46,17 @@ html[theme="dark"] {
 
     code {
         background-color: #{$brown-color};
+        border-color: #707070;
     }
 
     pre {
+        color: #383a42;
+        background-color:#fafafa;
         filter: invert(1) hue-rotate(180deg);
+
+        > code {
+            background-color: transparent;
+        }
     }
 }
 

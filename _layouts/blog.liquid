@@ -13,11 +13,6 @@
                <time datetime="{{ page.published_date }}" itemprop="datePublished">
                   {{ page.published_date | date: "%b %-d, %Y" }}
                </time>
-               {% if page.author %} |
-                  <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-                    <span itemprop="name">{{ page.author }}</span>
-                  </span>
-               {% endif %}
                 | <span class="time">
                     {{ page.content | split:" " | size | divided_by:180 }}
                   </span>
