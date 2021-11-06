@@ -183,7 +183,7 @@ class Turtle {
   }
 }
 
-class LSystem2 {
+class LSystem {
   constructor(axiom, type, rules, ignoredSymbols) {
     this.axiom = axiom;
     this.type = type;
@@ -427,7 +427,7 @@ function setupInteractiveSystem() {
     currentSystem = systems[optgroupId][select.value]
 
     fillDescription(currentSystem);
-    lsystem = new LSystem2(
+    lsystem = new LSystem(
       currentSystem.axiom,
       currentSystem.type,
       currentSystem.rules,
@@ -459,7 +459,7 @@ window.addEventListener('DOMContentLoaded', (_) => {
   currentSystem = systems["context_free"]["system1"];
 
   turtle = new Turtle(currentSystem.axiomAngle, currentSystem.startPositionY, currentSystem.startLength);
-  lsystem = new LSystem2(
+  lsystem = new LSystem(
     currentSystem.axiom,
     currentSystem.type,
     currentSystem.rules,

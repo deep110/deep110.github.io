@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google-site-verification" content="4Y4j9CIooUmnjwIpVMuPbEtO0gQQy1-Q0hymYrw8Yw0"/>
+<meta name="description" content="Generating Convex Hull using Graham Scan">
+<title>
+Generating Convex Hull using Graham Scan
+</title>
+<link rel="stylesheet" href="https://deep110.github.io/assets/css/main.css">
+<script>if(localStorage.getItem("theme")==="dark"){document.documentElement.setAttribute("theme","dark")}</script>
+</head>
+<body>
+<header class="site-header">
+<div class="wrapper">
+<a href="#" id="menu-icon" aria-label="NavDrawer">
+<svg viewBox="0 0 18 15">
+<path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+<path d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+<path d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+</svg>
+</a>
+<a class="site-title" href="https://deep110.github.io/">Deepankar</a>
+<a href="#" id="dark-theme-icon" class="icon" title="Switch to dark theme" aria-label="Toggle Theme">
+<svg viewBox="0 0 512 512">
+<path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/>
+</svg>
+</a>
+<nav class="site-nav">
+<div class="trigger">
+<a class="page-link" href="https://deep110.github.io/about.html">About Me</a>
+<a class="page-link" href="https://deep110.github.io/archive.html">Archive</a>
+<a class="page-link" href="https://deep110.github.io/log.html">Logs</a>
+<a class="page-link" href="https://deep110.github.io/projects.html">Projects</a>
+</div>
+</nav>
+</div>
+</header>
+<div class="page-content">
+<div class="wrapper">
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+<header class="post-header">
+<h1 class="post-title" itemprop="name headline">Generating Convex Hull using Graham Scan</h1>
+<p class="post-meta">
+<time datetime="2021-06-26 00:00:00 +0000" itemprop="datePublished">
+Jun 26, 2021
+</time>
+| <span class="time">
+14
+</span>
+Minute Read
+</p>
+</header>
+<div class="post-content" itemprop="articleBody">
+<p>I am trying to experiment with rendering some basic shapes on a pixel buffer for another <a href="https://github.com/deep110/verlet.rs">side project</a> of mine. After trying out a few rust crates out there and not liking any, I eventually fell into the classic software engineering trap and wrote a small library - <a href="https://github.com/deep110/ada">ada</a>. It supports some basic shapes like - Line2D, Rectangle2D, Ellipse2D, Polygon2D and Bezier2D.</p>
+<p>For polygons I wanted to create random shaped <a href="https://en.wikipedia.org/wiki/Convex_polygon">convex polygons</a>. One way to do that is to generate a set of random points and compute its convex hull. There are many <a href="https://en.wikipedia.org/wiki/Convex_hull_algorithms">convex hull algorithms</a> but the one we are discussing below is <a href="https://en.wikipedia.org/wiki/Graham_scan">Graham Scan</a> which takes O(n log n) time.</p>
+<h3>Visualizing Steps</h3>
+<p>Here is a demo of the steps the algorithm takes.</p>
+<p><canvas id="canvas" height=450 width=550></canvas></p>
+<style>canvas{background:#3a3a3a;display:block;margin:auto;}@media only screen and (max-width:600px){#canvas{width:calc(100vw - 2em);}}</style>
+<h3>How does it work</h3>
+<h4><strong>Step1:</strong> Get the bottom most point P</h4>
+<p>We will start by finding the point with lowest y coordinate. If two points have same y-coordinate we will take the one with least x-coordinate. In the above demo, bottom most point is colored red.</p>
+<div style="text-align:center">
+<img src="/assets/images/2021-06/graham-bottom-point.png" alt="Graham Scan Bottom Most Point"></img>
+</div>
+<br>
+<p>Here is the code to find bottom-most point:</p>
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">class </span><span style="color:#c18401;">GrahamScan {
+</span><span style="color:#c18401;">  </span><span style="color:#4078f2;">constructor</span><span style="color:#c18401;">(</span><span style="color:#383a42;">points</span><span style="color:#c18401;">: []</span><span style="color:#383a42;">Vector2</span><span style="color:#c18401;">) {
+</span><span style="color:#c18401;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">points </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">points;
+</span><span style="color:#c18401;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">startPointIndex </span><span style="color:#0184bc;">= </span><span style="color:#986801;">undefined</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">stack </span><span style="color:#0184bc;">= </span><span style="color:#c18401;">[]</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">  }
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">  function </span><span style="color:#4078f2;">getBottomMostPoint</span><span style="color:#c18401;">() {
+</span><span style="color:#c18401;">    </span><span style="color:#a626a4;">var </span><span style="color:#383a42;">bottomIndex </span><span style="color:#0184bc;">= </span><span style="color:#986801;">0</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">    </span><span style="color:#a626a4;">for </span><span style="color:#c18401;">(</span><span style="color:#a626a4;">let </span><span style="color:#383a42;">i </span><span style="color:#0184bc;">= </span><span style="color:#986801;">1</span><span style="color:#383a42;">; i </span><span style="color:#0184bc;">&lt; </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">points</span><span style="color:#383a42;">.</span><span style="color:#c18401;">length</span><span style="color:#383a42;">; i</span><span style="color:#0184bc;">++</span><span style="color:#c18401;">) {
+</span><span style="color:#c18401;">      </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">pTry </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">points[</span><span style="color:#383a42;">i</span><span style="color:#c18401;">]</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">      </span><span style="color:#a626a4;">if </span><span style="color:#c18401;">(</span><span style="color:#e45649;">pTry</span><span style="color:#383a42;">.</span><span style="color:#c18401;">y </span><span style="color:#0184bc;">&lt; </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">points[</span><span style="color:#383a42;">bottomIndex</span><span style="color:#c18401;">]</span><span style="color:#383a42;">.</span><span style="color:#c18401;">y </span><span style="color:#0184bc;">||
+</span><span style="color:#c18401;">            (</span><span style="color:#e45649;">pTry</span><span style="color:#383a42;">.</span><span style="color:#c18401;">y </span><span style="color:#0184bc;">== </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">points[</span><span style="color:#383a42;">bottomIndex</span><span style="color:#c18401;">]</span><span style="color:#383a42;">.</span><span style="color:#c18401;">y </span><span style="color:#0184bc;">&amp;&amp; </span><span style="color:#e45649;">pTry</span><span style="color:#383a42;">.</span><span style="color:#c18401;">x </span><span style="color:#0184bc;">&lt; </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">points[</span><span style="color:#383a42;">bottomIndex</span><span style="color:#c18401;">]</span><span style="color:#383a42;">.</span><span style="color:#c18401;">x)) {
+</span><span style="color:#c18401;">        </span><span style="color:#383a42;">bottomIndex </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">i;
+</span><span style="color:#c18401;">      }
+</span><span style="color:#c18401;">    }
+</span><span style="color:#c18401;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">startPointIndex </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">bottomIndex;
+</span><span style="color:#c18401;">  }
+</span><span style="color:#c18401;">}
+</span></pre>
+<p>We only iterate through the array once, hence time complexity till now is <code>O(n)</code>.</p>
+<h4><strong>Step2:</strong> Sort the points in increasing order of angle with x-axis</h4>
+<p>Next we will sort the points in increasing order of angle they and Point P make with x-axis. In the above demo, the result of this sorting is shown by drawing a blue line to each point from bottom-most point P. You can intuitively see that marked line moves in anti-clockwise direction.</p>
+<div style="text-align:center">
+<img src="/assets/images/2021-06/graham-sort-order.png" alt="Graham Scan Sort Order"></img>
+</div>
+<br>
+<p>For making a comparison of angles for sorting function, we can calculate <code>cos θ</code> using dot product, but that would be little inefficient and we can do better than that.</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathnormal">cos</span><span class="mord mathnormal" style="margin-right:0.02778em;">θ</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.30744em;vertical-align:-0.936em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.37144em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord">∣</span><span class="mord mathnormal">a</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">∗</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mord">∣</span><span class="mord mathnormal">b</span><span class="mord">∣</span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="mord">.</span><span class="mord mathnormal">b</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.936em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></p>
+<p>We don't need to actually calculate the angle to sort. We can compare the angle made by any two points [Let's call them A and B] using just the cross product of <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.20533em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.20533em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">A</span></span></span><span class="svg-align" style="top:-3.6833299999999998em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="height:0.522em;min-width:0.888em;"><svg xmlns="http://www.w3.org/2000/svg" width='400em' height='0.522em' viewBox='0 0 400000 522' preserveAspectRatio='xMaxYMin slice'><path d='M0 241v40h399891c-47.3 35.3-84 78-110 128
+-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20
+ 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7
+ 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85
+-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5
+-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67
+ 151.7 139 205zm0 0v40h399900v-40z'/></svg></span></span></span></span></span></span></span></span></span> and <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.20533em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.20533em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05017em;">PB</span></span></span><span class="svg-align" style="top:-3.6833299999999998em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="height:0.522em;min-width:0.888em;"><svg xmlns="http://www.w3.org/2000/svg" width='400em' height='0.522em' viewBox='0 0 400000 522' preserveAspectRatio='xMaxYMin slice'><path d='M0 241v40h399891c-47.3 35.3-84 78-110 128
+-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20
+ 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7
+ 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85
+-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5
+-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67
+ 151.7 139 205zm0 0v40h399900v-40z'/></svg></span></span></span></span></span></span></span></span></span>.</p>
+<p>Calculate the cross product for ordered triplet [P, A, B], If</p>
+<pre>
+<code><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.28866em;vertical-align:-0.08333em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.20533em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">A</span></span></span><span class="svg-align" style="top:-3.6833299999999998em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="height:0.522em;min-width:0.888em;"><svg xmlns="http://www.w3.org/2000/svg" width='400em' height='0.522em' viewBox='0 0 400000 522' preserveAspectRatio='xMaxYMin slice'><path d='M0 241v40h399891c-47.3 35.3-84 78-110 128
+-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20
+ 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7
+ 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85
+-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5
+-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67
+ 151.7 139 205zm0 0v40h399900v-40z'/></svg></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.24443em;vertical-align:-0.0391em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.20533em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05017em;">PB</span></span></span><span class="svg-align" style="top:-3.6833299999999998em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="height:0.522em;min-width:0.888em;"><svg xmlns="http://www.w3.org/2000/svg" width='400em' height='0.522em' viewBox='0 0 400000 522' preserveAspectRatio='xMaxYMin slice'><path d='M0 241v40h399891c-47.3 35.3-84 78-110 128
+-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20
+ 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7
+ 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85
+-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5
+-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67
+ 151.7 139 205zm0 0v40h399900v-40z'/></svg></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span></span></span></span> => anti-clockwise means keep order as it is i.e A then B
+
+<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.28866em;vertical-align:-0.08333em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.20533em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">A</span></span></span><span class="svg-align" style="top:-3.6833299999999998em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="height:0.522em;min-width:0.888em;"><svg xmlns="http://www.w3.org/2000/svg" width='400em' height='0.522em' viewBox='0 0 400000 522' preserveAspectRatio='xMaxYMin slice'><path d='M0 241v40h399891c-47.3 35.3-84 78-110 128
+-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20
+ 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7
+ 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85
+-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5
+-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67
+ 151.7 139 205zm0 0v40h399900v-40z'/></svg></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.24443em;vertical-align:-0.0391em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.20533em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05017em;">PB</span></span></span><span class="svg-align" style="top:-3.6833299999999998em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="height:0.522em;min-width:0.888em;"><svg xmlns="http://www.w3.org/2000/svg" width='400em' height='0.522em' viewBox='0 0 400000 522' preserveAspectRatio='xMaxYMin slice'><path d='M0 241v40h399891c-47.3 35.3-84 78-110 128
+-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20
+ 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7
+ 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85
+-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5
+-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67
+ 151.7 139 205zm0 0v40h399900v-40z'/></svg></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span></span></span></span> => clockwise hence swap the order i.e B then A
+
+<span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.28866em;vertical-align:-0.08333em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.20533em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal">A</span></span></span><span class="svg-align" style="top:-3.6833299999999998em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="height:0.522em;min-width:0.888em;"><svg xmlns="http://www.w3.org/2000/svg" width='400em' height='0.522em' viewBox='0 0 400000 522' preserveAspectRatio='xMaxYMin slice'><path d='M0 241v40h399891c-47.3 35.3-84 78-110 128
+-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20
+ 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7
+ 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85
+-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5
+-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67
+ 151.7 139 205zm0 0v40h399900v-40z'/></svg></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">×</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.20533em;vertical-align:0em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.20533em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05017em;">PB</span></span></span><span class="svg-align" style="top:-3.6833299999999998em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="height:0.522em;min-width:0.888em;"><svg xmlns="http://www.w3.org/2000/svg" width='400em' height='0.522em' viewBox='0 0 400000 522' preserveAspectRatio='xMaxYMin slice'><path d='M0 241v40h399891c-47.3 35.3-84 78-110 128
+-16.7 32-27.7 63.7-33 95 0 1.3-.2 2.7-.5 4-.3 1.3-.5 2.3-.5 3 0 7.3 6.7 11 20
+ 11 8 0 13.2-.8 15.5-2.5 2.3-1.7 4.2-5.5 5.5-11.5 2-13.3 5.7-27 11-41 14.7-44.7
+ 39-84.5 73-119.5s73.7-60.2 119-75.5c6-2 9-5.7 9-11s-3-9-9-11c-45.3-15.3-85
+-40.5-119-75.5s-58.3-74.8-73-119.5c-4.7-14-8.3-27.3-11-40-1.3-6.7-3.2-10.8-5.5
+-12.5-2.3-1.7-7.5-2.5-15.5-2.5-14 0-21 3.7-21 11 0 2 2 10.3 6 25 20.7 83.3 67
+ 151.7 139 205zm0 0v40h399900v-40z'/></svg></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span></span></span></span> => points are colinear, keep the one with least distance first
+</code></pre>
+<div style="text-align:center">
+<img src="/assets/images/2021-06/graham-sort-ab.png" alt="Graham Scan Sort AB"></img>
+</div>
+<br>
+<p>In the above picture if we get the order [P, A, B] then cross product will be positive keeping A first then B. Else if we get the order [P, B, A] then product will be negative, causing order to swap, again choosing A first then B.</p>
+<p>Here is the code to implement sorting:</p>
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">class </span><span style="color:#c18401;">GrahamSort {
+</span><span style="color:#c18401;">  ...
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">  </span><span style="font-style:italic;color:#a0a1a7;">/**
+</span><span style="font-style:italic;color:#a0a1a7;">   * To find orientation of ordered triplet (p, q, r).
+</span><span style="font-style:italic;color:#a0a1a7;">   *
+</span><span style="font-style:italic;color:#a0a1a7;">   * @param {Vector2} p, q, r
+</span><span style="font-style:italic;color:#a0a1a7;">   * @return {number} wether points are clockwise, counter-clockwise or colinear
+</span><span style="font-style:italic;color:#a0a1a7;">   *
+</span><span style="font-style:italic;color:#a0a1a7;">   *  0 =&gt; colinear, 1 =&gt; clockwise and 2 =&gt; counter-clockwise
+</span><span style="font-style:italic;color:#a0a1a7;">   */
+</span><span style="color:#c18401;">  function </span><span style="color:#4078f2;">orientation</span><span style="color:#c18401;">(</span><span style="color:#383a42;">p</span><span style="color:#c18401;">, </span><span style="color:#383a42;">q</span><span style="color:#c18401;">, </span><span style="color:#383a42;">r</span><span style="color:#c18401;">) {
+</span><span style="color:#c18401;">    </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">val </span><span style="color:#0184bc;">= </span><span style="color:#c18401;">(</span><span style="color:#e45649;">q</span><span style="color:#383a42;">.</span><span style="color:#c18401;">y </span><span style="color:#0184bc;">- </span><span style="color:#e45649;">p</span><span style="color:#383a42;">.</span><span style="color:#c18401;">y) </span><span style="color:#0184bc;">* </span><span style="color:#c18401;">(</span><span style="color:#e45649;">r</span><span style="color:#383a42;">.</span><span style="color:#c18401;">x </span><span style="color:#0184bc;">- </span><span style="color:#e45649;">q</span><span style="color:#383a42;">.</span><span style="color:#c18401;">x) </span><span style="color:#0184bc;">- </span><span style="color:#c18401;">(</span><span style="color:#e45649;">q</span><span style="color:#383a42;">.</span><span style="color:#c18401;">x </span><span style="color:#0184bc;">- </span><span style="color:#e45649;">p</span><span style="color:#383a42;">.</span><span style="color:#c18401;">x) </span><span style="color:#0184bc;">* </span><span style="color:#c18401;">(</span><span style="color:#e45649;">r</span><span style="color:#383a42;">.</span><span style="color:#c18401;">y </span><span style="color:#0184bc;">- </span><span style="color:#e45649;">q</span><span style="color:#383a42;">.</span><span style="color:#c18401;">y)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">    </span><span style="color:#a626a4;">if </span><span style="color:#c18401;">(</span><span style="color:#383a42;">val </span><span style="color:#0184bc;">== </span><span style="color:#986801;">0</span><span style="color:#c18401;">) </span><span style="color:#a626a4;">return </span><span style="color:#986801;">0</span><span style="color:#383a42;">;  </span><span style="font-style:italic;color:#a0a1a7;">// colinear
+</span><span style="color:#c18401;">    </span><span style="color:#a626a4;">return </span><span style="color:#c18401;">(</span><span style="color:#383a42;">val </span><span style="color:#0184bc;">&gt; </span><span style="color:#986801;">0</span><span style="color:#c18401;">) </span><span style="color:#0184bc;">? </span><span style="color:#986801;">1 </span><span style="color:#0184bc;">: </span><span style="color:#986801;">2</span><span style="color:#383a42;">; </span><span style="font-style:italic;color:#a0a1a7;">// clock or counter-clock wise
+</span><span style="color:#c18401;">  }
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">  function </span><span style="color:#4078f2;">sort</span><span style="color:#c18401;">() {
+</span><span style="color:#c18401;">    </span><span style="font-style:italic;color:#a0a1a7;">// first remove the bottom most point in the array
+</span><span style="color:#c18401;">    </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">startPoint </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">points</span><span style="color:#383a42;">.</span><span style="color:#0184bc;">splice</span><span style="color:#c18401;">(</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">startPointIndex</span><span style="color:#383a42;">, </span><span style="color:#986801;">1</span><span style="color:#c18401;">)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">    </span><span style="font-style:italic;color:#a0a1a7;">// now sort rest of the points
+</span><span style="color:#c18401;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">sortedPoints </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">points</span><span style="color:#383a42;">.</span><span style="color:#0184bc;">sort</span><span style="color:#c18401;">((</span><span style="color:#383a42;">a</span><span style="color:#c18401;">, </span><span style="color:#383a42;">b</span><span style="color:#c18401;">) </span><span style="color:#a626a4;">=&gt; </span><span style="color:#c18401;">{
+</span><span style="color:#c18401;">      </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">o </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">orientation</span><span style="color:#c18401;">(</span><span style="color:#383a42;">startPoint, </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">points[</span><span style="color:#383a42;">a</span><span style="color:#c18401;">]</span><span style="color:#383a42;">, </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">points[</span><span style="color:#383a42;">b</span><span style="color:#c18401;">])</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">      </span><span style="color:#a626a4;">if </span><span style="color:#c18401;">(</span><span style="color:#383a42;">o </span><span style="color:#0184bc;">== </span><span style="color:#986801;">0</span><span style="color:#c18401;">) {
+</span><span style="color:#c18401;">        </span><span style="color:#a626a4;">return </span><span style="color:#c18401;">(</span><span style="color:#e45649;">distSq</span><span style="color:#c18401;">(</span><span style="color:#383a42;">startPoint, </span><span style="color:#e45649;">points</span><span style="color:#c18401;">[</span><span style="color:#383a42;">a</span><span style="color:#c18401;">]) </span><span style="color:#0184bc;">&gt;= </span><span style="color:#e45649;">distSq</span><span style="color:#c18401;">(</span><span style="color:#383a42;">startPoint, </span><span style="color:#e45649;">points</span><span style="color:#c18401;">[</span><span style="color:#383a42;">b</span><span style="color:#c18401;">])) </span><span style="color:#0184bc;">? -</span><span style="color:#986801;">1 </span><span style="color:#0184bc;">: </span><span style="color:#986801;">1</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">      }
+</span><span style="color:#c18401;">      </span><span style="color:#a626a4;">return </span><span style="color:#c18401;">(</span><span style="color:#383a42;">o </span><span style="color:#0184bc;">== </span><span style="color:#986801;">2</span><span style="color:#c18401;">) </span><span style="color:#0184bc;">? -</span><span style="color:#986801;">1 </span><span style="color:#0184bc;">: </span><span style="color:#986801;">1</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">    })</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">stack</span><span style="color:#383a42;">.</span><span style="color:#0184bc;">push</span><span style="color:#c18401;">(</span><span style="color:#383a42;">startPoint</span><span style="color:#c18401;">)</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">  }
+</span><span style="color:#c18401;">}
+</span></pre>
+<p>Sorting can be done via any of the <code>O(n log n)</code> algorithms like quicksort.</p>
+<h4><strong>Step3:</strong> Scan the points for left turns</h4>
+<p>Let us create a stack to keep the points which will make the hull. First we push bottom most Point P and the next two points from sorted points into the stack.</p>
+<div style="text-align:center">
+<img src="/assets/images/2021-06/graham-hull-start.png" alt="Graham Scan Hull Init"></img>
+</div>
+<br>
+<p>Now we will iterate through rest of the points and check wether we will add it in the stack or not. The check is as follows:</p>
+<ul>
+<li>Calculate the orientation of ordered pair of last two points in stack and current point in consideration.</li>
+<li>If orientation is:
+<ul>
+<li><em>Anticlockwise</em> i.e we took a left turn reaching this point, we consider it part of hull and add it in stack</li>
+<li><em>Collinear</em> discard the current point</li>
+<li><em>Clockwise</em> i.e we took a right turn to reach this point, we will temporarily keep this point. But we will keep removing previous points unless new point makes a left turn with last two points.</li>
+</ul>
+</li>
+<li>The points on stack will form a convex hull.</li>
+</ul>
+<div style="text-align:center">
+<img src="/assets/images/2021-06/graham-hull-left.png" alt="Graham Scan Hull Left Turn"></img>
+</div>
+<br>
+<p>Consider the above image, On checking point 3, we see that we took a left turn to reach it with respect to last two points i.e 1 and 2. Hence we will add three 3 in the stack and consider it as part of hull for now.</p>
+<div style="text-align:center">
+<img src="/assets/images/2021-06/graham-hull-right.png" alt="Graham Scan Hull Right Turn"></img>
+</div>
+<br>
+<p>For the next point 4, we see that we have to take a right turn to reach it. Hence we will temporarily keep point 4 and pop previous point i.e 3 and check if point 2 and 4 make a left turn. If yes we will take out 3 and consider 4 as part of hull [as seen in below image].</p>
+<div style="text-align:center">
+<img src="/assets/images/2021-06/graham-hull-right-pop.png" alt="Graham Scan Hull Pop"></img>
+</div>
+<br>
+<p>Well here is the code for final step:</p>
+<pre style="background-color:#fafafa;">
+<span style="color:#383a42;">
+</span><span style="color:#a626a4;">class </span><span style="color:#c18401;">GrahamScan {
+</span><span style="color:#c18401;">  ...
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">  function </span><span style="color:#4078f2;">scan</span><span style="color:#c18401;">() {
+</span><span style="color:#c18401;">    </span><span style="font-style:italic;color:#a0a1a7;">// push first and second point
+</span><span style="color:#c18401;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">stack</span><span style="color:#383a42;">.</span><span style="color:#0184bc;">push</span><span style="color:#c18401;">(</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">sortedPoints[</span><span style="color:#986801;">0</span><span style="color:#c18401;">])</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">stack</span><span style="color:#383a42;">.</span><span style="color:#0184bc;">push</span><span style="color:#c18401;">(</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">sortedPoints[</span><span style="color:#986801;">1</span><span style="color:#c18401;">])</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">
+</span><span style="color:#c18401;">    </span><span style="color:#a626a4;">for </span><span style="color:#c18401;">(</span><span style="color:#a626a4;">let </span><span style="color:#383a42;">i </span><span style="color:#0184bc;">= </span><span style="color:#986801;">2</span><span style="color:#383a42;">; i </span><span style="color:#0184bc;">&lt; </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">sortedPoints</span><span style="color:#383a42;">.</span><span style="color:#c18401;">length</span><span style="color:#383a42;">; i</span><span style="color:#0184bc;">++</span><span style="color:#c18401;">) {
+</span><span style="color:#c18401;">      </span><span style="font-style:italic;color:#a0a1a7;">// Keep removing top while the angle formed by points
+</span><span style="color:#c18401;">      </span><span style="font-style:italic;color:#a0a1a7;">// next-to-top, top, and sortedPoints[i] makes a non-left turn
+</span><span style="color:#c18401;">      </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">stackLength </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">stack</span><span style="color:#383a42;">.</span><span style="color:#c18401;">length</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">      </span><span style="color:#a626a4;">while </span><span style="color:#c18401;">(</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#e45649;">orientation</span><span style="color:#c18401;">(</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">stack[</span><span style="color:#383a42;">stackLength </span><span style="color:#0184bc;">- </span><span style="color:#986801;">2</span><span style="color:#c18401;">]</span><span style="color:#383a42;">, </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">stack[</span><span style="color:#383a42;">stackLength </span><span style="color:#0184bc;">- </span><span style="color:#986801;">1</span><span style="color:#c18401;">]</span><span style="color:#383a42;">, </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">sortedPoints[</span><span style="color:#383a42;">i</span><span style="color:#c18401;">]) </span><span style="color:#0184bc;">!= </span><span style="color:#986801;">2</span><span style="color:#c18401;">) {
+</span><span style="color:#c18401;">        </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">stack</span><span style="color:#383a42;">.</span><span style="color:#0184bc;">pop</span><span style="color:#c18401;">()</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">      }
+</span><span style="color:#c18401;">      </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">stack</span><span style="color:#383a42;">.</span><span style="color:#0184bc;">push</span><span style="color:#c18401;">(</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">sortedPoints[</span><span style="color:#383a42;">i</span><span style="color:#c18401;">])</span><span style="color:#383a42;">;
+</span><span style="color:#c18401;">    }
+</span><span style="color:#c18401;">  }
+</span><span style="color:#c18401;">}
+</span></pre>
+<p>Well it might look like complexity for this step is <code>O(n^2)</code> because for adding each new point we might iterate back the whole loop. But when encountering the right turn, previous point is removed and doesn't get considered for iterating back for a future point. It means each point would only be considered at-most twice. So complexity of this step would actually be <code>O(n)</code>.</p>
+<p>Hence the final complexity of this algorithm will be <code>O(n log n)</code> with sorting taking the most time.</p>
+<p>That's all folks, hope this makes sense.</p>
+<h3>Reference</h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Graham_scan">Wikipedia</a></li>
+</ul>
+</div>
+<div class="post-navigation">
+<a class="next" href="https://deep110.github.io/posts/blogs/2021-05-07-natural-trees-with-stochastic-L-system.html">←&nbsp;Prev Post</a>
+</div>
+<div>
+<script src="https://utteranc.es/client.js" repo="deep110/deep110.github.io" issue-term="pathname" label="comment" theme="github-light" crossorigin="anonymous" async></script>
+</div>
+</article>
+</div>
+</div>
+<footer class="site-footer">
+<div class="wrapper">
+<a class="footer-icon icon" href="https://github.com/deep110" aria-label="Github">
+<svg viewBox="0 0 438.55 438.55">
+<path d="m409.13 114.57c-19.608-33.596-46.205-60.194-79.798-79.8-33.598-19.607-70.277-29.408-110.06-29.408-39.781 0-76.472 9.804-110.06 29.408-33.596 19.605-60.192 46.204-79.8 79.8-19.605 33.595-29.408 70.281-29.408 110.06 0 47.78 13.94 90.745 41.827 128.91 27.884 38.164 63.906 64.572 108.06 79.227 5.14.954 8.945.283 11.419-1.996 2.475-2.282 3.711-5.14 3.711-8.562 0-.571-.049-5.708-.144-15.417-.098-9.709-.144-18.179-.144-25.406l-6.567 1.136c-4.187.767-9.469 1.092-15.846 1-6.374-.089-12.991-.757-19.842-1.999-6.854-1.231-13.229-4.086-19.13-8.559-5.898-4.473-10.085-10.328-12.56-17.556l-2.855-6.57c-1.903-4.374-4.899-9.233-8.992-14.559-4.093-5.331-8.232-8.945-12.419-10.848l-1.999-1.431c-1.332-.951-2.568-2.098-3.711-3.429-1.142-1.331-1.997-2.663-2.568-3.997-.572-1.335-.098-2.43 1.427-3.289s4.281-1.276 8.28-1.276l5.708.853c3.807.763 8.516 3.042 14.133 6.851 5.614 3.806 10.229 8.754 13.846 14.842 4.38 7.806 9.657 13.754 15.846 17.847 6.184 4.093 12.419 6.136 18.699 6.136s11.704-.476 16.274-1.423c4.565-.952 8.848-2.383 12.847-4.285 1.713-12.758 6.377-22.559 13.988-29.41-10.848-1.14-20.601-2.857-29.264-5.14-8.658-2.286-17.605-5.996-26.835-11.14-9.235-5.137-16.896-11.516-22.985-19.126-6.09-7.614-11.088-17.61-14.987-29.979-3.901-12.374-5.852-26.648-5.852-42.826 0-23.035 7.52-42.637 22.557-58.817-7.044-17.318-6.379-36.732 1.997-58.24 5.52-1.715 13.706-.428 24.554 3.853 10.85 4.283 18.794 7.952 23.84 10.994 5.046 3.041 9.089 5.618 12.135 7.708 17.705-4.947 35.976-7.421 54.818-7.421s37.117 2.474 54.823 7.421l10.849-6.849c7.419-4.57 16.18-8.758 26.262-12.565 10.088-3.805 17.802-4.853 23.134-3.138 8.562 21.509 9.325 40.922 2.279 58.24 15.036 16.18 22.559 35.787 22.559 58.817 0 16.178-1.958 30.497-5.853 42.966-3.9 12.471-8.941 22.457-15.125 29.979-6.191 7.521-13.901 13.85-23.131 18.986-9.232 5.14-18.182 8.85-26.84 11.136-8.662 2.286-18.415 4.004-29.263 5.146 9.894 8.562 14.842 22.077 14.842 40.539v60.237c0 3.422 1.19 6.279 3.572 8.562 2.379 2.279 6.136 2.95 11.276 1.995 44.163-14.653 80.185-41.062 108.07-79.226 27.88-38.161 41.825-81.126 41.825-128.91-.01-39.771-9.818-76.454-29.414-110.05z"/>
+</svg>
+</a>
+<a class="footer-icon icon" href="https://www.linkedin.com/in/deepankar-agrawal-318aab96/" aria-label="LinkedIn">
+<svg enable-background="new 0 0 486.392 486.392" version="1.1" viewBox="0 0 486.39 486.39">
+<path d="m243.2 0c-134.3 0-243.2 108.89-243.2 243.2s108.89 243.2 243.2 243.2 243.2-108.89 243.2-243.2c0-134.34-108.89-243.2-243.2-243.2zm-60.799 360.99h-60.799v-212.8h60.799v212.8zm-28.515-225.84c-15.747 0-28.484-12.768-28.484-28.515s12.768-28.515 28.484-28.515c15.747 0.03 28.515 12.798 28.515 28.515 0 15.747-12.768 28.515-28.515 28.515zm241.31 225.84h-60.799v-131.57c0-15.413-4.408-26.204-23.347-26.204-31.403 0-37.452 26.204-37.452 26.204v131.57h-60.799v-212.8h60.799v20.337c8.694-6.657 30.399-20.307 60.799-20.307 19.699 0 60.799 11.795 60.799 83.051v129.72z"/>
+</svg>
+</a>
+<a class="footer-icon icon" href="https://deep110.github.io/rss.xml" aria-label="RSS">
+<svg viewBox="0 0 48 48">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M24 0C10.7452 0 0 10.7452 0 24C0 37.2548 10.7452 48 24 48C37.2548 48 48 37.2548 48 24C48 10.7452 37.2548 0 24 0ZM17.6002 33.6C15.833 33.6 14.4002 32.1672 14.4002 30.4C14.4002 28.6328 15.833 27.2 17.6002 27.2C19.3674 27.2 20.8002 28.6328 20.8002 30.4C20.8002 32.1672 19.3674 33.6 17.6002 33.6ZM36.8 33.6C36.8 21.2488 26.7513 11.2 14.4002 11.2V15.4664C24.3993 15.4664 32.5336 23.6008 32.5336 33.6H36.8ZM14.4 18.6664C22.6343 18.6664 29.3334 25.3656 29.3334 33.6H25.0671C25.0671 27.7184 20.2815 22.9336 14.4 22.9336V18.6664Z"/>
+</svg>
+</a>
+<a class="footer-icon icon" href="mailto:deepankar11093@gmail.com" aria-label="Mail">
+<svg enable-background="new 0 0 299.997 299.997" viewBox="0 0 299.997 299.997"><path d="m149.996 0c-82.839 0-149.995 67.158-149.995 149.997 0 82.837 67.156 150 149.995 150s150-67.163 150-150c0-82.839-67.161-149.997-150-149.997zm.003 52.686 88.763 55.35h-177.526zm89.869 143.737h-.009c0 8.878-7.195 16.072-16.072 16.072h-147.576c-8.878 0-16.072-7.195-16.072-16.072v-84.865c0-.939.096-1.852.252-2.749l84.808 52.883c.104.065.215.109.322.169.112.062.226.122.34.179.599.309 1.216.558 1.847.721.065.018.13.026.195.041.692.163 1.393.265 2.093.265h.005.01c.7 0 1.401-.099 2.093-.265.065-.016.13-.023.195-.041.63-.163 1.245-.412 1.847-.721.114-.057.228-.117.34-.179.106-.06.218-.104.322-.169l84.808-52.883c.156.897.252 1.808.252 2.749z"/></svg>
+</a>
+</div>
+</footer>
+<script type="text/javascript" src="https://deep110.github.io/assets/js/main.js"></script>
+<script type="text/javascript" src="https://deep110.github.io/assets/js/extras/simulate-graham-scan.js"></script>
+<link rel="stylesheet" href="https://deep110.github.io/assets/css/katex.min.css"></script>
+</body>
+</html>
