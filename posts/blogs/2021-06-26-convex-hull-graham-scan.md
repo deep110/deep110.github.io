@@ -211,6 +211,6 @@ Hence the final complexity of this algorithm will be `O(n log n)` with sorting t
 That's all folks, hope this makes sense.
 
 
-### Reference
+### References
 
 - [Wikipedia](https://en.wikipedia.org/wiki/Graham_scan)
