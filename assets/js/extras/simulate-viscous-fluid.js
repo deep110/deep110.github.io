@@ -17,6 +17,12 @@ class Array2f {
     this.data[i + this.ni * j] = val;
   }
 
+  add(val) {
+    for (let k = 0; k < this.data.length; k++) {
+      this.data[k] += val;
+    }
+  }
+
   toString() {
     this.data.toString();
   }
@@ -84,7 +90,7 @@ class FluidSim {
     this.ni = gridRes; // number rows
     this.nj = gridRes; // number columns
     this.dx = 1.0 / gridRes;
-    this.inv_dx = 1 / this.dx;
+    this.inv_dx = gridRes;
 
     // fluid velocity
     this.u = new Array2f(this.ni + 1, this.nj);
@@ -132,16 +138,36 @@ class FluidSim {
   }
 
   advance(dt) {
+    let t = 0;
 
-    // Passively advect particles
-    this.#advectParticles(dt);
+    while (t < dt) {
+      let substep = this.#cfl();
+
+      if (t + substep > dt) {
+        substep = dt - t;
+      }
+      // Passively advect particles
+      this.#advectParticles(substep);
+
+      // Estimate the liquid signed distance for density
+      this.#computePhi();
+
+      // Advance the velocity
+      this.#advect(substep);
+      this.#addGravity(substep);
+
+      t += substep;
+    }
   }
 
-  #getVelocity(position) {
-    let u_val = this.u.interpolateValue(position.scale(this.inv_dx).subtract(new Vector2(0, 0.5)));
-    let v_val = this.v.interpolateValue(position.scale(this.inv_dx).subtract(new Vector2(0.5, 0)));
-
-    return new Vector2(u_val, v_val);
+  #cfl() {
+    let maxvel = 0;
+    for (let i = 0; i < this.u.data.length; ++i) {
+      maxvel = Math.max(maxvel, Math.abs(this.u.data[i]));
+    }
+    for (let i = 0; i < this.v.data.length; ++i)
+      maxvel = Math.max(maxvel, Math.abs(this.v.data[i]));
+    return this.dx / maxvel;
   }
 
   // calculate new particles position based on current velocity
@@ -172,6 +198,88 @@ class FluidSim {
       }
     }
   }
+
+  #computePhi() {
+    this.liquidPhi.fill(3 * this.dx);
+
+    for (let p = 0; p < this.particles.length; p++) {
+      let point = this.particles[p];
+
+      // determine containing cell
+      var [i, fx] = Utils.get_barycentric(point.x / this.dx - 0.5, 0, this.ni);
+      var [j, fy] = Utils.get_barycentric(point.y / this.dx - 0.5, 0, this.nj);
+
+      //compute distance to surrounding few points, keep if it's the minimum
+      for (let j_off = j - 2; j_off <= j + 2; j_off++) {
+        for (let i_off = i - 2; i_off <= i + 2; i_off++) {
+          if (i_off < 0 || i_off >= this.ni || j_off < 0 || j_off >= this.nj)
+            continue;
+
+          let pos = new Vector2((i_off + 0.5) * this.dx, (j_off + 0.5) * this.dx);
+          let phiTemp = pos.distance(point) - 1.02 * this.particleRadius;
+          this.liquidPhi.set(i_off, j_off, Math.min(this.liquidPhi.get(i_off, j_off), phiTemp));
+        }
+      }
+    }
+
+    // "extrapolate" phi into solids if nearby
+    for (let j = 0; j < this.nj; j++) {
+      for (let i = 0; i < this.ni; i++) {
+        if (this.liquidPhi.get(i, j) < 0.5 * this.dx) {
+          let solidPhiVal = 0.25 * (
+            this.signedBoundary.get(i, j) +
+            this.signedBoundary.get(i + 1, j) +
+            this.signedBoundary.get(i, j + 1) +
+            this.signedBoundary.get(i + 1, j + 1)
+          );
+          if (solidPhiVal < 0) this.liquidPhi.set(i, j, -0.5 * this.dx);
+        }
+      }
+    }
+  }
+
+  // Basic first order semi-Lagrangian advection of velocities
+  #advect(dt) {
+    // semi-Lagrangian advection on u-component of velocity
+    for (let j = 0; j < this.nj; ++j) {
+      for (let i = 0; i < this.ni + 1; ++i) {
+        let pos = new Vector2(i * this.dx, (j + 0.5) * this.dx);
+        pos = this.#traceRK2(pos, -dt);
+        this.tempU.set(i, j, this.#getVelocity(pos).x);
+      }
+    }
+
+    // semi-Lagrangian advection on v-component of velocity
+    for (let j = 0; j < this.nj + 1; ++j) {
+      for (let i = 0; i < this.ni; ++i) {
+        let pos = new Vector2((i + 0.5) * this.dx, j * this.dx);
+        pos = this.#traceRK2(pos, -dt);
+        this.tempV.set(i, j, this.#getVelocity(pos).y);
+      }
+    }
+
+    // move update velocities into u/v vectors
+    this.u = this.tempU;
+    this.v = this.tempV;
+  }
+
+  #addGravity(_dt) {
+    this.v.add(-0.1);
+  }
+
+  #getVelocity(position) {
+    let u_val = this.u.interpolateValue(position.scale(this.inv_dx).subtract(new Vector2(0, 0.5)));
+    let v_val = this.v.interpolateValue(position.scale(this.inv_dx).subtract(new Vector2(0.5, 0)));
+
+    return new Vector2(u_val, v_val);
+  }
+
+  #traceRK2(position, dt) {
+    let velocity = this.#getVelocity(position);
+    let newPos = position.add(velocity.iscale(0.5 * dt));
+    velocity = this.#getVelocity(newPos);
+    return position.add(velocity.iscale(dt));
+  }
 }
 
 function setupGridContainer(sim, displayLen) {
@@ -197,6 +305,7 @@ function setupGridContainer(sim, displayLen) {
 
   grid.pivot.x = grid.width / 2;
   grid.pivot.y = grid.height / 2;
+
 
   return grid;
 }
@@ -225,6 +334,10 @@ function setUpDragBackground(sim, displayLen) {
   const bg = new PIXI.Graphics();
   bg.beginFill(0x3a3a3a, 0.1);
   bg.drawRect(0, 0, displayLen, displayLen);
+  bg.endFill();
+
+  bg.lineStyle(1, 0xFFBD01, 1);
+  bg.drawCircle(bg.width / 2, bg.height / 2, 0.4 * displayLen);
   bg.endFill();
 
   bg.x = app.view.width / 2;
@@ -290,7 +403,9 @@ function update(dt) {
   }
 
   // advance simulation on every update i.e 1/FPS seconds.
-  fluidSim.advance(0.01);
+  if (playSimulation) {
+    fluidSim.advance(0.01);
+  }
 }
 
 function insideCircle(x, y, cx, cy, radius) {
@@ -328,6 +443,11 @@ app.stage.addChild(background);
 
 // Add some particles for testing
 fluidSim.addParticle(0.662281, 0.59606);
-fluidSim.addParticle(0.582053, 0.648958);
-fluidSim.addParticle(0.60656, 0.586516);
+// fluidSim.addParticle(0.582053, 0.648958);
+// fluidSim.addParticle(0.60656, 0.586516);
 
+
+var playSimulation = true
+function pause(e) {
+  playSimulation = !playSimulation;
+}

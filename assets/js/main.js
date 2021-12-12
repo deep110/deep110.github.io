@@ -155,13 +155,8 @@ Vector2.prototype = {
 
 	inormalize: function () {
 		var mag = this.magnitude();
-		if (Math.abs(mag) < 1e-9) {
-			this.x = 0;
-			this.y = 0;
-		} else {
-			this.x /= mag;
-			this.y /= mag;
-		}
+		this.x /= mag;
+		this.y /= mag;
 		return this;
 	},
 
