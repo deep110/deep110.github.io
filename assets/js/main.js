@@ -100,6 +100,12 @@ Vector2.prototype = {
 		return new Vector2(this.x * scalar, this.y * scalar);
 	},
 
+	iscale: function (scalar) {
+		this.x = this.x * scalar;
+		this.y = this.y * scalar;
+		return this;
+	},
+
 	dot: function (vector) {
 		return (this.x * vector.x + this.y + vector.y);
 	},
@@ -145,6 +151,18 @@ Vector2.prototype = {
 			vector.y /= mag;
 		}
 		return vector;
+	},
+
+	inormalize: function () {
+		var mag = this.magnitude();
+		if (Math.abs(mag) < 1e-9) {
+			this.x = 0;
+			this.y = 0;
+		} else {
+			this.x /= mag;
+			this.y /= mag;
+		}
+		return this;
 	},
 
 	angle: function () {

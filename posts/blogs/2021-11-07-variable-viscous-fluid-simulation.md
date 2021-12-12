@@ -9,7 +9,9 @@ data:
 
 hello world
 
-<div id="canvas-container"></div>
+<div id="canvas-container">
+  <canvas id="canvas" height=500 width=500></canvas>
+</div>
 
 <style>
   canvas {
@@ -38,3 +40,11 @@ FLIP + viscosity
 
 Euler equations & viscosity - pg 13
 Boundary conditions
+
+
+### Simulation
+
+1. Advect particles
+- For each particle, get the current velocity
+- Use Rungee-Kutta 2nd order integration to get new position
+

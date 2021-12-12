@@ -213,4 +213,4 @@ That's all folks, hope this makes sense.
 
 ### References
 
-- [Wikipedia](https://en.wikipedia.org/wiki/Graham_scan)
+1. [Wikipedia](https://en.wikipedia.org/wiki/Graham_scan)
