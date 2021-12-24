@@ -9,6 +9,13 @@ class Array2f {
     this.data.fill(val);
   }
 
+  copy(arr) {
+    let d = arr.data;
+    for (let k = 0; k < this.data.length; k++) {
+      this.data[k] = d[k];
+    }
+  }
+
   get(i, j) {
     return this.data[i + this.ni * j];
   }
@@ -28,8 +35,8 @@ class Array2f {
   }
 
   interpolateValue(point) {
-    var [i, fx] = Utils.get_barycentric(point.x, 0, this.ni);
-    var [j, fy] = Utils.get_barycentric(point.y, 0, this.nj);
+    var [i, fx] = Utils.getBarycentric(point.x, 0, this.ni);
+    var [j, fy] = Utils.getBarycentric(point.y, 0, this.nj);
 
     return Utils.bilerp(
       this.get(i, j), this.get(i + 1, j),
@@ -38,8 +45,8 @@ class Array2f {
   }
 
   interpolateGradient(point) {
-    var [i, fx] = Utils.get_barycentric(point.x, 0, this.ni);
-    var [j, fy] = Utils.get_barycentric(point.y, 0, this.nj);
+    var [i, fx] = Utils.getBarycentric(point.x, 0, this.ni);
+    var [j, fy] = Utils.getBarycentric(point.y, 0, this.nj);
 
     let v00 = this.get(i, j);
     let v01 = this.get(i, j + 1);
@@ -68,7 +75,7 @@ class Utils {
     return Utils.lerp(Utils.lerp(v00, v10, fx), Utils.lerp(v01, v11, fx), fy);
   }
 
-  static get_barycentric(val, i_low, i_high) {
+  static getBarycentric(val, i_low, i_high) {
     var s = Math.floor(val);
     var i = s;
     var f = 0;
@@ -90,7 +97,7 @@ class FluidSim {
     this.ni = gridRes; // number rows
     this.nj = gridRes; // number columns
     this.dx = 1.0 / gridRes;
-    this.inv_dx = gridRes;
+    this.invDx = gridRes;
 
     // fluid velocity
     this.u = new Array2f(this.ni + 1, this.nj);
@@ -156,6 +163,13 @@ class FluidSim {
       this.#advect(substep);
       this.#addGravity(substep);
 
+      this.#applyViscosity(substep);
+
+
+      //For extrapolated velocities, replace the normal component with
+      //that of the object.
+      this.#constrainVelocity();
+
       t += substep;
     }
   }
@@ -189,7 +203,7 @@ class FluidSim {
 
       // Particles can still occasionally leave the domain due to truncation errors,
       // interpolation error, or large timesteps, so we project them back in for good measure.
-      const scaledPos = newPosition.scale(this.inv_dx);
+      const scaledPos = newPosition.scale(this.invDx);
       const phiValue = this.signedBoundary.interpolateValue(scaledPos);
       if (phiValue < 0) {
         let normal = this.signedBoundary.interpolateGradient(scaledPos);
@@ -206,8 +220,8 @@ class FluidSim {
       let point = this.particles[p];
 
       // determine containing cell
-      var [i, fx] = Utils.get_barycentric(point.x / this.dx - 0.5, 0, this.ni);
-      var [j, fy] = Utils.get_barycentric(point.y / this.dx - 0.5, 0, this.nj);
+      var [i, _fx] = Utils.getBarycentric(point.x / this.dx - 0.5, 0, this.ni);
+      var [j, _fy] = Utils.getBarycentric(point.y / this.dx - 0.5, 0, this.nj);
 
       //compute distance to surrounding few points, keep if it's the minimum
       for (let j_off = j - 2; j_off <= j + 2; j_off++) {
@@ -259,17 +273,69 @@ class FluidSim {
     }
 
     // move update velocities into u/v vectors
-    this.u = this.tempU;
-    this.v = this.tempV;
+    this.u.copy(this.tempU);
+    this.v.copy(this.tempV);
   }
 
   #addGravity(_dt) {
     this.v.add(-0.1);
   }
 
+  #applyViscosity(dt) {
+    this.#computeVolumeFractions(this.liquidPhi, this.cVol, new Vector2(-0.5, -0.5), 2);
+    this.#computeVolumeFractions(this.liquidPhi, this.nVol, new Vector2(-1, -1), 2);
+    this.#computeVolumeFractions(this.liquidPhi, this.uVol, new Vector2(-1, -0.5), 2);
+    this.#computeVolumeFractions(this.liquidPhi, this.vVol, new Vector2(-0.5, -1), 2);
+  }
+
+  #constrainVelocity() {
+    this.tempU.copy(this.u);
+    this.tempV.copy(this.v);
+
+    //constrain u
+    for (let j = 0; j < this.u.nj; ++j) {
+      for (let i = 0; i < this.u.ni; ++i) {
+        if (this.uWeights.get(i, j) == 0) {
+          //apply constraint
+          let pos = new Vector2(i * this.dx, (j + 0.5) * this.dx);
+          let vel = this.#getVelocity(pos);
+          pos.iscale(this.invDx);
+          let normal = this.signedBoundary.interpolateGradient(pos);
+          normal.inormalize();
+
+          let perpComponent = vel.dot(normal);
+          vel.x -= perpComponent * normal.x;
+          this.tempU.set(i, j, vel.x);
+        }
+      }
+    }
+
+    //constrain v
+    for (let j = 0; j < this.v.nj; ++j) {
+      for (let i = 0; i < this.v.ni; ++i) {
+        if (this.vWeights.get(i, j) == 0) {
+          //apply constraint
+          let pos = new Vector2((i + 0.5) * this.dx, j * this.dx);
+          let vel = this.#getVelocity(pos);
+          pos.iscale(this.invDx);
+          let normal = this.signedBoundary.interpolateGradient(pos);
+          normal.inormalize();
+
+          let perpComponent = vel.dot(normal);
+          vel.y -= perpComponent * normal.y;
+          this.tempV.set(i, j, vel.y);
+        }
+      }
+    }
+
+    //update
+    this.u.copy(this.tempU);
+    this.v.copy(this.tempV);
+  }
+
   #getVelocity(position) {
-    let u_val = this.u.interpolateValue(position.scale(this.inv_dx).subtract(new Vector2(0, 0.5)));
-    let v_val = this.v.interpolateValue(position.scale(this.inv_dx).subtract(new Vector2(0.5, 0)));
+    let u_val = this.u.interpolateValue(position.scale(this.invDx).subtract(new Vector2(0, 0.5)));
+    let v_val = this.v.interpolateValue(position.scale(this.invDx).subtract(new Vector2(0.5, 0)));
 
     return new Vector2(u_val, v_val);
   }
@@ -279,6 +345,29 @@ class FluidSim {
     let newPos = position.add(velocity.iscale(0.5 * dt));
     velocity = this.#getVelocity(newPos);
     return position.add(velocity.iscale(dt));
+  }
+
+  #computeVolumeFractions(levelset, fractions, fraction_origin, subdivision) {
+    // Assumes levelset and fractions have the same dx
+    let sub_dx = 1.0 / subdivision;
+    let sample_max = subdivision * subdivision;
+    for (let j = 0; j < fractions.nj; ++j) {
+      for (let i = 0; i < fractions.ni; ++i) {
+        let start_x = fraction_origin.x + i;
+        let start_y = fraction_origin.y + j;
+        let incount = 0;
+
+        for (let sub_j = 0; sub_j < subdivision; ++sub_j) {
+          for (let sub_i = 0; sub_i < subdivision; ++sub_i) {
+            let x_pos = start_x + (sub_i + 0.5) * sub_dx;
+            let y_pos = start_y + (sub_j + 0.5) * sub_dx;
+            let phi_val = levelset.interpolateValue(new Vector2(x_pos, y_pos));
+            if (phi_val < 0) ++incount;
+          }
+        }
+        fractions.set(i, j, incount / sample_max);
+      }
+    }
   }
 }
 
@@ -404,7 +493,13 @@ function update(dt) {
 
   // advance simulation on every update i.e 1/FPS seconds.
   if (playSimulation) {
+    var start = Date.now();
+    // for (let i = 0; i < 3; i++) {
+    // }
     fluidSim.advance(0.01);
+    // playSimulation = false;
+    var end = Date.now();
+    console.log(`Execution time: ${end - start} ms`);
   }
 }
 

@@ -107,7 +107,7 @@ Vector2.prototype = {
 	},
 
 	dot: function (vector) {
-		return (this.x * vector.x + this.y + vector.y);
+		return (this.x * vector.x + this.y * vector.y);
 	},
 
 	cross: function (vector) {
