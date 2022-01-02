@@ -66,6 +66,65 @@ class Array2f {
   }
 }
 
+class SparseMatrixf {
+  constructor(dim) {
+    this.n = dim;
+    this.index = Array.from({ length: dim }, () => []);
+    this.value = Array.from({ length: dim }, () => []);
+  }
+
+  zero() {
+    for (var i = 0; i < this.n; i++) {
+      this.index[i].length = 0;
+      this.value[i].length = 0;
+    }
+  }
+
+  setElement(i, j, newValue) {
+    for (let k = 0; k < this.index[i].length; ++k) {
+      if (this.index[i][k] == j) {
+        this.value[i][k] = newValue;
+        return;
+      } else if (this.index[i][k] > j) {
+        this.index[i].splice(k, 0, j);
+        this.value[i].splice(k, 0, newValue);
+        return;
+      }
+    }
+    this.index[i].push(j);
+    this.value[i].push(newValue);
+  }
+
+  addToElement(i, j, incrementValue) {
+    for (let k = 0; k < this.index[i].length; ++k) {
+      if (this.index[i][k] == j) {
+        this.value[i][k] += incrementValue;
+        return;
+      } else if (this.index[i][k] > j) {
+        this.index[i].splice(k, 0, j);
+        this.value[i].splice(k, 0, incrementValue);
+        return;
+      }
+    }
+    this.index[i].push(j);
+    this.value[i].push(incrementValue);
+  }
+}
+
+class FixedSparseMatrixf {
+  constructor(dim) {
+    this.n = dim;
+    this.value = []; // nonzero values row by row
+    this.colIndex = []; // corresponding column indices
+    this.rowStart = [];
+  }
+
+  zero() {
+  }
+
+
+}
+
 class Utils {
   static lerp(value0, value1, f) {
     return (1 - f) * value0 + f * value1;
@@ -282,10 +341,16 @@ class FluidSim {
   }
 
   #applyViscosity(dt) {
+    // Estimate weights at velocity and stress positions
     this.#computeVolumeFractions(this.liquidPhi, this.cVol, new Vector2(-0.5, -0.5), 2);
     this.#computeVolumeFractions(this.liquidPhi, this.nVol, new Vector2(-1, -1), 2);
     this.#computeVolumeFractions(this.liquidPhi, this.uVol, new Vector2(-1, -0.5), 2);
     this.#computeVolumeFractions(this.liquidPhi, this.vVol, new Vector2(-0.5, -1), 2);
+
+    this.#solveViscosity(dt);
+  }
+
+  #solveViscosity(dt) {
   }
 
   #constrainVelocity() {
@@ -542,7 +607,7 @@ fluidSim.addParticle(0.662281, 0.59606);
 // fluidSim.addParticle(0.60656, 0.586516);
 
 
-var playSimulation = true
+var playSimulation = false
 function pause(e) {
   playSimulation = !playSimulation;
 }

@@ -2,6 +2,7 @@
 layout: blog.liquid
 title:  "Variable Viscous Fluid Simulation"
 categories: ["blog"]
+is_draft: true
 data:
   css: [katex.min.css]
   scripts: [lib/pixi.min.js, extras/simulate-viscous-fluid.js]
@@ -12,6 +13,8 @@ hello world
 <div id="canvas-container">
   <canvas id="canvas" height=500 width=500></canvas>
 </div>
+
+<button onclick="pause()">ClickMe</button>
 
 <style>
   canvas {
