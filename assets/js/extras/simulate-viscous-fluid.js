@@ -266,7 +266,7 @@ class FluidSim {
       const phiValue = this.signedBoundary.interpolateValue(scaledPos);
       if (phiValue < 0) {
         let normal = this.signedBoundary.interpolateGradient(scaledPos);
-        normal.inormalize();
+        normal.normalize();
         this.particles[p] = newPosition.subtract(normal.iscale(phiValue));
       }
     }
@@ -366,7 +366,7 @@ class FluidSim {
           let vel = this.#getVelocity(pos);
           pos.iscale(this.invDx);
           let normal = this.signedBoundary.interpolateGradient(pos);
-          normal.inormalize();
+          normal.normalize();
 
           let perpComponent = vel.dot(normal);
           vel.x -= perpComponent * normal.x;
@@ -384,7 +384,7 @@ class FluidSim {
           let vel = this.#getVelocity(pos);
           pos.iscale(this.invDx);
           let normal = this.signedBoundary.interpolateGradient(pos);
-          normal.inormalize();
+          normal.normalize();
 
           let perpComponent = vel.dot(normal);
           vel.y -= perpComponent * normal.y;

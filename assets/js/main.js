@@ -73,110 +73,109 @@ var GameLoopController = {
 	timeElapsed: 0,
 };
 
-function Vector2(x, y) {
-	this.x = (x === undefined) ? 0 : x;
-	this.y = (y === undefined) ? 0 : y;
-}
+class Vector2 {
+	constructor(x, y) {
+		this.x = (x === undefined) ? 0 : x;
+		this.y = (y === undefined) ? 0 : y;
+	}
 
-Vector2.prototype = {
-	set: function (x, y) {
+	set(x, y) {
 		this.x = x || 0;
 		this.y = y || 0;
-	},
+	}
 
-	clone: function () {
+	clone() {
 		return new Vector2(this.x, this.y)
-	},
+	}
 
-	add: function (vector) {
+	add(vector) {
 		return new Vector2(this.x + vector.x, this.y + vector.y);
-	},
+	}
 
-	subtract: function (vector) {
+	subtract(vector) {
 		return new Vector2(this.x - vector.x, this.y - vector.y);
-	},
+	}
 
-	scale: function (scalar) {
+	scale(scalar) {
 		return new Vector2(this.x * scalar, this.y * scalar);
-	},
+	}
 
-	iscale: function (scalar) {
+	iscale(scalar) {
 		this.x = this.x * scalar;
 		this.y = this.y * scalar;
 		return this;
-	},
+	}
 
-	dot: function (vector) {
+	dot(vector) {
 		return (this.x * vector.x + this.y * vector.y);
-	},
+	}
 
-	cross: function (vector) {
+	cross(vector) {
 		return (this.x * vector.y - vector.x * this.y);
-	},
+	}
 
-	moveTowards: function (vector, t) {
+	moveTowards(vector, t) {
 		// Linearly interpolates between vectors A and B by t.
 		// t = 0 returns A, t = 1 returns B
 		t = Math.min(t, 1); // still allow negative t
 		var diff = vector.subtract(this);
 		return this.add(diff.scale(t));
-	},
+	}
 
-	magnitude: function () {
+	magnitude() {
 		return Math.sqrt(this.magnitudeSqr());
-	},
+	}
 
-	magnitudeSqr: function () {
+	magnitudeSqr() {
 		return (this.x * this.x + this.y * this.y);
-	},
+	}
 
-	distance: function (vector) {
+	distance(vector) {
 		return Math.sqrt(this.distanceSqr(vector));
-	},
+	}
 
-	distanceSqr: function (vector) {
+	distanceSqr(vector) {
 		var deltaX = this.x - vector.x;
 		var deltaY = this.y - vector.y;
 		return (deltaX * deltaX + deltaY * deltaY);
-	},
+	}
 
-	normalize: function () {
-		var mag = this.magnitude();
-		var vector = this.clone();
-		if (Math.abs(mag) < 1e-9) {
-			vector.x = 0;
-			vector.y = 0;
-		} else {
-			vector.x /= mag;
-			vector.y /= mag;
-		}
-		return vector;
-	},
-
-	inormalize: function () {
+	normalize() {
 		var mag = this.magnitude();
 		this.x /= mag;
 		this.y /= mag;
 		return this;
-	},
+	}
 
-	angle: function () {
+	angle() {
 		return Math.atan2(this.y, this.x);
-	},
+	}
 
-	rotate: function (alpha) {
+	rotate(alpha) {
 		var cos = Math.cos(alpha);
 		var sin = Math.sin(alpha);
 		var vector = new Vector2();
 		vector.x = this.x * cos - this.y * sin;
 		vector.y = this.x * sin + this.y * cos;
 		return vector;
-	},
-};
+	}
+
+	static random() {
+		let randomAngle = MathUtil.randomFloat(0, MathUtil.PI2);
+		return new Vector2(Math.cos(randomAngle), Math.sin(randomAngle));
+	}
+}
 
 class MathUtil {
-	/* random number between min and max [included] */
-	static random(min, max) {
-		return Math.floor(Math.random() * (max - min + 1) + min)
+	static PI2 = 2 * Math.PI;
+
+	/* random integer between min and max [excluded] */
+	static randomInt(min, max) {
+		return Math.floor(Math.random() * (max - min) + min)
+	}
+
+	/* random float between min and max [excluded] */
+	static randomFloat(min, max) {
+		return Math.random() * (max - min) + min
 	}
 }
