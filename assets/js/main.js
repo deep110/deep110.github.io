@@ -66,11 +66,17 @@ var GameLoopController = {
 				loopFunc(GameLoopController.timeElapsed);
 				GameLoopController.timeElapsed -= targetTime;
 			}
-			GameLoopController.loop(loopFunc, targetFps);
+			if (!GameLoopController.toStop) {
+				GameLoopController.loop(loopFunc, targetFps);
+			}
 		});
+	},
+	stop: function() {
+		GameLoopController.toStop = true;
 	},
 	stamp: undefined,
 	timeElapsed: 0,
+	toStop: false,
 };
 
 class Vector2 {
@@ -90,6 +96,12 @@ class Vector2 {
 
 	add(vector) {
 		return new Vector2(this.x + vector.x, this.y + vector.y);
+	}
+
+	iadd(vector) {
+		this.x += vector.x;
+		this.y += vector.y;
+		return this;
 	}
 
 	subtract(vector) {
@@ -160,6 +172,9 @@ class Vector2 {
 		return vector;
 	}
 
+	/**
+	 * generates a random unit vector
+	 */
 	static random() {
 		let randomAngle = MathUtil.randomFloat(0, MathUtil.PI2);
 		return new Vector2(Math.cos(randomAngle), Math.sin(randomAngle));
