@@ -1,5 +1,5 @@
-let canvas;
-let context;
+let canvas = document.getElementById("canvas");
+let context = canvas.getContext("2d");
 let lsystem;
 
 var labels = {
@@ -452,34 +452,29 @@ function fillDescription(cs) {
   document.getElementById("desc-rules").innerHTML = ruleStr
 }
 
-window.addEventListener('DOMContentLoaded', (_) => {
-  // setup
-  canvas = document.getElementById("canvas");
-  context = canvas.getContext("2d");
-  currentSystem = systems["context_free"]["system1"];
+// setup
+currentSystem = systems["context_free"]["system1"];
+turtle = new Turtle(currentSystem.axiomAngle, currentSystem.startPositionY, currentSystem.startLength);
+lsystem = new LSystem(
+  currentSystem.axiom,
+  currentSystem.type,
+  currentSystem.rules,
+  currentSystem.ignore,
+);
 
-  turtle = new Turtle(currentSystem.axiomAngle, currentSystem.startPositionY, currentSystem.startLength);
-  lsystem = new LSystem(
-    currentSystem.axiom,
-    currentSystem.type,
-    currentSystem.rules,
-    currentSystem.ignore,
-  );
+setupInteractiveSystem();
+render(lsystem.getString());
 
-  setupInteractiveSystem();
+document.getElementById("generate").addEventListener("click", function () {
+  // generate next iteration
+  var code = lsystem.iterate();
+
+  // render the next generated iteration
+  render(code);
+});
+
+document.getElementById("reset").addEventListener("click", function () {
+  turtle.reset(currentSystem.axiomAngle, currentSystem.startPositionY, currentSystem.startLength);
+  lsystem.reset();
   render(lsystem.getString());
-
-  document.getElementById("generate").addEventListener("click", function () {
-    // generate next iteration
-    var code = lsystem.iterate();
-
-    // render the next generated iteration
-    render(code);
-  });
-
-  document.getElementById("reset").addEventListener("click", function () {
-    turtle.reset(currentSystem.axiomAngle, currentSystem.startPositionY, currentSystem.startLength);
-    lsystem.reset();
-    render(lsystem.getString());
-  });
 });

@@ -1,5 +1,4 @@
 const NUM_STARS = 300;
-const PI2 = 2 * Math.PI;
 let SPEED = 60;
 
 function map(value, low1, high1, low2, high2) {
@@ -8,18 +7,18 @@ function map(value, low1, high1, low2, high2) {
 
 class Star {
     constructor() {
-        this.x = MathUtil.random(-1000, 1000);
-        this.y = MathUtil.random(-1000, 1000);
-        this.z = MathUtil.random(100, 1000);
+        this.x = MathUtil.randomInt(-1000, 1000);
+        this.y = MathUtil.randomInt(-1000, 1000);
+        this.z = MathUtil.randomInt(100, 1000);
         this.pz = this.z;
     }
 
     update() {
         this.z = this.z-SPEED
         if (this.z < 1) {
-            this.x = MathUtil.random(-1000, 1000);
-            this.y = MathUtil.random(-1000, 1000);
-            this.z = MathUtil.random(100, 1000);
+            this.x = MathUtil.randomInt(-1000, 1000);
+            this.y = MathUtil.randomInt(-1000, 1000);
+            this.z = MathUtil.randomInt(100, 1000);
             this.pz = this.z;
         }
     }
@@ -29,10 +28,10 @@ class Star {
 
         let sx = map(this.x/this.z, -1, 1, 0, canvas.width);
         let sy = map(this.y/this.z, -1, 1, 0, canvas.height);
-        let r = map(this.z, 100, 1000, MathUtil.random(2, 5), 1);
+        let r = map(this.z, 100, 1000, MathUtil.randomInt(2, 6), 1);
 
         ctx.fillStyle = "#FFF";
-        ctx.arc(sx, sy, r, 0, PI2);
+        ctx.arc(sx, sy, r, 0, MathUtil.PI2);
         ctx.fill();
 
         ctx.beginPath();
@@ -50,26 +49,20 @@ class Star {
 
 }
 
-window.addEventListener('DOMContentLoaded', (_) => {
-    document.getElementById("icon-play").addEventListener("click", (_) => {
-        document.getElementById("overlay").remove()
-        setup();
-    });
-});
-
-let canvas;
-let context;
+let canvas = document.getElementById("myCanvas");
+let context = canvas.getContext("2d");
 let stars = [];
 
-function setup() {
-    canvas = document.getElementById("myCanvas");
+document.getElementById("icon-play").addEventListener("click", (_) => {
+    document.getElementById("overlay").remove();
+    setup();
+});
 
+function setup() {
     // set canvas width and height
     canvasContainer = document.getElementById("canvas-container");
-    canvas.width = canvasContainer.offsetWidth
-    canvas.height = canvasContainer.offsetHeight
-
-    context = canvas.getContext("2d");
+    canvas.width = canvasContainer.offsetWidth;
+    canvas.height = canvasContainer.offsetHeight;
 
     var slider = document.getElementById("myRange");
     slider.value = SPEED;

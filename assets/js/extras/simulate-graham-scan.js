@@ -1,5 +1,3 @@
-const PI2 = 2 * Math.PI;
-
 var points = [];
 var pInitialIndex = null;
 var pSelect = null;
@@ -124,8 +122,8 @@ function setup() {
   let buffer = 20;
   for (let i = 0; i < 30; i++) {
     points.push(new Vector2(
-      MathUtil.random(buffer, canvas.width - buffer),
-      MathUtil.random(buffer, canvas.height - buffer),
+      MathUtil.randomInt(buffer, canvas.width - buffer),
+      MathUtil.randomInt(buffer, canvas.height - buffer),
     ));
   }
 
@@ -146,7 +144,7 @@ function draw(dt) {
 
     context.strokeStyle = "#FF0000";
     context.lineWidth = 5;
-    context.arc(points[pInitialIndex].x, points[pInitialIndex].y, 10, 0, PI2);
+    context.arc(points[pInitialIndex].x, points[pInitialIndex].y, 10, 0, MathUtil.PI2);
     context.stroke();
   }
 
@@ -162,7 +160,7 @@ function draw(dt) {
     context.beginPath();
     context.strokeStyle = "#0000FF";
     context.lineWidth = 4;
-    context.arc(pSelect.x, pSelect.y, 10, 0, PI2);
+    context.arc(pSelect.x, pSelect.y, 10, 0, MathUtil.PI2);
     context.stroke();
   }
 
@@ -218,7 +216,7 @@ function drawPoints(ctx) {
   ctx.fillStyle = "#FFFFFFA0";
   for (let i = 0; i < points.length; i++) {
     ctx.moveTo(points[i].x, points[i].y);
-    ctx.arc(points[i].x, points[i].y, 4, 0, PI2);
+    ctx.arc(points[i].x, points[i].y, 4, 0, MathUtil.PI2);
   }
   ctx.fill();
 }
