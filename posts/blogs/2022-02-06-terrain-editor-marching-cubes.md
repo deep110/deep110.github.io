@@ -2,10 +2,9 @@
 layout: blog.liquid
 title:  "Terrain Generation and Editing using Marching Cubes"
 categories: ["blog"]
-is_draft: true
 data:
   css: [katex.min.css]
-  scripts: [lib/three.min.js, lib/orbit-controls.js ,extras/terrain-editor-marching-cubes.js]
+  scripts: [lib/three.min.js, lib/orbit-controls.min.js, lib/simplex-noise.min.js, extras/terrain-editor-marching-cubes.js]
 ---
 
 <div id="canvas-container">
@@ -64,3 +63,9 @@ data:
 </style>
 
 Hello world
+
+### Refrences
+
+1. http://paulbourke.net/geometry/polygonise/
+2. https://github.com/mrdoob/three.js/blob/master/examples/webgl_marchingcubes.html
+3. https://www.youtube.com/watch?v=M3iI2l0ltbE
