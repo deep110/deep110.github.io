@@ -603,8 +603,7 @@ function setup() {
     camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
 
     renderer = new THREE.WebGLRenderer({ canvas: canvas });
-    const pixelRatio = window.devicePixelRatio;
-    renderer.setSize(canvas.clientWidth * pixelRatio, canvas.clientHeight * pixelRatio, false);
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
 
     // add terrain
     const terrain = new Terrain(WIDTH, HEIGHT, DEPTH, 1);
@@ -641,8 +640,10 @@ function setup() {
 
     const mousePointer = new THREE.Vector2();
     canvas.onmousemove = (e) => {
-        mousePointer.x = ( e.clientX / window.innerWidth ) * 2 - 1;
-        mousePointer.y = - ( e.clientY / window.innerHeight ) * 2 + 1;
+        var canvasBoundingRect = canvas.getBoundingClientRect();
+
+        mousePointer.x = ( (e.clientX - canvasBoundingRect.left) / canvas.clientWidth ) * 2 - 1;
+        mousePointer.y = - ( (e.clientY - canvasBoundingRect.top) / canvas.clientHeight ) * 2 + 1;
         updateBrushPosition(mousePointer, terrain, brush);
     }
 
