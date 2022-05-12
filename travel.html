@@ -1,0 +1,52 @@
+---
+layout: default.liquid
+title: TravelLog
+data:
+  css: [jsvectormap.min.css]
+  scripts: [lib/jsvectormap.min.js, lib/jsvectormap-world-merc.js, extras/travel-map.js]
+---
+
+<div class="home">
+  <h1 style="width: fit-content; margin:auto;">Travel Footprint</h1>
+  <br>
+  <div style="position: relative;">
+    <div id="map" style="width: 100%; height: 400px"></div>
+    <button id="marker-btn">Hide Cities</button>
+  </div>
+
+  <br>
+
+  <h3>Countries I have been to:</h3>
+
+  <h4><b>Turkey</b></h4>
+
+  <h4><b>United Arab Emirates</b></h4>
+
+  <h4><b>India</b></h4>
+
+
+  <!-- -  <ul class="post-list">
+    -    {% for post in collections.posts.pages %}
+    -      {% if post.categories contains 'travel' %}
+    -      <li>
+    -        <span class="post-meta">{{ post.published_date | date: "%b %-d, %Y" }}</span>
+    -        <h2>
+    -          <a class="post-link" href="/{{ post.permalink }}">{{ post.title }}</a>
+    -        </h2>
+    -      </li>
+    -      {% endif %}
+    -    {% endfor %}
+    -  </ul> -->
+
+</div>
+
+<style>
+  #marker-btn {
+    position: absolute;
+    width: 78px;
+    top: 10px;
+    left: 86%;
+    font-size: 14px;
+    z-index: 10;
+  }
+</style>

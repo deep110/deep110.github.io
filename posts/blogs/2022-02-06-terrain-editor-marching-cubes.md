@@ -2,6 +2,7 @@
 layout: blog.liquid
 title:  "Terrain Generation and Editing using Marching Cubes"
 categories: ["blog"]
+is_draft: true
 data:
   css: [katex.min.css]
   scripts: [lib/three.min.js, lib/orbit-controls.min.js, lib/simplex-noise.min.js, extras/terrain-editor-marching-cubes.js]
@@ -62,9 +63,15 @@ data:
   }
 </style>
 
-Hello world
+<br>
 
-### Refrences
+This is just a sample text which i wanted to type to get started on something great.
+
+I also wanted to just trim this so that references is not seen and page doesnt overflow
+I have an OCD regaarding this so please dont judge me.
+
+
+<h3 id="references">References</h3>
 
 1. http://paulbourke.net/geometry/polygonise/
 2. https://github.com/mrdoob/three.js/blob/master/examples/webgl_marchingcubes.html
