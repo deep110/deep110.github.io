@@ -185,6 +185,30 @@ table {
   }
 }
 
+/**
+ * buttons
+ */
+button {
+    background-color: var(--color-theme);
+    color: var(--color-background);
+    border-radius: 8px;
+    border-style: none;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: inline-block;
+    padding: 8px;
+    text-align: center;
+    text-decoration: none;
+    transition: color 100ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+button:hover {
+    background-color: var(--color-btn-hover);
+}
+
 .icon:hover {
     > svg {
         path {

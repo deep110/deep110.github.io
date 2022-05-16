@@ -14,29 +14,11 @@ data:
     <button id="marker-btn">Hide Cities</button>
   </div>
 
-  <br>
+  <br><br>
 
-  <h3>Countries I have been to:</h3>
+  <h3>Places I have been to. You can click on any city to open its travel log:</h3>
 
-  <h4><b>Turkey</b></h4>
-
-  <h4><b>United Arab Emirates</b></h4>
-
-  <h4><b>India</b></h4>
-
-
-  <!-- -  <ul class="post-list">
-    -    {% for post in collections.posts.pages %}
-    -      {% if post.categories contains 'travel' %}
-    -      <li>
-    -        <span class="post-meta">{{ post.published_date | date: "%b %-d, %Y" }}</span>
-    -        <h2>
-    -          <a class="post-link" href="/{{ post.permalink }}">{{ post.title }}</a>
-    -        </h2>
-    -      </li>
-    -      {% endif %}
-    -    {% endfor %}
-    -  </ul> -->
+  <div id="places-container"></div>
 
 </div>
 
@@ -45,8 +27,58 @@ data:
     position: absolute;
     width: 78px;
     top: 10px;
-    left: 86%;
+    right: 10px;
     font-size: 14px;
     z-index: 10;
+  }
+
+  .cities-container {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+  }
+
+  .img-city {
+    margin: 8px;
+    height: 230px;
+    width: 230px;
+    vertical-align: middle;
+    position: relative;
+    cursor: pointer;
+    background-color: #ececec;
+  }
+
+  .img-city-header {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.4);
+    color: white;
+    font-size: 13px;
+    display: flex;
+  }
+
+  .img-city-header img {
+    width: 16px;
+    padding-left: 10px;
+  }
+
+  .img-city-header div {
+    padding-top: 17px;
+    padding-left: 4px;
+  }
+
+  @media (max-width: 700px) {
+    .cities-container {
+      justify-content: center;
+    }
+
+    .img-city {
+      width: 325px;
+      height: 325px;
+      margin: 4px;
+    }
   }
 </style>

@@ -19,6 +19,7 @@ $white-color:#fdfdfd;
 $brown-color: #4a4a4a;
 $brown-color-d5: darken($brown-color, 5%);
 $brown-color-d10: darken($brown-color, 10%);
+$brown-color-l15: lighten($brown-color, 15%);
 $brown-color-l25: lighten($brown-color, 25%);
 $brown-color-l55: lighten($brown-color, 55%);
 $brown-color-l65: lighten($brown-color, 65%);
@@ -34,6 +35,7 @@ html {
     --color-text: #{$brown-color-d10};
     --color-text-light: #{$brown-color-l25};
     --color-hover: #{$brown-color-l55};
+    --color-btn-hover: #{$brown-color-l15};
 }
 
 html[theme="dark"] {
@@ -43,6 +45,7 @@ html[theme="dark"] {
     --color-text: #{$white-color-d10};
     --color-text-light: #{$white-color-d30};
     --color-hover: #{$brown-color};
+    --color-btn-hover: #{$brown-color-l25};
 
     code {
         background-color: #{$brown-color};
