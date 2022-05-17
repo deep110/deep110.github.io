@@ -68,17 +68,6 @@ var map = new jsVectorMap({
         selected: { fill: '#707070' },
         hover: { fill: '#8a8a8a' },
     },
-    regionLabelStyle: {
-        initial: {
-            fill: 'red',
-            fontFamily: 'Poppins',
-            fontWeight: 500,
-            fontSize: 13,
-        },
-        hover: { fill: 'red' },
-        selected: {},
-        selectedHover: {}
-    },
     selectedRegions: visitedCountries,
     markers: citiesCoords,
     markerStyle: {

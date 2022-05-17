@@ -355,3 +355,37 @@ span.last-update {
 .utterances {
     margin-top: $spacing-unit*3;
 }
+
+/* for image carousels */
+.splide {
+    width: 668px;
+    margin: auto;
+    padding: 30px 60px;
+    margin-bottom: 20px;
+    background: var(--color-theme-light);
+}
+
+.splide-portrait {
+    width: 500px;
+}
+
+.splide__slide div {
+    text-align: center;
+}
+
+@media (max-width: 850px) {
+    .splide {
+        width: 600px;
+    }
+
+    .splide-portrait {
+        width: 500px;
+    }
+}
+
+@media (max-width: 600px) {
+    .splide {
+        width: 95%;
+        padding: 3% 3% 6% 3%;
+    }
+}
