@@ -2,11 +2,11 @@ var visitedCountries = ['IN', 'TR', 'NP', 'AE'];
 var visitedCities = {
     "Turkey": [
         // 2022
-        { name: "Cappadocia", coords: [38.3535, 35.0911], image: "cappadocia.webp", post: "2022-05-13-turkey.html", date: "May, 2022" },
+        { name: "Cappadocia", coords: [38.3535, 35.0911], image: "cappadocia.webp", post: "2022-05-13-turkey.html#cappadocia", date: "May, 2022" },
         { name: "Antalya", coords: [36.8969, 30.7133], image: "antalya.webp", post: "2022-05-13-turkey.html#antalya", date: "May, 2022" },
-        { name: "Pamukkale", coords: [37.9137, 29.1187], image: "pamukkale.webp", post: "2022-05-13-turkey.html", date: "May, 2022" },
-        { name: "Ephesus", coords: [37.94111, 27.34194], image: "ephesus.webp", post: "2022-05-13-turkey.html", date: "May, 2022" },
-        { name: "Kuşadası", coords: [37.8579, 27.2610], image: "kusadasi.webp", post: "2022-05-13-turkey.html", date: "May, 2022" },
+        { name: "Pamukkale", coords: [37.9137, 29.1187], image: "pamukkale.webp", post: "2022-05-13-turkey.html#pamukkale", date: "May, 2022" },
+        { name: "Ephesus", coords: [37.94111, 27.34194], image: "ephesus.webp", post: "2022-05-13-turkey.html#kusadasi", date: "May, 2022" },
+        { name: "Kuşadası", coords: [37.8579, 27.2610], image: "kusadasi.webp", post: "2022-05-13-turkey.html#kusadasi", date: "May, 2022" },
         { name: "Istanbul", coords: [41.0082, 28.9784], image: "istanbul.webp", post: "2022-05-13-turkey.html", date: "April, 2022" },
     ],
     "United Arab Emirates": [
