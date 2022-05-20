@@ -61,47 +61,13 @@ You can click on the start button to start the simulation. Use the slider to cha
         background: #000;
         display: block;
         height: 100%; 
-        width: 100%; 
+        width: 100%;
     }
 
     .slider-container {
         display: flex;
         margin: 0 9%;
     }
-
-    .slider {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 100%;
-        height: 20px;
-        border-radius: 5px;
-        background: #d3d3d3;
-        margin-left: 5%;
-        outline: none;
-        opacity: 0.7;
-        -webkit-transition: .2s;
-        transition: opacity .2s;
-    }
-
-    .slider:hover {
-        opacity: 1;
-    }
-
-    .slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 30px;
-        height: 30px;
-        background: #515865;
-        cursor: pointer;
-    }
-
-    .slider::-moz-range-thumb {
-        width: 30px;
-        height: 30px;
-        background: #515865;
-        cursor: pointer;
-    } 
 
     @media only screen and (max-width: 700px) {
         #canvas-container {

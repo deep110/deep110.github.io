@@ -35,47 +35,13 @@ data:
     margin-top: 30px;
   }
 
-  .slider {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 20px;
-    border-radius: 5px;
-    background: #d3d3d3;
-    margin-left: 5%;
-    outline: none;
-    opacity: 0.7;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
-  }
-
-  .slider:hover {
-    opacity: 1;
-  }
-
-  .slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 30px;
-    height: 30px;
-    background: #515865;
-    cursor: pointer;
-  }
-
-  .slider::-moz-range-thumb {
-    width: 30px;
-    height: 30px;
-    background: #515865;
-    cursor: pointer;
-  }
-
   @media only screen and (max-width: 740px) {
     canvas {
-        width: calc(100vw - 2em);
+      width: calc(100vw - 2em);
     }
 
     #canvas-container {
-        width: calc(100vw - 2em);
+      width: calc(100vw - 2em);
     }
   }
 </style>

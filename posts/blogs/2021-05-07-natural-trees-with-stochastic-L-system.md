@@ -274,5 +274,5 @@ class Turtle {
 <br>
 
 ### References
-- [The Algorithmic Beauty of Plants](http://algorithmicbotany.org/papers/#abop)
-- [Job Talle - Lindenmayer Systems](https://jobtalle.com/lindenmayer_systems.html)
+1. [The Algorithmic Beauty of Plants](http://algorithmicbotany.org/papers/#abop)
+2. [Job Talle - Lindenmayer Systems](https://jobtalle.com/lindenmayer_systems.html)
