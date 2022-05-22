@@ -680,8 +680,6 @@ function setup() {
 
 function render() {
     renderer.render(scene, camera);
-
-    // requestAnimationFrame(render);
 }
 
 setup();
