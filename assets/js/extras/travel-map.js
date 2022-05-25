@@ -40,8 +40,15 @@ var visitedCities = {
 
         // 2016
         { name: "Wayanad", coords: [11.6854, 76.1320], image: "wayanad.webp", date: "Dec, 2016" },
-        { name: "Mahabaleshwar", coords: [17.9307, 73.6477], image: "mahabaleshwar.webp", date: "May, 2016" },
-        { name: "Pune", coords: [18.5204, 73.8567], image: "pune.webp", date: "May, 2016" },
+        { name: "Mahabaleshwar", coords: [17.9307, 73.6477], image: "mahabaleshwar.webp", date: "June, 2016" },
+        { name: "Pune", coords: [18.5204, 73.8567], image: "pune.webp", date: "June, 2016" },
+
+        // 2015
+        { name: "Shimla", coords: [31.1048, 77.1734], image: "shimla.webp", date: "Jan, 2015" },
+        { name: "Nainital", coords: [29.3919, 79.4542], image: "nainital.webp", date: "Oct, 2015" },
+
+        // 2014
+        { name: "Rishikesh", coords: [30.0869, 78.2676], image: "rishikesh.webp", date: "Nov, 2014" },
     ]
 }
 
@@ -132,6 +139,8 @@ function addPlaces() {
             var cityImg = document.createElement("img");
             cityImg.src = "/assets/images/travel/home/" + city["image"];
             cityImg.alt = city["name"];
+            cityImg.width = 325;
+            cityImg.height = 325;
             cityDiv.appendChild(cityImg);
 
             // add city heading
@@ -141,6 +150,8 @@ function addPlaces() {
             var locationTag = document.createElement("img");
             locationTag.src = "/assets/images/location.svg";
             locationTag.alt = "location-icon";
+            locationTag.width = 16;
+            locationTag.height = 16;
             headingDiv.appendChild(locationTag);
 
             var locationName = document.createElement("div");
