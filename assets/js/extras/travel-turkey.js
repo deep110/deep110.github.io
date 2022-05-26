@@ -51,22 +51,14 @@ var map = new jsVectorMap({
 });
 
 window.addEventListener('DOMContentLoaded', (_) => {
+    carousel.init();
+
     ['touchmove','mousedown'].forEach(evt => {
         document.getElementById("map-container").addEventListener(evt, (e) => {
             e.preventDefault();
             e.stopImmediatePropagation();
-        }, true);
+        }, { passive: true });
     });
-    
-    Splide.defaults = {
-        rewind : true,
-        lazyLoad: "nearby",
-    };
-    
-    var elms = document.getElementsByClassName('splide');
-    for (var i = 0; i < elms.length; i++) {
-        new Splide(elms[i]).mount();
-    }
 });
 
 // add background to marker labels
