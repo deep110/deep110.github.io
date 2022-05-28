@@ -49,6 +49,10 @@ var visitedCities = {
 
         // 2014
         { name: "Rishikesh", coords: [30.0869, 78.2676], image: "rishikesh.webp", date: "Nov, 2014" },
+    ],
+    "Nepal": [
+        // Old
+        { name: "Kathmandu", coords: [27.7172, 85.3240], image: "kathmandu.webp", date: "" },
     ]
 }
 
@@ -79,10 +83,7 @@ var map = new jsVectorMap({
     markers: citiesCoords,
     markerStyle: {
         initial: {
-            //   stroke: "#676767",
-            //   strokeWidth: 1,
-            //   fill: '#ff5566',
-            fillOpacity: 1
+            strokeWidth: 3,
         },
         hover: {},
         selected: {},
@@ -124,7 +125,8 @@ function addPlaces() {
         var countryDiv = document.createElement("div");
 
         // add heading
-        var heading = document.createElement("h3");
+        var heading = document.createElement("h2");
+        heading.id = country.toLowerCase();
         heading.innerHTML = "<b>" + country + "</b>";
         countryDiv.appendChild(heading);
 
