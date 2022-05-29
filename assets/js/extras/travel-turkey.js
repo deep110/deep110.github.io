@@ -57,7 +57,7 @@ window.addEventListener('DOMContentLoaded', (_) => {
         document.getElementById("map-container").addEventListener(evt, (e) => {
             e.preventDefault();
             e.stopImmediatePropagation();
-        }, { passive: true });
+        }, true);
     });
 });
 
