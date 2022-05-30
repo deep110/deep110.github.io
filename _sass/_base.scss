@@ -224,3 +224,13 @@ button:hover {
 
     .katex { font-size: 0.95em !important; }
 }
+
+::-moz-selection {
+    color: var(--color-background);
+    background: var(--color-theme);
+}
+
+::selection {
+    color: var(--color-background);
+    background: var(--color-theme);
+}
