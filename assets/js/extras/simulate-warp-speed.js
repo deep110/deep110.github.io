@@ -3,7 +3,7 @@ let SPEED = 60;
 
 function map(value, low1, high1, low2, high2) {
     return low2 + (value - low1) * (high2 - low2) / (high1 - low1)
-}
+};
 
 class Star {
     constructor() {
@@ -14,7 +14,7 @@ class Star {
     }
 
     update() {
-        this.z = this.z-SPEED
+        this.z = this.z-SPEED;
         if (this.z < 1) {
             this.x = MathUtil.randomInt(-1000, 1000);
             this.y = MathUtil.randomInt(-1000, 1000);
@@ -47,7 +47,7 @@ class Star {
         this.pz = this.z;
     }
 
-}
+};
 
 let canvas = document.getElementById("myCanvas");
 let context = canvas.getContext("2d");
@@ -68,14 +68,14 @@ function setup() {
     slider.value = SPEED;
     slider.oninput = function() {
         SPEED = this.value;
-    }
+    };
 
     for (let i=0; i < NUM_STARS; i++) {
         stars[i] = new Star();
-    }
+    };
 
     GameLoopController.loop(draw, 60);
-}
+};
 
 function draw() {
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -84,4 +84,4 @@ function draw() {
         stars[i].update();
         stars[i].draw(context);
     }
-}
+};

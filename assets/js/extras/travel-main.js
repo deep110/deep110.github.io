@@ -54,13 +54,12 @@ var visitedCities = {
         // Old
         { name: "Kathmandu", coords: [27.7172, 85.3240], image: "kathmandu.webp", date: "" },
     ]
-}
+};
 
-var citiesCoords = []
-
+var citiesCoords = [];
 for (var item in visitedCities) {
     citiesCoords.push(...visitedCities[item])
-}
+};
 
 var isMarkersAdded = true;
 var map = new jsVectorMap({
@@ -97,15 +96,15 @@ var map = new jsVectorMap({
 function onMapLoaded(map) {
     window.addEventListener('resize', () => {
         map.updateSize()
-    })
+    });
 
     var markerBtn = document.getElementById("marker-btn");
     markerBtn.addEventListener("click", () => {
         toggleMarkers(markerBtn);
-    })
+    });
 
     addPlaces();
-}
+};
 
 function toggleMarkers(markerBtn) {
     isMarkersAdded = !isMarkersAdded;
@@ -117,7 +116,7 @@ function toggleMarkers(markerBtn) {
         map.removeMarkers();
         markerBtn.innerHTML = "Display Cities";
     }
-}
+};
 
 function addPlaces() {
     var countryContainer = document.getElementById("places-container");
@@ -169,10 +168,10 @@ function addPlaces() {
                     window.location = "/posts/travel/" + city["post"];
                 })
             }
-        })
+        });
         countryDiv.appendChild(citiesDiv);
 
         countryContainer.appendChild(countryDiv);
         countryContainer.appendChild(document.createElement("br"));
     }
-}
+};
