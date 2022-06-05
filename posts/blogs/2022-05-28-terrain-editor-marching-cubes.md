@@ -35,7 +35,7 @@ One interactive of a cube with set of points with some values and iso surface is
 
 ### Final Notes
 
-<h3 id="references">References</h3>
+### References { #references }
 
 1. [Implementation by Paul Broke](http://paulbourke.net/geometry/polygonise/)
 2. [Marching Cubes Explanation by Sebastian Lague](https://www.youtube.com/watch?v=M3iI2l0ltbE)

@@ -194,12 +194,15 @@ const carousel = function () {
 			const slideCount = container.children.length;
 			const carouselIndicator = sliderElement.querySelector(".carousel-indicators");
 
-			for (var i = 0; i < slideCount; i++) {
-				var indicatorChild = document.createElement("li");
-				if (i == 0) {
-					indicatorChild.classList.add("active");
+			if (carouselIndicator !== null) {
+				for (var i = 0; i < slideCount; i++) {
+					var indicatorChild = document.createElement("li");
+					if (i == 0) {
+						indicatorChild.classList.add("active");
+					}
+					carouselIndicator.appendChild(indicatorChild);
 				}
-				carouselIndicator.appendChild(indicatorChild);
+				carouselIndicator.addEventListener("click", () => this.slideToByIndicator());
 			}
 
 			container.dataset.slideNum = 0;
@@ -213,8 +216,6 @@ const carousel = function () {
 					this.handleIndicators(sliderElement, newSlideNum);
 				}, { passive: true });
 			}
-
-			carouselIndicator.addEventListener("click", () => this.slideToByIndicator());
 
 			// mouse drag
 			container.addEventListener("mousedown", (e) => this.handleMouseDrag(e, sliderElement, container, slideCount), { passive: true });
@@ -325,9 +326,6 @@ const videoPlayer = function () {
 			const playbackAnimation = document.createElement("div");
 			const videoControls = document.createElement("div");
 
-			startButton.innerHTML = `
-			<svg viewBox='0 0 487.622 487.622'><circle fill='#b5b5b5' cx='243.811' cy='243.811' r='243.811'/><path d='M375.699 243.811 169.686 368.19V119.431z' fill='#fff' class='active-path'/></svg>
-			`
 			startButton.classList.add("start-button");
 			videoContainer.appendChild(startButton);
 
@@ -404,11 +402,12 @@ const videoPlayer = function () {
 			startButton.addEventListener("click", () => {
 				video.play();
 				startButton.classList.add("hidden");
+				video.addEventListener("click", () => {
+					this.animatePlayback(playbackAnimation);
+					this.togglePlay(video);
+				});
 			});
-			video.addEventListener("click", () => {
-				this.animatePlayback(playbackAnimation);
-				this.togglePlay(video);
-			});
+
 			video.addEventListener('play', () => this.updatePlayButton(video, playButton));
 			video.addEventListener('pause', () => this.updatePlayButton(video, playButton));
 			video.addEventListener('loadedmetadata', () => this.initializeVideo(video, seek, progressBar, duration));
@@ -546,3 +545,15 @@ const videoPlayer = function () {
 		},
 	}
 }();
+
+const snackbar = function (msg, displayTime = 2000) {
+	let toastDiv = document.getElementById("snackbar");
+	if (toastDiv == null) {
+		toastDiv = document.createElement("div");
+		toastDiv.id = "snackbar";
+		document.body.appendChild(toastDiv);
+	}
+	toastDiv.innerText = msg;
+	toastDiv.className = "show";
+	setTimeout(() => { toastDiv.classList.remove("show") }, displayTime);
+}

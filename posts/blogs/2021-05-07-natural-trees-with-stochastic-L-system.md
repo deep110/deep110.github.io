@@ -160,7 +160,7 @@ The idea is when replacing a token choose the replacement based on certain proba
 
 You can also play around with above interactive demo to generate more variations.
 
-<h3 id="rendering">Rendering</h3>
+### Rendering { #rendering }
 
 There are a lot of methods for visualizing a L-system, but the easiest and mostly widely used is [Turtle Graphics](https://en.wikipedia.org/wiki/Turtle_graphics). I am pretty sure most of you have played around with turtle graphics in the past on MSLogo.
 
@@ -267,9 +267,8 @@ class Turtle {
 }
 ```
 
-
 ### Footnotes
-[^fn1]:. Here X is a constant i.e it will get ignored during rendering. For more in-depth see [rendering](#rendering) section. Dummy variables are used to give a more realistic look to generated fractal trees.
+[^fn1]: Here X is a constant i.e it will get ignored during rendering. For more in-depth see [rendering](#rendering) section. Dummy variables are used to give a more realistic look to generated fractal trees.
 
 <br>
 

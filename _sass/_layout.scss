@@ -274,6 +274,10 @@
 
     sup {
         font-size: unset;
+        margin-right: 4px;
+    }
+    sup::after {
+        content: ".";
     }
 
     p {

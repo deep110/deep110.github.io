@@ -67,7 +67,7 @@ The one i would be focusing on is object placement.
 
 ### Implementation
 
-There are many implementations for poisson disc sampling but the one we are going to discuss was proposed by [Robert Bridson](#references). It is reasonably fast and can be used for N arbitrary dimensions.
+There are many implementations for poisson disc sampling but the one we are going to discuss was proposed by Robert Bridson[^robert]. It is reasonably fast and can be used for N arbitrary dimensions.
 
 The steps are as follows:
 
@@ -209,7 +209,8 @@ Having a greater value of k [typically more than 30] will give you a dense packi
 
 Though it can be desirable if you would want to fill those areas with some other things. For example with lakes when generating a forest. You can try playing around with `MaxTries` slider above to see the effect of k.
 
-<h3 id="references">References</h3>
+### References { #references }
 
-1. [Fast Poisson Disk Sampling in Arbitrary Dimensions](https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf) by Robert Bridson, University of British Columbia
-2. [Wikipedia](https://en.wikipedia.org/wiki/Supersampling#Poisson_disk)
+[^robert]:  [Fast Poisson Disk Sampling in Arbitrary Dimensions](https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf) by Robert Bridson, University of British Columbia
+
+[^wikipedia]: [Wikipedia](https://en.wikipedia.org/wiki/Supersampling#Poisson_disk)

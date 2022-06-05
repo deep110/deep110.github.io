@@ -15,7 +15,7 @@
                   {{ page.published_date | date: "%b %-d, %Y" }}
                </time>
                 | <span class="time">
-                    {{ page.content | split:" " | size | divided_by:180 }}
+                    {{ page.content | strip_html | split:" " | size | divided_by:220 }}
                   </span>
                    Minute Read
             </p>

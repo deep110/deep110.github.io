@@ -14,11 +14,11 @@ $progress-color: red;
     position: absolute;
     left: calc(50% - 50px);
     top: calc(50% - 50px);
-    background: transparent;
+    background: transparent url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 487.622 487.622'><circle cx='243.811' cy='243.811' r='243.811' fill='%23b5b5b5' /><path d='M375.699 243.811 169.686 368.19V119.431z' fill='%23fff'/></svg>") no-repeat center;
 }
 
 .start-button:hover {
-    background: transparent;
+    background: transparent url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 487.622 487.622'><circle cx='243.811' cy='243.811' r='243.811' fill='%23b5b5b5' /><path d='M375.699 243.811 169.686 368.19V119.431z' fill='%23fff'/></svg>") no-repeat center;
     transform: scale(1.2);
 }
 
