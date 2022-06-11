@@ -4,12 +4,13 @@ title:  "Terrain Generation and Editing using Marching Cubes"
 categories: ["blog"]
 is_draft: true
 data:
+  keywords: "html5, canvas, marching, cubes, terrain, procedural, generation, tutorial, threejs"
   css: [katex.min.css]
   scripts: [lib/three.min.js, lib/orbit-controls.min.js, lib/simplex-noise.min.js, extras/terrain-editor-marching-cubes.js]
 ---
 
 <div id="canvas-container">
-  <canvas id="canvas" height=500 width=740></canvas>
+  <canvas id="main-canvas" height=500 width=740></canvas>
   <div id="toggle-fs"/>
 </div>
 
@@ -23,11 +24,16 @@ First we will see how the algorithm works, then we will create a terrain and fin
 
 Even though I am describing the algorithm here, I would highly recommend if you can go ahead and checkout [Marching Cubes Tutorial](#references) by Sebastian Lague.
 
-One interactive of a cube which can show isosurfaces on clicking a vertex -> video 1:30s
 
-<canvas id="canvas-iso-surface" height=400 width=400></canvas>
+<canvas id="canvas-iso-surface" height=400 width=500></canvas>
 
 One interactive of a cube with set of points with some values and iso surface is drawn. Slider to change the threshold.
+
+<canvas id="canvas-algo" height=450 width=600></canvas>
+
+<input type="range" min="5" max="25" class="slider" id="surface-level-slider">
+
+<div class="loader"><div></div><div></div><div></div><div></div></div>
 
 ### Creating A Procedural Terrain
 
@@ -46,10 +52,7 @@ One interactive of a cube with set of points with some values and iso surface is
     display: block;
     margin: auto;
     cursor: pointer;
-  }
-
-  #canvas-iso-surface {
-    background: #3a3a3a;
+    -webkit-tap-highlight-color: transparent;
   }
 
   #canvas-container {

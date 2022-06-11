@@ -3,6 +3,7 @@ layout: blog.liquid
 title:  "Generating Convex Hull using Graham Scan"
 categories: ["blog"]
 data:
+  keywords: "html5, canvas, convex, hull, graham, polygon"
   css: [katex.min.css]
   scripts: [extras/simulate-graham-scan.js]
 ---

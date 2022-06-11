@@ -3,6 +3,7 @@ layout: blog.liquid
 title:  "Natural Looking Trees with Stochastic L-Systems"
 categories: ["blog"]
 data:
+  keywords: "canvas, html5, lsystems, procedural generation, lindenmayer, nomanssky, stochastic, tutorial"
   css: [katex.min.css]
   scripts: [extras/simulate-l-system.js]
 ---

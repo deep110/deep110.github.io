@@ -1,18 +1,3 @@
-const ISO_LEVEL = 0;
-
-const WIDTH = 60;
-const HEIGHT = WIDTH;
-const DEPTH = WIDTH;
-
-var scene;
-var camera;
-var renderer;
-var canvas;
-
-var whichKeyPress = "NONE"; // Shift, Z, NONE
-var isFullScreen = false;
-const raycaster = new THREE.Raycaster();
-
 const triangulationTable = [
     [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
     [0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
@@ -307,6 +292,23 @@ const edgeTable = [
     0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0,
 ];
 
+class Field {
+    constructor(xMax, yMax, zMax) {
+        this.xMax2 = 2 * xMax;
+        this.yMax2 = 2 * yMax;
+        this.zMax2 = 2 * zMax;
+        this.buffer = new Float32Array((xMax + 1) * (yMax + 1) * (zMax + 1) * 8);
+    }
+
+    set(i, j, k, amt) {
+        this.buffer[i * this.xMax2 * this.zMax2 + k * this.zMax2 + j] = amt;
+    }
+
+    get(i, j, k) {
+        return this.buffer[i * this.xMax2 * this.zMax2 + k * this.zMax2 + j];
+    }
+}
+
 class MarchingCubes {
     constructor(xMax, yMax, zMax, sampleSize = 1) {
         this.xMax = xMax;
@@ -322,7 +324,7 @@ class MarchingCubes {
         }
     }
 
-    generateMesh(geometry, surfaceLevel, terrain) {
+    generateMesh(geometry, surfaceLevel, field) {
         let fI, fJ, fK;
         let x, y, z;
 
@@ -331,21 +333,21 @@ class MarchingCubes {
         for (let i = -this.xMax; i < this.xMax; i++) {
             fI = i + this.xMax;
             x = i * this.sampleSize;
-            for (let j = -this.yMax+1; j < this.yMax-1; j++) {
+            for (let j = -this.yMax + 1; j < this.yMax - 1; j++) {
                 fJ = j + this.yMax;
                 y = j * this.sampleSize;
                 for (let k = -this.zMax; k < this.zMax; k++) {
                     fK = k + this.zMax;
                     z = k * this.sampleSize;
 
-                    const v0 = terrain.getField(fI, fJ, fK);
-                    const v1 = terrain.getField(fI + 1, fJ, fK);
-                    const v2 = terrain.getField(fI + 1, fJ, fK + 1);
-                    const v3 = terrain.getField(fI, fJ, fK + 1);
-                    const v4 = terrain.getField(fI, fJ + 1, fK);
-                    const v5 = terrain.getField(fI + 1, fJ + 1, fK);
-                    const v6 = terrain.getField(fI + 1, fJ + 1, fK + 1);
-                    const v7 = terrain.getField(fI, fJ + 1, fK + 1);
+                    const v0 = field.get(fI, fJ, fK);
+                    const v1 = field.get(fI + 1, fJ, fK);
+                    const v2 = field.get(fI + 1, fJ, fK + 1);
+                    const v3 = field.get(fI, fJ, fK + 1);
+                    const v4 = field.get(fI, fJ + 1, fK);
+                    const v5 = field.get(fI + 1, fJ + 1, fK);
+                    const v6 = field.get(fI + 1, fJ + 1, fK + 1);
+                    const v7 = field.get(fI, fJ + 1, fK + 1);
 
                     let cubeIndex = this.#getCubeIndex(surfaceLevel, v0, v1, v2, v3, v4, v5, v6, v7);
                     let edgeIndex = edgeTable[cubeIndex];
@@ -427,6 +429,78 @@ class MarchingCubes {
         geometry.attributes.normal.needsUpdate = true;
     }
 
+    generateMeshIsoSurface(geometry, surfaceLevel, field) {
+        let x = 0, y = 0, z = 0;
+        let vIdx = 0;
+
+        const v0 = field.get(0, 0, 0);
+        const v1 = field.get(1, 0, 0);
+        const v2 = field.get(1, 0, 1);
+        const v3 = field.get(0, 0, 1);
+        const v4 = field.get(0, 1, 0);
+        const v5 = field.get(1, 1, 0);
+        const v6 = field.get(1, 1, 1);
+        const v7 = field.get(0, 1, 1);
+
+        let cubeIndex = this.#getCubeIndex(surfaceLevel, v0, v1, v2, v3, v4, v5, v6, v7);
+        let edgeIndex = edgeTable[cubeIndex];
+        let mu = 0.5;
+        if (edgeIndex & 1) {
+            this.#setFloatArray(this.edges[0], x + mu, y, z);
+        }
+        if (edgeIndex & 2) {
+            this.#setFloatArray(this.edges[1], x + 1, y, z + mu);
+        }
+        if (edgeIndex & 4) {
+            this.#setFloatArray(this.edges[2], x + mu, y, z + 1);
+        }
+        if (edgeIndex & 8) {
+            this.#setFloatArray(this.edges[3], x, y, z + mu);
+        }
+        if (edgeIndex & 16) {
+            this.#setFloatArray(this.edges[4], x + mu, y + 1, z);
+        }
+        if (edgeIndex & 32) {
+            this.#setFloatArray(this.edges[5], x + 1, y + 1, z + mu);
+        }
+        if (edgeIndex & 64) {
+            this.#setFloatArray(this.edges[6], x + mu, y + 1, z + 1);
+        }
+        if (edgeIndex & 128) {
+            this.#setFloatArray(this.edges[7], x, y + 1, z + mu);
+        }
+        if (edgeIndex & 256) {
+            this.#setFloatArray(this.edges[8], x, y + mu, z);
+        }
+        if (edgeIndex & 512) {
+            this.#setFloatArray(this.edges[9], x + 1, y + mu, z);
+        }
+        if (edgeIndex & 1024) {
+            this.#setFloatArray(this.edges[10], x + 1, y + mu, z + 1);
+        }
+        if (edgeIndex & 2048) {
+            this.#setFloatArray(this.edges[11], x, y + mu, z + 1);
+        }
+
+        const triLen = triangulationTable[cubeIndex];
+        for (let i = 0; i < triLen.length; i++) {
+            if (triLen[i] === -1) {
+                break;
+            }
+            const e = this.edges[triLen[i]];
+            this.vertices[vIdx] = e[0];
+            this.vertices[vIdx + 1] = e[1];
+            this.vertices[vIdx + 2] = e[2];
+            vIdx += 3;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(this.vertices.slice(0, vIdx), 3));
+        geometry.computeVertexNormals();
+
+        geometry.attributes.position.needsUpdate = true;
+        geometry.attributes.normal.needsUpdate = true;
+    }
+
     #getCubeIndex(isoLevel, a, b, c, d, e, f, g, h) {
         let cubeIndex = 0;
 
@@ -454,21 +528,19 @@ class MarchingCubes {
 }
 
 class Terrain {
-    constructor(width, height, depth, sampleSize) {
+    constructor(width, height, depth, sampleSize, isoLevel = 0) {
         this.xMax = Math.floor(width / (2 * sampleSize));
         this.yMax = Math.floor(height / (2 * sampleSize));
         this.zMax = Math.floor(depth / (2 * sampleSize));
         this.sampleSize = sampleSize;
-
-        this.xMax2 = 2 * this.xMax;
-        this.yMax2 = 2 * this.yMax;
-        this.zMax2 = 2 * this.zMax;
-        this.fieldBuffer = new Float32Array((this.xMax + 1) * (this.yMax + 1) * (this.zMax + 1) * 8);
+        this.isoLevel = isoLevel;
+        this.field = new Field(this.xMax, this.yMax, this.zMax);
 
         // noise values
         this.numOctaves = 4;
         this.lacunarity = 2;
         this.persistence = 0.5;
+        this.noiseOffset = Math.random() * 10 + 1;
         this.noiseScale = 2;
         this.noiseWeight = 7;
         this.floorOffset = 5;
@@ -477,21 +549,13 @@ class Terrain {
 
         // graphics
         this.geometry = new THREE.BufferGeometry();
-        this.material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        this.material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.marchingCubes = new MarchingCubes(this.xMax, this.yMax, this.zMax, sampleSize);
 
         // generate mesh geometry
         this.generateHeightField();
-        this.marchingCubes.generateMesh(this.geometry, ISO_LEVEL, this);
-    }
-
-    setField(i, j, k, amt) {
-        this.fieldBuffer[i * this.xMax2 * this.zMax2 + k * this.zMax2 + j] = amt;
-    }
-
-    getField(i, j, k) {
-        return this.fieldBuffer[i * this.xMax2 * this.zMax2 + k * this.zMax2 + j];
+        this.regenerateMesh();
     }
 
     getMesh() {
@@ -508,7 +572,7 @@ class Terrain {
                         let yi = Math.round(point.y + y) + this.yMax;
                         let zi = Math.round(point.z + z) + this.zMax;
 
-                        this.setField(xi, yi, zi, this.getField(xi, yi, zi) - distance * multiplier);
+                        this.field.set(xi, yi, zi, this.field.get(xi, yi, zi) - distance * multiplier);
                     }
                 }
             }
@@ -517,7 +581,7 @@ class Terrain {
     }
 
     regenerateMesh() {
-        this.marchingCubes.generateMesh(this.geometry, ISO_LEVEL, this);
+        this.marchingCubes.generateMesh(this.geometry, this.isoLevel, this.field);
     }
 
     generateHeightField() {
@@ -527,14 +591,13 @@ class Terrain {
                 let y = j * this.sampleSize;
                 for (let k = -this.zMax; k < this.zMax + 1; k++) {
                     let z = k * this.sampleSize;
-                    this.setField(i + this.xMax, j + this.yMax, k + this.zMax, this.#heightValue(x, y, z));
+                    this.field.set(i + this.xMax, j + this.yMax, k + this.zMax, this.#heightValue(x, y, z));
                 }
             }
         }
     }
 
     #heightValue(x, y, z) {
-        let offsetNoise = 1;
         let noise = 0;
 
         let frequency = this.noiseScale / 100;
@@ -542,9 +605,9 @@ class Terrain {
         let weight = 1;
         for (var j = 0; j < this.numOctaves; j++) {
             let n = this.simplex.noise3D(
-                (x + offsetNoise) * frequency,
-                (y + offsetNoise) * frequency,
-                (z + offsetNoise) * frequency,
+                (x + this.noiseOffset) * frequency,
+                (y + this.noiseOffset) * frequency,
+                (z + this.noiseOffset) * frequency,
             );
             let v = 1 - Math.abs(n);
             v = v * v * weight;
@@ -564,123 +627,374 @@ class Terrain {
     }
 }
 
-function correctDisplaySize() {
-	// update camera's projection aspect ratio
-	if (isFullScreen) {
-		const pixelRatio = window.devicePixelRatio;
-		renderer.setSize(canvas.clientWidth * pixelRatio, canvas.clientHeight * pixelRatio, false);
-	} else {
-		renderer.setSize(740, 500, false);
-	}
-	camera.aspect = canvas.clientWidth / canvas.clientHeight;
-	camera.updateProjectionMatrix();
-	render();
-}
+class MainScene {
+    constructor() {
+        this.canvas = document.getElementById("main-canvas");
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(75, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 1000);
+        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+        this.terrainSize = 60;
 
-// ---- utils end -------
+        this.whichKeyPress = "NONE"; // Shift, Z, NONE
+        this.isFullScreen = false;
+        this.raycaster = new THREE.Raycaster();
+    }
 
-document.getElementById("toggle-fs").addEventListener("click", (event) => {
-	canvas.classList.toggle("fullscreen");
-	event.currentTarget.classList.toggle("tfs");
-	isFullScreen = !isFullScreen;
+    setup() {
+        const canvas = this.canvas;
+        this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight, false);
 
-	correctDisplaySize();
-});
+        // add terrain
+        const terrain = new Terrain(this.terrainSize, this.terrainSize, this.terrainSize, 1);
+        this.scene.add(terrain.getMesh());
 
-function updateBrushPosition(mousePosition, terrain, brush) {
-    raycaster.setFromCamera(mousePosition, camera);
-    const result = raycaster.intersectObject(terrain.getMesh());
-    if (result.length > 0) {
-        const point = result[0].point;
-        brush.position.set(point.x, point.y, point.z);
-        render();
+        // add editing brush
+        const brushMat = new THREE.MeshPhongMaterial({ color: 0xffff00, transparent: true, opacity: 0.5 });
+        const brushGeo = new THREE.SphereGeometry(1.5, 16, 16);
+        const brush = new THREE.Mesh(brushGeo, brushMat);
+        this.scene.add(brush);
+
+        // add lights
+        const dLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
+        dLight.position.set(-5, 2, 10);
+        this.scene.add(dLight);
+
+        let ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        this.scene.add(ambientLight);
+
+        this.scene.background = new THREE.Color("#3a3a3a");
+        this.camera.position.z = 15;
+        this.camera.position.x = 15;
+        this.camera.position.y = 15;
+
+        this.controls = new THREE.OrbitControls(this.camera, this.canvas);
+        this.controls.listenToKeyEvents(window);
+        this.controls.addEventListener('change', this.render.bind(this));
+
+        window.addEventListener('resize', () => {
+            if (this.isFullScreen) {
+                this.correctDisplaySize();
+            }
+        });
+
+        const mousePointer = new THREE.Vector2();
+        this.canvas.onmousemove = (e) => {
+            var canvasBoundingRect = canvas.getBoundingClientRect();
+
+            mousePointer.x = ((e.clientX - canvasBoundingRect.left) / canvas.clientWidth) * 2 - 1;
+            mousePointer.y = - ((e.clientY - canvasBoundingRect.top) / canvas.clientHeight) * 2 + 1;
+            this.updateBrushPosition(mousePointer, terrain, brush);
+        };
+
+        var interval;
+        this.canvas.onmousedown = () => {
+            interval = setInterval(() => {
+                let point = brush.position;
+                if (this.whichKeyPress === "Shift") {
+                    // raise the terrain
+                    terrain.makeShape(5, point, -1);
+                    this.render();
+                } else if (this.whichKeyPress === "Z") {
+                    // depress the terrain
+                    terrain.makeShape(5, point, 1);
+                    this.render();
+                }
+            }, 100);
+        };
+
+        this.canvas.onmouseup = (e) => {
+            clearInterval(interval);
+        };
+
+        document.addEventListener('keydown', (e) => {
+            const key = e.key;
+            if (key === "Shift") {
+                this.whichKeyPress = "Shift";
+                return;
+            }
+            if (key.toUpperCase() === "Z") {
+                this.whichKeyPress = "Z";
+                return;
+            }
+            this.whichKeyPress = "NONE";
+        });
+        document.addEventListener('keyup', () => {
+            this.whichKeyPress = "NONE";
+        });
+
+        document.getElementById("toggle-fs").addEventListener("click", (event) => {
+            this.canvas.classList.toggle("fullscreen");
+            event.currentTarget.classList.toggle("tfs");
+            this.isFullScreen = !this.isFullScreen;
+
+            this.correctDisplaySize();
+        });
+
+        this.render();
+    }
+
+    render() {
+        this.renderer.render(this.scene, this.camera);
+    }
+
+    correctDisplaySize() {
+        // update camera's projection aspect ratio
+        if (this.isFullScreen) {
+            const pixelRatio = window.devicePixelRatio;
+            this.renderer.setSize(this.canvas.clientWidth * pixelRatio, this.canvas.clientHeight * pixelRatio, false);
+        } else {
+            this.renderer.setSize(740, 500, false);
+        }
+        this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight;
+        this.camera.updateProjectionMatrix();
+        this.render();
+    }
+
+    updateBrushPosition(mousePosition, terrain, brush) {
+        this.raycaster.setFromCamera(mousePosition, this.camera);
+        const result = this.raycaster.intersectObject(terrain.getMesh());
+        if (result.length > 0) {
+            const point = result[0].point;
+            brush.position.set(point.x, point.y, point.z);
+            this.render();
+        }
     }
 }
 
-function setup() {
-    canvas = document.getElementById("canvas");
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+class IsoSurfaceScene {
+    constructor() {
+        this.canvas = document.getElementById("canvas-iso-surface");
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(75, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 100);
+        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+        this.raycaster = new THREE.Raycaster();
+        this.mousePosition = new THREE.Vector2();
+        this.sphereParent = new THREE.Object3D();
 
-    renderer = new THREE.WebGLRenderer({ canvas: canvas });
-    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+        // marching cubes mesh
+        this.mcGeometry = new THREE.BufferGeometry();
+        this.mcMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
+        this.mcMesh = new THREE.Mesh(this.mcGeometry, this.mcMaterial);
+        this.marchingCubes = new MarchingCubes(1, 1, 1, 1);
 
-    // add terrain
-    const terrain = new Terrain(WIDTH, HEIGHT, DEPTH, 1);
-    scene.add(terrain.getMesh());
+        this.field = new Field(1, 1, 1);
+        this.intersected = null;
+    }
 
-    // add editing brush
-    const brushMat = new THREE.MeshPhongMaterial({ color: 0xffff00, transparent: true, opacity: 0.5 });
-    const brushGeo = new THREE.SphereGeometry(1.5, 16, 16);
-    const brush = new THREE.Mesh(brushGeo, brushMat);
-    scene.add(brush);
+    setup() {
+        this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight, false);
+        this.scene.background = new THREE.Color("#3a3a3a");
 
-    // add lights
-    const dLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
-    dLight.position.set(-5, 2, 10);
-    scene.add(dLight);
+        this.addCube();
+        this.scene.add(this.mcMesh);
 
-    let ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
-    scene.add(ambientLight);
+        this.camera.position.x = 1.5;
+        this.camera.position.y = 1.5;
+        this.camera.position.z = 1.5;
 
-    scene.background = new THREE.Color("#3a3a3a");
-    camera.position.z = 15;
-    camera.position.x = 15;
-    camera.position.y = 15;
+        this.canvas.addEventListener('mousemove', (e) => {
+            var canvasBoundingRect = this.canvas.getBoundingClientRect();
+            this.mousePosition.x = ((e.clientX - canvasBoundingRect.left) / this.canvas.clientWidth) * 2 - 1;
+            this.mousePosition.y = - ((e.clientY - canvasBoundingRect.top) / this.canvas.clientHeight) * 2 + 1;
 
-    controls = new THREE.OrbitControls(camera, canvas);
-    controls.listenToKeyEvents(window);
-    controls.addEventListener('change', render);
+            this.interactiveSphere();
+        });
 
-    window.addEventListener('resize', () => {
-        if (isFullScreen) {
-            correctDisplaySize();
+        this.canvas.addEventListener('click', (e) => {
+            if (this.intersected) {
+                var pos = this.intersected.position;
+                var val = this.field.get(Math.round(pos.x), Math.round(pos.y), Math.round(pos.z));
+                if (val == 0) {
+                    this.field.set(Math.round(pos.x), Math.round(pos.y), Math.round(pos.z), 1);
+                    this.intersected.material.color.set(0xcccccc);
+                } else {
+                    this.field.set(Math.round(pos.x), Math.round(pos.y), Math.round(pos.z), 0);
+                    this.intersected.material.color.set(0xffffff);
+                }
+                this.updateMesh();
+                this.render();
+            }
+        });
+
+        this.controls = new THREE.OrbitControls(this.camera, this.canvas);
+        this.controls.target = new THREE.Vector3(0.5, 0.5, 0.5);
+        this.controls.listenToKeyEvents(window);
+        this.controls.addEventListener('change', this.render.bind(this));
+
+        this.updateMesh();
+        this.render();
+    }
+
+    render() {
+        this.renderer.render(this.scene, this.camera);
+    }
+
+    addCube() {
+        const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
+        var edgeGeo = new THREE.EdgesGeometry(cubeGeo);
+        const material = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+        const cube = new THREE.LineSegments(edgeGeo, material);
+        cube.position.x = 0.5;
+        cube.position.y = 0.5;
+        cube.position.z = 0.5;
+        this.scene.add(cube);
+
+        for (let i = 0; i <= 1; i++) {
+            for (let j = 0; j <= 1; j++) {
+                for (let k = 0; k <= 1; k++) {
+                    this.sphereParent.add(this.addSphere(i, j, k));
+                }
+            }
         }
-    });
+        this.scene.add(this.sphereParent);
+    }
 
-    const mousePointer = new THREE.Vector2();
-    canvas.onmousemove = (e) => {
-        var canvasBoundingRect = canvas.getBoundingClientRect();
+    addSphere(posX, posY, posZ) {
+        const geometry = new THREE.SphereGeometry(0.05, 12, 8);
+        const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        const sphere = new THREE.Mesh(geometry, material);
+        sphere.position.x = posX;
+        sphere.position.y = posY;
+        sphere.position.z = posZ;
 
-        mousePointer.x = ( (e.clientX - canvasBoundingRect.left) / canvas.clientWidth ) * 2 - 1;
-        mousePointer.y = - ( (e.clientY - canvasBoundingRect.top) / canvas.clientHeight ) * 2 + 1;
-        updateBrushPosition(mousePointer, terrain, brush);
-    };
+        return sphere;
+    }
 
-    canvas.onclick = (e) => {
-        let point = brush.position;
+    interactiveSphere() {
+        this.raycaster.setFromCamera(this.mousePosition, this.camera);
+        const intersects = this.raycaster.intersectObjects(this.sphereParent.children, false);
 
-        if (whichKeyPress === "Shift") {
-            // raise the terrain
-            terrain.makeShape(5, point, -1);
-            render();
-        } else if (whichKeyPress === "Z") {
-            // depress the terrain
-            terrain.makeShape(5, point, 1);
-            render();
+        if (intersects.length > 0) {
+            if (this.intersected != intersects[0].object) {
+                this.intersected = intersects[0].object;
+                this.intersected.material.color.set(0xffffff);
+                this.render();
+            }
+        } else {
+            if (this.intersected) {
+                var pos = this.intersected.position;
+                var val = this.field.get(Math.round(pos.x), Math.round(pos.y), Math.round(pos.z));
+                if (val == 0) {
+                    this.intersected.material.color.set(0x0);
+                } else {
+                    this.intersected.material.color.set(0xcccccc);
+                }
+                this.intersected = null;
+                this.render();
+            }
         }
-    };
+    }
 
-    document.addEventListener('keydown', (e) => {
-        const key = e.key;
-        if (key === "Shift") {
-            whichKeyPress = "Shift";
-            return;
-        }
-        if (key.toUpperCase() === "Z") {
-            whichKeyPress = "Z";
-            return;
-        }
-        whichKeyPress = "NONE";
-    });
-    document.addEventListener('keyup', () => {
-        whichKeyPress = "NONE";
-    });
+    updateMesh() {
+        this.marchingCubes.generateMeshIsoSurface(this.mcGeometry, 0.5, this.field);
+    }
 }
 
-function render() {
-    renderer.render(scene, camera);
+class AlgoScene {
+    constructor() {
+        this.canvas = document.getElementById("canvas-algo");
+        this.scene = new THREE.Scene();
+        this.camera = new THREE.PerspectiveCamera(75, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 100);
+        this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+        this.sphereParent = new THREE.Object3D();
+        this.slider = document.getElementById("surface-level-slider");
+        this.size = 8;
+        this.range = 20;
+
+        // marching cubes mesh
+        this.mcGeometry = new THREE.BufferGeometry();
+        this.mcMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+        this.mcMesh = new THREE.Mesh(this.mcGeometry, this.mcMaterial);
+        this.marchingCubes = new MarchingCubes(this.size/2, this.size/2+1, this.size/2, 1);
+
+        this.isoLevel = 0;
+        this.field = new Field(this.size, this.size, this.size);
+    }
+
+    setup() {
+        this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight, false);
+        this.scene.background = new THREE.Color("#3a3a3a");
+
+        const dLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
+        dLight.position.set(-5, 2, 10);
+        this.scene.add(dLight);
+
+        let ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        this.scene.add(ambientLight);
+
+        this.drawField();
+        this.slider.max = this.range - 2;
+        this.slider.min = -this.range;
+        this.slider.value = this.isoLevel;
+        this.slider.oninput = () => {
+            this.isoLevel = parseInt(this.slider.value, 10);
+            // hide spheres below this isoLevel
+            var spheres = this.sphereParent.children;
+            for (let i=0; i < spheres.length; i++) {
+                if (spheres[i].fieldValue < this.isoLevel) {
+                    spheres[i].visible = false;
+                } else {
+                    spheres[i].visible = true;
+                }
+            }
+            this.marchingCubes.generateMesh(this.mcGeometry, this.isoLevel, this.field);
+            this.render();
+        }
+
+        this.marchingCubes.generateMesh(this.mcGeometry, this.isoLevel, this.field);
+        this.scene.add(this.mcMesh);
+
+        this.camera.position.x = 8;
+        this.camera.position.y = 8;
+        this.camera.position.z = 8;
+
+        this.controls = new THREE.OrbitControls(this.camera, this.canvas);
+        this.controls.listenToKeyEvents(window);
+        this.controls.addEventListener('change', this.render.bind(this));
+
+        this.render();
+    }
+
+    render() {
+        this.renderer.render(this.scene, this.camera);
+    }
+
+    drawField() {
+        var size_2 = this.size / 2;
+        for (let i = 0; i <= this.size; i++) {
+            for (let j = 0; j <= this.size; j++) {
+                for (let k = 0; k < this.size; k++) {
+                    let val = MathUtil.randomInt(-this.range, this.range);
+                    this.field.set(i, j, k, val);
+                    this.sphereParent.add(this.addSphere(i-size_2, j-size_2, k-size_2, val));
+                }
+            }
+        }
+        this.scene.add(this.sphereParent);
+    }
+
+    addSphere(posX, posY, posZ, val) {
+        const geometry = new THREE.SphereGeometry(0.1, 12, 8);
+        const material = new THREE.MeshBasicMaterial({ color: this.floatToColor(0.5 + val / (2 * this.range)) });
+        const sphere = new THREE.Mesh(geometry, material);
+        sphere.position.x = posX;
+        sphere.position.y = posY;
+        sphere.position.z = posZ;
+        sphere.fieldValue = val;
+        if (val < this.isoLevel) {
+            sphere.visible = false;
+        }
+
+        return sphere;
+    }
+
+    floatToColor(percentage) {
+        var colorPartHex = parseInt(255 * percentage, 10).toString(16).padStart(2, "0");
+        var colorHex = colorPartHex + colorPartHex + colorPartHex;
+        return parseInt(colorHex, 16);
+    }
 }
 
-setup();
-render();
+// new MainScene().setup();
+new IsoSurfaceScene().setup();
+new AlgoScene().setup();

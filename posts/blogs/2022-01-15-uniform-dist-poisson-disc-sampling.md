@@ -3,6 +3,7 @@ layout: blog.liquid
 title:  "Uniform Random Distribution using Poisson Disc Sampling"
 categories: ["blog"]
 data:
+  keywords: "html5, canvas, poisson, disc, sampling, games, javascript, tutorial"
   css: [katex.min.css]
   scripts: [extras/simulate-poisson-disc-sampling.js]
 ---
@@ -13,7 +14,7 @@ data:
   <div id="controls-container">
     <div class="slider-container">
       <label for="myRadius">MinDistance</label>
-      <input type="range" min="5" max="25" value="10" class="slider" id="myRadius">
+      <input type="range" min="5" max="25" class="slider" id="myRadius">
     </div>
     <div class="slider-container">
       <label for="myMaxTries">MaxTries</label>
@@ -28,6 +29,7 @@ data:
     display: block;
     margin: auto;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .slider-container {
@@ -51,7 +53,7 @@ data:
 Suppose you want to fill a texture or a 3D world with a object placed randomly like procedurally filling a forest with trees, random 2D distribution does not give good results.
 
 <div style="text-align:center">
-  <img src="/assets/images/2022-01/random-sampling-vs-poisson-sampling.jpg" alt="Random Sampling vs Poisson Disc Sampling"></img>
+  <img src="/assets/images/2022-01/random-sampling-vs-poisson-sampling.webp" alt="Random Sampling vs Poisson Disc Sampling"></img>
   <div style="margin-top: 8px;">Random Sampling  vs  Poisson Disc Sampling</div>
 </div>
 <br>

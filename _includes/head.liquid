@@ -11,6 +11,9 @@
   {% if page.data.keywords != blank %}
     <meta name="keywords" content="{{ page.data.keywords }}">
   {% endif %}
+  {% if page.data.description != blank %}
+    <meta name="description" content="{{ page.data.description }}">
+  {% endif %}
   <title>
     {% if page.title %} {{ page.title }} {% else %} {{ site.title }} {% endif %}
   </title>

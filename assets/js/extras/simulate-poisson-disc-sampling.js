@@ -1,6 +1,7 @@
 let canvas = document.getElementById("canvas");
 let context = canvas.getContext("2d");
 
+let scaleFactor = canvas.height / canvas.clientHeight;
 let radius = 10;
 let maxTryLimit = 10; // k in paper
 let cellSize, radiusSqr, numColumns, numRows;
@@ -28,7 +29,7 @@ canvas.addEventListener('click', function (event) {
 	var x = event.pageX - canvas.offsetLeft,
 		y = event.pageY - canvas.offsetTop;
 
-	setup(x, y);
+	setup(x * scaleFactor, y * scaleFactor);
 }, false);
 
 function setup(xStart, yStart) {
