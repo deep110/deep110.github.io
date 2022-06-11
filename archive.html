@@ -4,7 +4,31 @@ title: Archive
 permalink: /archive.html
 ---
 <div class="archive-header">
-  <h2>Archives</h2>
+  <h2>Travel Archives</h2>
+</div>
+
+<ul class="archive-lists">
+  {% assign pyear = "0" %}
+
+  {% for post in collections.posts.pages %}
+    {% if post.categories contains 'travel' %}
+      {% capture year %}{{ post.published_date | date: '%Y' }}{% endcapture %}
+      {% if year != pyear %}
+        {% if pyear != "0" %}</div>{% endif %}
+        <div class="by-year">
+            <h3>{{ post.published_date | date: '%Y' }}</h3>
+      {% endif %}
+      <li>
+        <span class="date">{{ post.published_date | date:"%d %b" }}</span>
+        <a href="{{ post.permalink | prepend: '/' | prepend: site.base_url }}">{{ post.title }}</a>
+      </li>
+      {% capture pyear %}{{ year }}{% endcapture %}
+    {% endif %}
+  {% endfor %}
+</ul>
+
+<div class="archive-header">
+  <h2>Blog Archives</h2>
 </div>
 
 <ul class="archive-lists">
