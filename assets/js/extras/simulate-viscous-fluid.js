@@ -607,7 +607,7 @@ fluidSim.addParticle(0.662281, 0.59606);
 // fluidSim.addParticle(0.60656, 0.586516);
 
 
-var playSimulation = false
+var playSimulation = false;
 function pause(e) {
   playSimulation = !playSimulation;
 }

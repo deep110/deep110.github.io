@@ -30,10 +30,10 @@ Uniform Random Distribution using Poisson Disc Sampling
 </a>
 <nav class="site-nav">
 <div class="trigger">
-<a class="page-link" href="https://deep110.github.io/about.html">About Me</a>
-<a class="page-link" href="https://deep110.github.io/archive.html">Archive</a>
 <a class="page-link" href="https://deep110.github.io/travel.html">Travel Log</a>
+<a class="page-link" href="https://deep110.github.io/archive.html">Archive</a>
 <a class="page-link" href="https://deep110.github.io/projects.html">Projects</a>
+<a class="page-link" href="https://deep110.github.io/about.html">About</a>
 </div>
 </nav>
 </div>
@@ -48,7 +48,7 @@ Uniform Random Distribution using Poisson Disc Sampling
 Jan 15, 2022
 </time>
 | <span class="time">
-9
+4
 </span>
 Minute Read
 </p>
@@ -67,7 +67,7 @@ Minute Read
 </div>
 </div>
 </div>
-<style>canvas{background:#3a3a3a;display:block;margin:auto;cursor:pointer;}.slider-container{display:flex;margin-top:30px;}.slider{-webkit-appearance:none;appearance:none;width:100%;height:20px;border-radius:5px;background:#d3d3d3;margin-left:5%;outline:none;opacity:0.7;-webkit-transition:.2s;transition:opacity .2s;}.slider:hover{opacity:1;}.slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:30px;height:30px;background:#515865;cursor:pointer;}.slider::-moz-range-thumb{width:30px;height:30px;background:#515865;cursor:pointer;}@media only screen and (max-width:740px){canvas{width:calc(100vw - 2em);}#canvas-container{width:calc(100vw - 2em);}}</style>
+<style>canvas{background:#3a3a3a;display:block;margin:auto;cursor:pointer;}.slider-container{display:flex;margin-top:30px;}@media only screen and (max-width:740px){canvas{width:calc(100vw - 2em);}#canvas-container{width:calc(100vw - 2em);}}</style>
 <br>
 <p>Suppose you want to fill a texture or a 3D world with a object placed randomly like procedurally filling a forest with trees, random 2D distribution does not give good results.</p>
 <div style="text-align:center">
@@ -84,10 +84,10 @@ Minute Read
 </ul>
 <p>The one i would be focusing on is object placement.</p>
 <h3>Implementation</h3>
-<p>There are many implementations for poisson disc sampling but the one we are going to discuss was proposed by <a href="#references">Robert Bridson</a>. It is reasonably fast and can be used for N arbitrary dimensions.</p>
+<p>There are many implementations for poisson disc sampling but the one we are going to discuss was proposed by Robert Bridson<sup class="footnote-reference"><a href="#robert">1</a></sup>. It is reasonably fast and can be used for N arbitrary dimensions.</p>
 <p>The steps are as follows:</p>
 <ol>
-<li>First we will define the minimum distance <code>r</code> that we want our points to have. Then a 2D grid is created with a cell-size <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1572200000000001em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord">/</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.90722em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord">2</span></span></span><span style="top:-2.86722em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width='400em' height='1.08em' viewBox='0 0 400000 1080' preserveAspectRatio='xMinYMin slice'><path d='M95,702
+<li>First we will define the minimum distance <code>r</code> that we want our points to have. Then a 2D grid is created with a cell-size <span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.1572em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord">/</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9072em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord">2</span></span></span><span style="top:-2.8672em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width='400em' height='1.08em' viewBox='0 0 400000 1080' preserveAspectRatio='xMinYMin slice'><path d='M95,702
 c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
 c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
 c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
@@ -98,7 +98,7 @@ c5.3,-9.3,12,-14,20,-14
 H400000v40H845.2724
 s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
 c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
-M834 80h400000v40h-400000z'/></svg></span></span></span><span class="vlist-s">‚Äã</span></span><span class="vlist-r"><span class="vlist" style="height:0.13278em;"><span></span></span></span></span></span></span></span></span> [See the below diagram for why].</li>
+M834 80h400000v40h-400000z'/></svg></span></span></span><span class="vlist-s">‚Äã</span></span><span class="vlist-r"><span class="vlist" style="height:0.1328em;"><span></span></span></span></span></span></span></span></span> [See the below diagram for why].</li>
 </ol>
 <div style="text-align:center">
 <img src="/assets/images/2022-01/grid-cell-size.jpg" alt="Grid Cell Size"></img>
@@ -232,10 +232,12 @@ M834 80h400000v40h-400000z'/></svg></span></span></span><span class="vlist-s">‚Ä
 <br>
 <p>Though it can be desirable if you would want to fill those areas with some other things. For example with lakes when generating a forest. You can try playing around with <code>MaxTries</code> slider above to see the effect of k.</p>
 <h3 id="references">References</h3>
-<ol>
-<li><a href="https://www.cs.ubc.ca/%7Erbridson/docs/bridson-siggraph07-poissondisk.pdf">Fast Poisson Disk Sampling in Arbitrary Dimensions</a> by Robert Bridson, University of British Columbia</li>
-<li><a href="https://en.wikipedia.org/wiki/Supersampling#Poisson_disk">Wikipedia</a></li>
-</ol>
+<div class="footnote-definition" id="robert"><sup class="footnote-definition-label">1</sup>
+<p><a href="https://www.cs.ubc.ca/%7Erbridson/docs/bridson-siggraph07-poissondisk.pdf">Fast Poisson Disk Sampling in Arbitrary Dimensions</a> by Robert Bridson, University of British Columbia</p>
+</div>
+<div class="footnote-definition" id="wikipedia"><sup class="footnote-definition-label">2</sup>
+<p><a href="https://en.wikipedia.org/wiki/Supersampling#Poisson_disk">Wikipedia</a></p>
+</div>
 </div>
 <div class="post-navigation">
 <a class="next" href="https://deep110.github.io/posts/blogs/2021-06-26-convex-hull-graham-scan.html">‚Üê&nbsp;Prev Post</a>
@@ -269,7 +271,7 @@ M834 80h400000v40h-400000z'/></svg></span></span></span><span class="vlist-s">‚Ä
 </div>
 </footer>
 <script type="text/javascript" src="https://deep110.github.io/assets/js/main.js"></script>
-<script type="text/javascript" src="https://deep110.github.io/assets/js/extras/simulate-poisson-disc-sampling.js"></script>
+<script defer type="text/javascript" src="https://deep110.github.io/assets/js/extras/simulate-poisson-disc-sampling.js"></script>
 <link rel="stylesheet" href="https://deep110.github.io/assets/css/katex.min.css"></script>
 </body>
 </html>

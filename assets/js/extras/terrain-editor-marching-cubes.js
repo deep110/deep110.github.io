@@ -345,7 +345,7 @@ class MarchingCubes {
                     const v4 = terrain.getField(fI, fJ + 1, fK);
                     const v5 = terrain.getField(fI + 1, fJ + 1, fK);
                     const v6 = terrain.getField(fI + 1, fJ + 1, fK + 1);
-                    const v7 = terrain.getField(fI, fJ + 1, fK + 1)
+                    const v7 = terrain.getField(fI, fJ + 1, fK + 1);
 
                     let cubeIndex = this.#getCubeIndex(surfaceLevel, v0, v1, v2, v3, v4, v5, v6, v7);
                     let edgeIndex = edgeTable[cubeIndex];
@@ -645,7 +645,7 @@ function setup() {
         mousePointer.x = ( (e.clientX - canvasBoundingRect.left) / canvas.clientWidth ) * 2 - 1;
         mousePointer.y = - ( (e.clientY - canvasBoundingRect.top) / canvas.clientHeight ) * 2 + 1;
         updateBrushPosition(mousePointer, terrain, brush);
-    }
+    };
 
     canvas.onclick = (e) => {
         let point = brush.position;
@@ -659,7 +659,7 @@ function setup() {
             terrain.makeShape(5, point, 1);
             render();
         }
-    }
+    };
 
     document.addEventListener('keydown', (e) => {
         const key = e.key;
@@ -680,8 +680,6 @@ function setup() {
 
 function render() {
     renderer.render(scene, camera);
-
-    // requestAnimationFrame(render);
 }
 
 setup();

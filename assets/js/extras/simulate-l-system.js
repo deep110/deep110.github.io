@@ -6,7 +6,7 @@ var labels = {
   "context_free": "Context Free Deterministic Grammar",
   "context_sensitive": "Context Sensitive Grammar",
   "stochastic": "Stochastic Grammar"
-}
+};
 
 var systems = {
   "context_free": {
@@ -132,7 +132,7 @@ var systems = {
       ]
     }
   }
-}
+};
 
 class Turtle {
   constructor(axiomAngle, startPosY, startLength) {
@@ -181,7 +181,7 @@ class Turtle {
     this.startPosY = posY;
     this.length = startLength;
   }
-}
+};
 
 class LSystem {
   constructor(axiom, type, rules, ignoredSymbols) {
@@ -194,7 +194,7 @@ class LSystem {
     if (type == 1) {
       for (let i=0; i < this.rules.length; i++) {
         let rule = this.rules[i];
-        let ruleMod = rule.a.replace(/ /g,'')
+        let ruleMod = rule.a.replace(/ /g,'');
         
         let left = ruleMod.match(/(.+)<(.)/);
         let right = ruleMod.match(/(.)>(.+)/);
@@ -204,12 +204,12 @@ class LSystem {
         }
 
         if (left != undefined) {
-          rule.leftCtx = left[1]
-          rule.toMatch = left[2]
+          rule.leftCtx = left[1];
+          rule.toMatch = left[2];
         }
         if (right != undefined) {
-          rule.rightCtx = right[2]
-          rule.toMatch = right[1]
+          rule.rightCtx = right[2];
+          rule.toMatch = right[1];
         }
       }
     } else if (type == 2) {
@@ -314,22 +314,22 @@ class LSystem {
     let inc, branchStart, branchEnd;
 
     if (startIndex > endIndex) { // left dir match
-      inc = -1
-      matchIndex = toMatch.length - 1
-      matchIndexOverflow = -1
-      branchStart = "]"
-      branchEnd = "["
+      inc = -1;
+      matchIndex = toMatch.length - 1;
+      matchIndexOverflow = -1;
+      branchStart = "]";
+      branchEnd = "[";
     } else {
-      inc = 1
-      matchIndex = 0
-      matchIndexOverflow = toMatch.length
-      branchStart = "["
-      branchEnd = "]"
+      inc = 1;
+      matchIndex = 0;
+      matchIndexOverflow = toMatch.length;
+      branchStart = "[";
+      branchEnd = "]";
     }
     let codeIndex = startIndex - inc;
 
     while(codeIndex !== endIndex) {
-      codeIndex += inc
+      codeIndex += inc;
       let axiomSymbol = code[codeIndex];
       let matchSymbol = toMatch[matchIndex];
 
@@ -395,8 +395,8 @@ function drawTurtle(context, turtle, angle) {
   var l = 10 * Math.pow(2, 0.5);
   var cp = turtle.position;
 
-  var cp1 = cp.subtract(new Vector2(l * Math.sin((45 + angle) * 0.01745), l * Math.cos((45 + angle) * 0.01745)))
-  var cp2 = cp.add(new Vector2(l * Math.sin((45 - angle ) * 0.01745), -1 * l * Math.cos((45 - angle) * 0.01745)))
+  var cp1 = cp.subtract(new Vector2(l * Math.sin((45 + angle) * 0.01745), l * Math.cos((45 + angle) * 0.01745)));
+  var cp2 = cp.add(new Vector2(l * Math.sin((45 - angle ) * 0.01745), -1 * l * Math.cos((45 - angle) * 0.01745)));
 
   context.moveTo(cp.x, turtle.cartToScreen(cp.y));
 
@@ -410,8 +410,8 @@ function setupInteractiveSystem() {
   let select = document.getElementById("system-selector");
   for (const sys_name in systems) {
     var optGrp = document.createElement("optgroup");
-    optGrp.label = labels[sys_name]
-    optGrp.id = sys_name
+    optGrp.label = labels[sys_name];
+    optGrp.id = sys_name;
     for (const ex in systems[sys_name]) {
       var option = document.createElement("option");
       option.value = ex;
@@ -424,7 +424,7 @@ function setupInteractiveSystem() {
 
   select.addEventListener("change", () => {
     var optgroupId = select.options[select.selectedIndex].parentNode.id;
-    currentSystem = systems[optgroupId][select.value]
+    currentSystem = systems[optgroupId][select.value];
 
     fillDescription(currentSystem);
     lsystem = new LSystem(
@@ -440,16 +440,16 @@ function setupInteractiveSystem() {
 }
 
 function fillDescription(cs) {
-  document.getElementById("desc-axiom").innerHTML = "Axiom: " + cs["axiom"]
-  document.getElementById("desc-angle").innerHTML = "Angle: " + cs["axiomAngle"]
+  document.getElementById("desc-axiom").innerHTML = "Axiom: " + cs["axiom"];
+  document.getElementById("desc-angle").innerHTML = "Angle: " + cs["axiomAngle"];
 
-  var ruleStr = "Rules: "
-  var rules = cs["rules"]
+  var ruleStr = "Rules: ";
+  var rules = cs["rules"];
   for (let i = 0; i < rules.length; i++) {
-    ruleStr += "<br>" + rules[i]["a"] + " -> " + rules[i]["b"]
+    ruleStr += "<br>" + rules[i]["a"] + " -> " + rules[i]["b"];
   }
 
-  document.getElementById("desc-rules").innerHTML = ruleStr
+  document.getElementById("desc-rules").innerHTML = ruleStr;
 }
 
 // setup

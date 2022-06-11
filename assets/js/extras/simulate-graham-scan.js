@@ -61,7 +61,7 @@ function* GrahamScan() {
       return (distSq(points[pInitialIndex], points[a]) >= distSq(points[pInitialIndex], points[b])) ? -1 : 1;
     }
     return (o == 2) ? -1 : 1;
-  })
+  });
 
   // loop just to show the order
   for (var i = 1; i < pointsSorted.length; i++) {
@@ -170,8 +170,8 @@ function draw(dt) {
     context.lineWidth = 3;
 
     for (let i = 0; i < hull.length - 1; i++) {
-      var curr = points[hull[i]]
-      var next = points[hull[i + 1]]
+      var curr = points[hull[i]];
+      var next = points[hull[i + 1]];
       context.moveTo(curr.x, curr.y);
       context.lineTo(next.x, next.y);
     }
@@ -203,7 +203,7 @@ function draw(dt) {
 
   if (value == 4) {
     // restart simulation again after 1 sec
-    stayCounter += dt
+    stayCounter += dt;
     if (stayCounter > 1000) {
       setup();
     }
