@@ -292,6 +292,149 @@ const edgeTable = [
     0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0,
 ];
 
+class CSS2DObject extends THREE.Object3D {
+    constructor(element = document.createElement('div')) {
+        super();
+        this.isCSS2DObject = true;
+        this.element = element;
+        this.element.style.position = 'absolute';
+        this.element.style.userSelect = 'none';
+        this.element.setAttribute('draggable', false);
+
+        this.addEventListener('removed', function () {
+            this.traverse(function (object) {
+                if (object.element instanceof Element && object.element.parentNode !== null) {
+                    object.element.parentNode.removeChild(object.element);
+                }
+            });
+        });
+    }
+
+    copy(source, recursive) {
+        super.copy(source, recursive);
+        this.element = source.element.cloneNode(true);
+        return this;
+    }
+}
+
+class CSS2DRenderer {
+    constructor(parameters = {}) {
+        this._vector = new THREE.Vector3();
+        this._viewMatrix = new THREE.Matrix4();
+        this._viewProjectionMatrix = new THREE.Matrix4();
+        this._a = new THREE.Vector3();
+        this._b = new THREE.Vector3();
+
+        const _this = this;
+        let _width, _height;
+        let _widthHalf, _heightHalf;
+
+        const cache = {
+            objects: new WeakMap()
+        };
+
+        const domElement = parameters.element !== undefined ? parameters.element : document.createElement('div');
+        domElement.style.overflow = 'hidden';
+        this.domElement = domElement;
+
+        this.getSize = function () {
+            return {
+                width: _width,
+                height: _height
+            };
+        };
+
+        this.render = function (scene, camera) {
+            if (scene.autoUpdate === true) scene.updateMatrixWorld();
+            if (camera.parent === null) camera.updateMatrixWorld();
+
+            this._viewMatrix.copy(camera.matrixWorldInverse);
+            this._viewProjectionMatrix.multiplyMatrices(camera.projectionMatrix, this._viewMatrix);
+
+            this.renderObject(scene, scene, camera);
+            zOrder(scene);
+        };
+
+        this.setSize = function (width, height) {
+            _width = width;
+            _height = height;
+
+            _widthHalf = _width / 2;
+            _heightHalf = _height / 2;
+
+            domElement.style.width = width + 'px';
+            domElement.style.height = height + 'px';
+        };
+
+        this.renderObject = function (object, scene, camera) {
+            if (object.isCSS2DObject) {
+                this._vector.setFromMatrixPosition(object.matrixWorld);
+                this._vector.applyMatrix4(this._viewProjectionMatrix);
+
+                const visible = (object.visible === true) && (this._vector.z >= - 1 && this._vector.z <= 1) && (object.layers.test(camera.layers) === true);
+                object.element.style.display = (visible === true) ? '' : 'none';
+
+                if (visible === true) {
+                    object.onBeforeRender(_this, scene, camera);
+
+                    const element = object.element;
+                    element.style.transform = 'translate(-50%,-50%) translate(' + (this._vector.x * _widthHalf + _widthHalf) + 'px,' + (- this._vector.y * _heightHalf + _heightHalf) + 'px)';
+
+                    if (element.parentNode !== domElement) {
+                        domElement.appendChild(element);
+                    }
+
+                    object.onAfterRender(_this, scene, camera);
+                }
+
+                const objectData = {
+                    distanceToCameraSquared: getDistanceToSquared(camera, object, this._a, this._b)
+                };
+
+                cache.objects.set(object, objectData);
+            }
+
+            for (let i = 0, l = object.children.length; i < l; i++) {
+                this.renderObject(object.children[i], scene, camera);
+            }
+        }
+
+        function getDistanceToSquared(object1, object2, a, b) {
+            a.setFromMatrixPosition(object1.matrixWorld);
+            b.setFromMatrixPosition(object2.matrixWorld);
+
+            return a.distanceToSquared(b);
+        }
+
+        function filterAndFlatten(scene) {
+            const result = [];
+            scene.traverse(function (object) {
+                if (object.isCSS2DObject) result.push(object);
+            });
+
+            return result;
+        }
+
+        function zOrder(scene) {
+            const sorted = filterAndFlatten(scene).sort(function (a, b) {
+                if (a.renderOrder !== b.renderOrder) {
+                    return b.renderOrder - a.renderOrder;
+                }
+
+                const distanceA = cache.objects.get(a).distanceToCameraSquared;
+                const distanceB = cache.objects.get(b).distanceToCameraSquared;
+
+                return distanceA - distanceB;
+            });
+
+            const zMax = sorted.length;
+            for (let i = 0, l = sorted.length; i < l; i++) {
+                sorted[i].element.style.zIndex = zMax - i;
+            }
+        }
+    }
+}
+
 class Field {
     constructor(xMax, yMax, zMax) {
         this.xMax2 = 2 * xMax;
@@ -317,6 +460,7 @@ class MarchingCubes {
         this.sampleSize = sampleSize;
 
         this.vertices = new Float32Array(this.xMax * this.yMax * this.zMax * 8 * 12 * 3);
+        this.normals = new Float32Array(this.xMax * this.yMax * this.zMax * 8 * 12 * 3);
 
         this.edges = [];
         for (let i = 0; i < 12; i++) {
@@ -413,8 +557,6 @@ class MarchingCubes {
                         this.vertices[vIdx] = e[0];
                         this.vertices[vIdx + 1] = e[1];
                         this.vertices[vIdx + 2] = e[2];
-                        // indices[idxCounter] = idxCounter;
-                        // idxCounter++;
                         vIdx += 3;
                     }
                 }
@@ -422,6 +564,7 @@ class MarchingCubes {
         }
 
         geometry.setAttribute('position', new THREE.BufferAttribute(this.vertices.slice(0, vIdx), 3));
+        geometry.setAttribute('normal', new THREE.BufferAttribute(this.normals.slice(0, vIdx), 3));
         geometry.computeVertexNormals();
 
         // tell three.js that mesh has been updated
@@ -495,6 +638,7 @@ class MarchingCubes {
         }
 
         geometry.setAttribute('position', new THREE.BufferAttribute(this.vertices.slice(0, vIdx), 3));
+        geometry.setAttribute('normal', new THREE.BufferAttribute(this.normals.slice(0, vIdx), 3));
         geometry.computeVertexNormals();
 
         geometry.attributes.position.needsUpdate = true;
@@ -528,7 +672,7 @@ class MarchingCubes {
 }
 
 class Terrain {
-    constructor(width, height, depth, sampleSize, isoLevel = 0) {
+    constructor(width, height, depth, sampleSize, guiController, isoLevel = 0) {
         this.xMax = Math.floor(width / (2 * sampleSize));
         this.yMax = Math.floor(height / (2 * sampleSize));
         this.zMax = Math.floor(depth / (2 * sampleSize));
@@ -537,25 +681,28 @@ class Terrain {
         this.field = new Field(this.xMax, this.yMax, this.zMax);
 
         // noise values
-        this.numOctaves = 4;
-        this.lacunarity = 2;
-        this.persistence = 0.5;
-        this.noiseOffset = Math.random() * 10 + 1;
-        this.noiseScale = 2;
-        this.noiseWeight = 7;
+        this.setNoiseValues(guiController);
         this.floorOffset = 5;
-        this.weightMultiplier = 3.6;
+        this.noiseOffset = Math.random() * 10 + 1;
         this.simplex = new SimplexNoise();
 
         // graphics
         this.geometry = new THREE.BufferGeometry();
-        this.material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+        this.material = new THREE.MeshStandardMaterial({ "color": guiController["TerrainColor"] });
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.marchingCubes = new MarchingCubes(this.xMax, this.yMax, this.zMax, sampleSize);
 
         // generate mesh geometry
         this.generateHeightField();
         this.regenerateMesh();
+    }
+
+    setNoiseValues(guiController) {
+        this.numOctaves = guiController["NumOctaves"];
+        this.lacunarity = guiController["Lacunarity"];
+        this.persistence = guiController["Persistence"];
+        this.noiseWeight = guiController["NoiseWeight"];
+        this.weightMultiplier = guiController["WeightMultiplier"];
     }
 
     getMesh() {
@@ -572,7 +719,7 @@ class Terrain {
                         let yi = Math.round(point.y + y) + this.yMax;
                         let zi = Math.round(point.z + z) + this.zMax;
 
-                        this.field.set(xi, yi, zi, this.field.get(xi, yi, zi) - distance * multiplier);
+                        this.field.set(xi, yi, zi, this.field.get(xi, yi, zi) + distance * multiplier);
                     }
                 }
             }
@@ -600,7 +747,7 @@ class Terrain {
     #heightValue(x, y, z) {
         let noise = 0;
 
-        let frequency = this.noiseScale / 100;
+        let frequency = 0.02;
         let amplitude = 1;
         let weight = 1;
         for (var j = 0; j < this.numOctaves; j++) {
@@ -631,13 +778,23 @@ class MainScene {
     constructor() {
         this.canvas = document.getElementById("main-canvas");
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 1000);
+        this.camera = new THREE.PerspectiveCamera(75, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 300);
         this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+        this.gui = new lil.GUI({ container: document.getElementById("gui-canvas-main") });
         this.terrainSize = 60;
 
-        this.whichKeyPress = "NONE"; // Shift, Z, NONE
         this.isFullScreen = false;
         this.raycaster = new THREE.Raycaster();
+        this.guiController = {
+            "TerrainColor": 0xc47b3c,
+            "BrushAction": "Raise",
+            "BrushSize": 5,
+            "NumOctaves": 4,
+            "Lacunarity": 2,
+            "Persistence": 0.5,
+            "NoiseWeight": 7,
+            "WeightMultiplier": 3.6,
+        }
     }
 
     setup() {
@@ -645,14 +802,15 @@ class MainScene {
         this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight, false);
 
         // add terrain
-        const terrain = new Terrain(this.terrainSize, this.terrainSize, this.terrainSize, 1);
-        this.scene.add(terrain.getMesh());
+        this.terrain = new Terrain(this.terrainSize, this.terrainSize, this.terrainSize, 1, this.guiController);
+        this.scene.add(this.terrain.getMesh());
 
         // add editing brush
         const brushMat = new THREE.MeshPhongMaterial({ color: 0xffff00, transparent: true, opacity: 0.5 });
-        const brushGeo = new THREE.SphereGeometry(1.5, 16, 16);
-        const brush = new THREE.Mesh(brushGeo, brushMat);
-        this.scene.add(brush);
+        const brushGeo = new THREE.SphereGeometry(3, 16, 16);
+        this.brush = new THREE.Mesh(brushGeo, brushMat);
+        this.brush.scale.setScalar(this.guiController["BrushSize"] * 0.25);
+        this.scene.add(this.brush);
 
         // add lights
         const dLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
@@ -661,11 +819,10 @@ class MainScene {
 
         let ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
         this.scene.add(ambientLight);
+        this.setupGUI();
 
         this.scene.background = new THREE.Color("#3a3a3a");
-        this.camera.position.z = 15;
-        this.camera.position.x = 15;
-        this.camera.position.y = 15;
+        this.camera.position.set(15, 15, 15);
 
         this.controls = new THREE.OrbitControls(this.camera, this.canvas);
         this.controls.listenToKeyEvents(window);
@@ -677,60 +834,82 @@ class MainScene {
             }
         });
 
+        this.changeShape = false;
         const mousePointer = new THREE.Vector2();
         this.canvas.onmousemove = (e) => {
+            this.changeShape = false;
             var canvasBoundingRect = canvas.getBoundingClientRect();
 
             mousePointer.x = ((e.clientX - canvasBoundingRect.left) / canvas.clientWidth) * 2 - 1;
             mousePointer.y = - ((e.clientY - canvasBoundingRect.top) / canvas.clientHeight) * 2 + 1;
-            this.updateBrushPosition(mousePointer, terrain, brush);
+            this.updateBrushPosition(mousePointer, this.brush);
         };
 
         var interval;
         this.canvas.onmousedown = () => {
-            interval = setInterval(() => {
-                let point = brush.position;
-                if (this.whichKeyPress === "Shift") {
-                    // raise the terrain
-                    terrain.makeShape(5, point, -1);
-                    this.render();
-                } else if (this.whichKeyPress === "Z") {
-                    // depress the terrain
-                    terrain.makeShape(5, point, 1);
-                    this.render();
+            this.changeShape = true;
+            setTimeout(() => {
+                if (this.changeShape) {
+                    interval = setInterval(() => {
+                        let multiplier = (this.guiController["BrushAction"] === "Depress") ? -1 : 1;
+                        this.terrain.makeShape(this.guiController["BrushSize"], this.brush.position, multiplier);
+                        this.render();
+                    }, 120);
                 }
-            }, 100);
+            }, 200);
         };
 
-        this.canvas.onmouseup = (e) => {
+        this.canvas.onmouseup = () => {
+            this.changeShape = false;
             clearInterval(interval);
         };
 
-        document.addEventListener('keydown', (e) => {
-            const key = e.key;
-            if (key === "Shift") {
-                this.whichKeyPress = "Shift";
-                return;
-            }
-            if (key.toUpperCase() === "Z") {
-                this.whichKeyPress = "Z";
-                return;
-            }
-            this.whichKeyPress = "NONE";
-        });
-        document.addEventListener('keyup', () => {
-            this.whichKeyPress = "NONE";
-        });
-
-        document.getElementById("toggle-fs").addEventListener("click", (event) => {
+        const toggleBtn = document.getElementById("toggle-fs");
+        toggleBtn.addEventListener("click", () => {
             this.canvas.classList.toggle("fullscreen");
-            event.currentTarget.classList.toggle("tfs");
+            toggleBtn.classList.toggle("fullscreen");
+            document.getElementById("gui-canvas-main").classList.toggle("fullscreen");
+            document.getElementById("index-canvas-main").classList.toggle("fullscreen");
             this.isFullScreen = !this.isFullScreen;
 
+            if (this.isFullScreen) {
+                toggleBtn.children[1].setAttribute("transform", "translate(16,16)rotate(135)scale(5)translate(-1.85,0)");
+            } else {
+                toggleBtn.children[1].setAttribute("transform", "translate(16,16)rotate(-45)scale(5)translate(-1.85,0)");
+            }
             this.correctDisplaySize();
         });
 
         this.render();
+    }
+
+    setupGUI() {
+        const terrainControl = this.gui.addFolder("Terrain Editing");
+        terrainControl.addColor(this.guiController, "TerrainColor").onChange(value => {
+            this.terrain.material.color.set(value);
+            this.render();
+        });
+        terrainControl.add(this.guiController, "BrushAction", ["Raise", "Depress"]);
+        terrainControl.add(this.guiController, "BrushSize", 2, 8, 1).onChange(value => {
+            this.brush.scale.setScalar(value * 0.25);
+            this.render();
+        });
+
+        // add noise controls
+        const noiseGUI = this.gui.addFolder("Noise");
+        noiseGUI.add(this.guiController, "NumOctaves", 2, 8, 1);
+        noiseGUI.add(this.guiController, "Lacunarity", 1, 3, 0.2);
+        noiseGUI.add(this.guiController, "Persistence", 0, 1, 0.1);
+        noiseGUI.add(this.guiController, "NoiseWeight", 4, 20, 1);
+        noiseGUI.add(this.guiController, "WeightMultiplier", 1, 10, 0.2);
+
+        noiseGUI.onFinishChange(event => {
+            this.terrain.setNoiseValues(this.guiController);
+            this.terrain.generateHeightField();
+            this.terrain.regenerateMesh();
+            this.render();
+        });
+        noiseGUI.close();
     }
 
     render() {
@@ -750,12 +929,12 @@ class MainScene {
         this.render();
     }
 
-    updateBrushPosition(mousePosition, terrain, brush) {
+    updateBrushPosition(mousePosition) {
         this.raycaster.setFromCamera(mousePosition, this.camera);
-        const result = this.raycaster.intersectObject(terrain.getMesh());
+        const result = this.raycaster.intersectObject(this.terrain.getMesh());
         if (result.length > 0) {
             const point = result[0].point;
-            brush.position.set(point.x, point.y, point.z);
+            this.brush.position.set(point.x, point.y, point.z);
             this.render();
         }
     }
@@ -767,30 +946,41 @@ class IsoSurfaceScene {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 100);
         this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+        this.labelRenderer = new CSS2DRenderer();
+        this.gui = new lil.GUI({ container: document.getElementById("gui-canvas-iso-surface") });
         this.raycaster = new THREE.Raycaster();
         this.mousePosition = new THREE.Vector2();
         this.sphereParent = new THREE.Object3D();
 
         // marching cubes mesh
         this.mcGeometry = new THREE.BufferGeometry();
-        this.mcMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
+        this.mcMaterial = new THREE.MeshBasicMaterial({ color: 0x1406e0, side: THREE.DoubleSide });
         this.mcMesh = new THREE.Mesh(this.mcGeometry, this.mcMaterial);
         this.marchingCubes = new MarchingCubes(1, 1, 1, 1);
 
         this.field = new Field(1, 1, 1);
+        this.field.set(0, 0, 1, 1);
         this.intersected = null;
+        this.guiController = {
+            "Toggle Numbering": () => {
+                this.camera.layers.toggle(1);
+                this.render();
+            },
+        }
     }
 
     setup() {
         this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight, false);
         this.scene.background = new THREE.Color("#3a3a3a");
+        this.setLabelRenderer();
+        this.gui.add(this.guiController, 'Toggle Numbering');
+
+        // setup camera
+        this.camera.layers.enableAll();
+        this.camera.position.set(1.373, 1.353, 1.729);
 
         this.addCube();
         this.scene.add(this.mcMesh);
-
-        this.camera.position.x = 1.5;
-        this.camera.position.y = 1.5;
-        this.camera.position.z = 1.5;
 
         this.canvas.addEventListener('mousemove', (e) => {
             var canvasBoundingRect = this.canvas.getBoundingClientRect();
@@ -825,8 +1015,18 @@ class IsoSurfaceScene {
         this.render();
     }
 
+    setLabelRenderer() {
+        this.labelRenderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight, false);
+        this.labelRenderer.domElement.style.position = 'absolute';
+        this.labelRenderer.domElement.style.top = '0px';
+        this.labelRenderer.domElement.style.left = "calc(50% - " + this.canvas.clientWidth / 2 + "px)";
+        this.labelRenderer.domElement.style.pointerEvents = 'none';
+        this.canvas.parentElement.appendChild(this.labelRenderer.domElement);
+    }
+
     render() {
         this.renderer.render(this.scene, this.camera);
+        this.labelRenderer.render(this.scene, this.camera);
     }
 
     addCube() {
@@ -834,30 +1034,58 @@ class IsoSurfaceScene {
         var edgeGeo = new THREE.EdgesGeometry(cubeGeo);
         const material = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
         const cube = new THREE.LineSegments(edgeGeo, material);
-        cube.position.x = 0.5;
-        cube.position.y = 0.5;
-        cube.position.z = 0.5;
+        cube.position.set(0.5, 0.5, 0.5);
         this.scene.add(cube);
 
-        for (let i = 0; i <= 1; i++) {
-            for (let j = 0; j <= 1; j++) {
-                for (let k = 0; k <= 1; k++) {
-                    this.sphereParent.add(this.addSphere(i, j, k));
+        for (let j = 0; j <= 1; j++) {
+            for (let k = 0; k <= 1; k++) {
+                for (let i = 0; i <= 1; i++) {
+                    this.sphereParent.add(this.addSphere(i, j, k, this.field.get(i, j, k)));
                 }
             }
         }
         this.scene.add(this.sphereParent);
+
+        for (let i = 0; i < 2; i++) {
+            // edge labels
+            this.addLabel(0 + 4 * i, "green", 0.5, i, 0, "0px");
+            this.addLabel(1 + 4 * i, "green", 1, i, 0.5, "0px");
+            this.addLabel(2 + 4 * i, "green", 0.5, i, 1, "0px");
+            this.addLabel(3 + 4 * i, "green", 0, i, 0.5, "0px");
+
+            // vertex labels
+            this.addLabel(0 + 4 * i, "white", 0, i, 0, "8px");
+            this.addLabel(1 + 4 * i, "white", 1, i, 0, "8px");
+            this.addLabel(2 + 4 * i, "white", 1, i, 1, "8px");
+            this.addLabel(3 + 4 * i, "white", 0, i, 1, "8px");
+
+        }
+        this.addLabel(8, "green", 0, 0.5, 0, "4px");
+        this.addLabel(9, "green", 1, 0.5, 0, "4px");
+        this.addLabel(10, "green", 1, 0.5, 1, "4px");
+        this.addLabel(11, "green", 0, 0.5, 1, "4px");
     }
 
-    addSphere(posX, posY, posZ) {
+    addSphere(posX, posY, posZ, val) {
         const geometry = new THREE.SphereGeometry(0.05, 12, 8);
-        const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
+        let color = (val == 0) ? 0x000000 : 0xcccccc;
+        const material = new THREE.MeshBasicMaterial({ color: color });
         const sphere = new THREE.Mesh(geometry, material);
-        sphere.position.x = posX;
-        sphere.position.y = posY;
-        sphere.position.z = posZ;
+        sphere.position.set(posX, posY, posZ);
 
         return sphere;
+    }
+
+    addLabel(content, color, x, y, z, leftMargin) {
+        const labelDiv = document.createElement('div');
+        labelDiv.textContent = content;
+        labelDiv.style.marginTop = '-10px';
+        labelDiv.style.marginLeft = leftMargin;
+        labelDiv.style.color = color;
+        const vertexLabel = new CSS2DObject(labelDiv);
+        vertexLabel.position.set(x, y, z);
+        vertexLabel.layers.set(1);
+        this.scene.add(vertexLabel);
     }
 
     interactiveSphere() {
@@ -896,41 +1124,50 @@ class AlgoScene {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, this.canvas.clientWidth / this.canvas.clientHeight, 0.1, 100);
         this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+        this.gui = new lil.GUI({ container: document.getElementById("gui-canvas-algo") });
         this.sphereParent = new THREE.Object3D();
-        this.slider = document.getElementById("surface-level-slider");
         this.size = 8;
-        this.range = 20;
+        this.range = 10;
 
         // marching cubes mesh
         this.mcGeometry = new THREE.BufferGeometry();
         this.mcMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide });
         this.mcMesh = new THREE.Mesh(this.mcGeometry, this.mcMaterial);
-        this.marchingCubes = new MarchingCubes(this.size/2, this.size/2+1, this.size/2, 1);
+        this.marchingCubes = new MarchingCubes(this.size / 2, this.size / 2 + 1, this.size / 2, 1);
 
-        this.isoLevel = 0;
+        this.isoLevel = 1;
         this.field = new Field(this.size, this.size, this.size);
+        this.guiController = {
+            "Toggle Field": () => { this.camera.layers.toggle(1); this.render(); },
+            "Surface Level": 1,
+            "Field Type": "Random",
+        }
     }
 
     setup() {
         this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight, false);
         this.scene.background = new THREE.Color("#3a3a3a");
 
-        const dLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
-        dLight.position.set(-5, 2, 10);
-        this.scene.add(dLight);
-
-        let ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
-        this.scene.add(ambientLight);
-
-        this.drawField();
-        this.slider.max = this.range - 2;
-        this.slider.min = -this.range;
-        this.slider.value = this.isoLevel;
-        this.slider.oninput = () => {
-            this.isoLevel = parseInt(this.slider.value, 10);
+        // setup GUI
+        this.gui.add(this.guiController, 'Toggle Field');
+        this.gui.add(this.guiController, 'Field Type', ["Random", "Sphere"]).onChange(value => {
+            const size_2 = this.size / 2;
+            for (let i = 0; i <= this.size; i++) {
+                for (let j = 0; j <= this.size; j++) {
+                    for (let k = 0; k <= this.size; k++) {
+                        this.field.set(i, j, k, this.getFieldValue(i - size_2, j - size_2, k - size_2, value));
+                    }
+                }
+            }
+            this.marchingCubes.generateMesh(this.mcGeometry, this.isoLevel, this.field);
+            this.render();
+        });
+        this.gui.add(this.guiController, 'Surface Level', -this.range, this.range, 1).onChange(value => {
+            if (this.isoLevel == value) return;
+            this.isoLevel = value;
             // hide spheres below this isoLevel
             var spheres = this.sphereParent.children;
-            for (let i=0; i < spheres.length; i++) {
+            for (let i = 0; i < spheres.length; i++) {
                 if (spheres[i].fieldValue < this.isoLevel) {
                     spheres[i].visible = false;
                 } else {
@@ -939,14 +1176,23 @@ class AlgoScene {
             }
             this.marchingCubes.generateMesh(this.mcGeometry, this.isoLevel, this.field);
             this.render();
-        }
+        });
+
+        const dLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
+        dLight.position.set(-5, 2, 10);
+        this.scene.add(dLight);
+
+        let ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        this.scene.add(ambientLight);
+
+        this.addCube();
+        this.drawField();
 
         this.marchingCubes.generateMesh(this.mcGeometry, this.isoLevel, this.field);
         this.scene.add(this.mcMesh);
 
-        this.camera.position.x = 8;
-        this.camera.position.y = 8;
-        this.camera.position.z = 8;
+        this.camera.layers.enableAll();
+        this.camera.position.set(8, 8, 8);
 
         this.controls = new THREE.OrbitControls(this.camera, this.canvas);
         this.controls.listenToKeyEvents(window);
@@ -959,32 +1205,50 @@ class AlgoScene {
         this.renderer.render(this.scene, this.camera);
     }
 
+    addCube() {
+        const cubeGeo = new THREE.BoxGeometry(this.size, this.size, this.size);
+        var edgeGeo = new THREE.EdgesGeometry(cubeGeo);
+        const material = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+        const cube = new THREE.LineSegments(edgeGeo, material);
+        this.scene.add(cube);
+
+        const axesHelper = new THREE.AxesHelper(7);
+        this.scene.add(axesHelper);
+    }
+
     drawField() {
         var size_2 = this.size / 2;
         for (let i = 0; i <= this.size; i++) {
             for (let j = 0; j <= this.size; j++) {
-                for (let k = 0; k < this.size; k++) {
-                    let val = MathUtil.randomInt(-this.range, this.range);
+                for (let k = 0; k <= this.size; k++) {
+                    let val = this.getFieldValue(i, j, k, "Random");
                     this.field.set(i, j, k, val);
-                    this.sphereParent.add(this.addSphere(i-size_2, j-size_2, k-size_2, val));
+                    this.sphereParent.add(this.addSphere(i - size_2, j - size_2, k - size_2, val));
                 }
             }
         }
         this.scene.add(this.sphereParent);
     }
 
+    getFieldValue(x, y, z, type) {
+        if (type === "Random") {
+            return MathUtil.randomInt(-this.range, this.range);
+        } else {
+            const size_2 = this.size / 2 - 1;
+            return size_2 * size_2 - (x * x + y * y + z * z);
+        }
+    }
+
     addSphere(posX, posY, posZ, val) {
         const geometry = new THREE.SphereGeometry(0.1, 12, 8);
         const material = new THREE.MeshBasicMaterial({ color: this.floatToColor(0.5 + val / (2 * this.range)) });
         const sphere = new THREE.Mesh(geometry, material);
-        sphere.position.x = posX;
-        sphere.position.y = posY;
-        sphere.position.z = posZ;
+        sphere.position.set(posX, posY, posZ);
         sphere.fieldValue = val;
         if (val < this.isoLevel) {
             sphere.visible = false;
         }
-
+        sphere.layers.set(1);
         return sphere;
     }
 
@@ -995,6 +1259,6 @@ class AlgoScene {
     }
 }
 
-// new MainScene().setup();
+new MainScene().setup();
 new IsoSurfaceScene().setup();
 new AlgoScene().setup();
