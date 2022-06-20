@@ -2,6 +2,12 @@ $progress-color: red;
 
 .video-player {
     position: relative;
+
+    .loader {
+        position: absolute;
+        left: calc(50% - 40px);
+        top: calc(50% - 40px);
+    }
 }
 
 .video-player video {
@@ -189,13 +195,7 @@ $progress-color: red;
         margin-right: 7px;
         font-size: 12px;
         padding: 3px;
-        border: none;
-        outline: none;
         background-color: transparent;
-    }
-
-    button * {
-        pointer-events: none;
     }
 
     button::before {

@@ -323,11 +323,16 @@ const videoPlayer = function () {
 		initVideo(videoContainer) {
 			const video = videoContainer.querySelector("video");
 			const startButton = document.createElement("button");
+			const loader = document.createElement("div");
 			const playbackAnimation = document.createElement("div");
 			const videoControls = document.createElement("div");
 
 			startButton.classList.add("start-button");
 			videoContainer.appendChild(startButton);
+
+			loader.classList.add("loader");
+			loader.classList.add("hidden");
+			videoContainer.appendChild(loader);
 
 			playbackAnimation.classList.add("playback-icons");
 			playbackAnimation.innerHTML = `
@@ -402,6 +407,7 @@ const videoPlayer = function () {
 			startButton.addEventListener("click", () => {
 				video.play();
 				startButton.classList.add("hidden");
+				loader.classList.remove("hidden");
 				video.addEventListener("click", () => {
 					this.animatePlayback(playbackAnimation);
 					this.togglePlay(video);
@@ -411,12 +417,11 @@ const videoPlayer = function () {
 			video.addEventListener('play', () => this.updatePlayButton(video, playButton));
 			video.addEventListener('pause', () => this.updatePlayButton(video, playButton));
 			video.addEventListener('loadedmetadata', () => this.initializeVideo(video, seek, progressBar, duration));
+			video.addEventListener('loadeddata', () => { loader.classList.add("hidden"); });
 			video.addEventListener('timeupdate', () => this.videoTimerUpdate(video, timeElapsed, seek, progressBar));
 			video.addEventListener('volumechange', () => this.updateVolumeIcon(video, volumeButton));
-			video.addEventListener('mouseenter', () => this.toggleControls(videoControls, video));
-			video.addEventListener('mouseleave', () => this.toggleControls(videoControls, video));
-			videoControls.addEventListener('mouseenter', () => this.toggleControls(videoControls, video));
-			videoControls.addEventListener('mouseleave', () => this.toggleControls(videoControls, video));
+			videoContainer.addEventListener('mouseenter', () => this.toggleControls(videoControls, video));
+			videoContainer.addEventListener('mouseleave', () => this.toggleControls(videoControls, video));
 
 			playButton.addEventListener("click", () => this.togglePlay(video));
 			seek.addEventListener('mousemove', (e) => this.updateSeekTooltip(e, video, seek, seekTooltip));
@@ -468,7 +473,7 @@ const videoPlayer = function () {
 			duration.setAttribute('datetime', `${time.minutes}m ${time.seconds}s`);
 		},
 		toggleControls(videoControls, video) {
-			if (video.readyState == 4 && video.paused) {
+			if (video.readyState == 4 && (video.paused && !video.ended)) {
 				return;
 			}
 			videoControls.classList.toggle('hidden');
