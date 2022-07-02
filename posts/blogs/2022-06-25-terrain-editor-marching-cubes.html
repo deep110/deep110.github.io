@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="google-site-verification" content="4Y4j9CIooUmnjwIpVMuPbEtO0gQQy1-Q0hymYrw8Yw0"/>
+<meta name="description" content="Terrain Generation and Editing using Marching Cubes">
+<meta name="keywords" content="html5, canvas, marching, cubes, terrain, procedural, generation, tutorial, threejs">
+<title>
+Terrain Generation and Editing using Marching Cubes
+</title>
+<link rel="stylesheet" href="https://deep110.github.io/assets/css/main.css">
+<script>if(localStorage.getItem("theme")==="dark"){document.documentElement.setAttribute("theme","dark")}</script>
+</head>
+<body>
+<header class="site-header">
+<div class="wrapper">
+<a href="#" id="menu-icon" aria-label="NavDrawer">
+<svg viewBox="0 0 18 15">
+<path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+<path d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+<path d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+</svg>
+</a>
+<a class="site-title" href="https://deep110.github.io/">Deepankar</a>
+<a href="#" id="dark-theme-icon" class="icon" title="Switch to dark theme" aria-label="Toggle Theme">
+<svg viewBox="0 0 512 512">
+<path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/>
+</svg>
+</a>
+<nav class="site-nav">
+<div class="trigger">
+<a class="page-link" href="https://deep110.github.io/travel.html">Travel Log</a>
+<a class="page-link" href="https://deep110.github.io/archive.html">Archive</a>
+<a class="page-link" href="https://deep110.github.io/projects.html">Projects</a>
+<a class="page-link" href="https://deep110.github.io/about.html">About</a>
+</div>
+</nav>
+</div>
+</header>
+<div class="page-content">
+<div class="wrapper">
+<article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+<header class="post-header">
+<h1 class="post-title" itemprop="name headline">Terrain Generation and Editing using Marching Cubes</h1>
+<p class="post-meta">
+<time datetime="2022-06-25 00:00:00 +0000" itemprop="datePublished">
+Jun 25, 2022
+</time>
+| <span class="time">
+8
+</span>
+Minute Read
+</p>
+</header>
+<div class="post-content" itemprop="articleBody">
+<div id="canvas-container" style="position: relative;">
+<canvas id="main-canvas" height=500 width=740></canvas>
+<svg id="toggle-fs"><circle cx="16" cy="16" r="14" style="fill: rgb(255, 255, 255); stroke: rgb(204, 204, 204); stroke-width: 4;"><title>Toggle fullscreen</title></circle><path transform="translate(16,16)rotate(-45)scale(5)translate(-1.85,0)" d="M0,0L0,.5 2,.5 2,1.5 4,0 2,-1.5 2,-.5 0,-.5Z" style="pointer-events: none; fill: rgb(170, 170, 170);"></path>
+</svg>
+<div id="gui-canvas-main" class="gui-canvas"></div>
+<div id="index-canvas-main">Click on Terrain to Edit it</div>
+</div>
+<br>
+<p>According to wikipedia, <a href="https://wikipedia.org/wiki/Marching_cubes">Marching Cubes</a> is an algorithm for creating a polygonal mesh out of a discrete 3d scalar field.</p>
+<p>So let's see how the algorithm<sup class="footnote-reference"><a href="#rf_pb">1</a></sup> works, then we will create a terrain and finally edit it. All the rendering is done using Three.js<sup class="footnote-reference"><a href="#rf_3js">2</a></sup> library.</p>
+<h3>The Algorithm</h3>
+<h4>Step 1: Fill a 3d space with random values at discrete intervals</h4>
+<p>In a 3d space where we want to draw our mesh, we will sample the points i.e assign some random value to each point at discrete intervals.</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">an</span><span class="mord mathnormal">d</span><span class="mord mathnormal">o</span><span class="mord mathnormal">m</span><span class="mopen">(</span><span class="mord">−</span><span class="mord">10</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">10</span><span class="mclose">)</span></span></span></span></span></p>
+<p>where, range of values can arbitrary.</p>
+<div style="text-align:center">
+<img src="/assets/images/2022-06/sample-points-3d-space.png" alt="Sample Points in 3d Space" width=450 aspect-ratio=1.25></img>
+<div>Sample Points at discrete intervals in 3d Space</div>
+</div>
+<br>
+<h4>Step 2: Choose a surface level</h4>
+<p>Now we have to define a surface level i.e any value between min and max of the whole field. A point with value above surface level is considered inside the mesh and below the surface level is considered outside the mesh.</p>
+<div style="text-align:center">
+<img src="/assets/images/2022-06/points-surface-level.png" alt="Points above or below surface level" width=450 aspect-ratio=1.25></img>
+<div>Points above or below surface level</div>
+</div>
+<br>
+<p>In the above diagram I have generated values between [-10, 10] and considered surface level as 0. Points above surface level are colored white and points below surface level are colored black.</p>
+<blockquote>
+<p>Note: Above and below surface level is subjective and does not affect the algorithm in any way. We just want to draw the boundary of the mesh. Mesh will be just inverted.</p>
+</blockquote>
+<h4>Step 3: Draw Mesh Triangles</h4>
+<p>Now for each point we consider next nearest seven points,
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⟨</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">⟩</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⟨</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">⟩</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⟨</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">⟩]</span></span></span></span></span></p>
+<p>thus forming a cube. Based on which points are included in mesh i.e below surface level we draw a mesh. For example: Lets take a look at the below image.</p>
+<div style="text-align:center">
+<img src="/assets/images/2022-06/mesh-isosurface-facet.png" alt="Iso-surface facet" width=400 aspect-ratio=1.334></img>
+<div>Iso-surface facet</div>
+</div>
+<br>
+<p>The vertex number 3 is above surface level so we will draw a mesh facet that will cut edge 2-3-11. Now if we manually code all the 2<sup>8</sup> combinations it would be little difficult. Thus we use <a href="https://github.com/deep110/terrain-editor-js/blob/master/marching-cubes.js#L260">edge tables</a> and <a href="https://github.com/deep110/terrain-editor-js/blob/master/marching-cubes.js#L1">triangulation tables</a> to make this process easier.</p>
+<ol>
+<li>Calculate the <code>cubeIndex</code> which will give a 12bit number in edge table where each bit corresponds to an edge. </li>
+</ol>
+<pre style="background-color:#fafafa;">
+<span style="color:#a626a4;">function </span><span style="color:#4078f2;">getCubeIndex</span><span style="color:#383a42;">() {
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">cubeIndex </span><span style="color:#0184bc;">= </span><span style="color:#986801;">0</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">grid</span><span style="color:#383a42;">.val[</span><span style="color:#986801;">0</span><span style="color:#383a42;">] </span><span style="color:#0184bc;">&gt; </span><span style="color:#383a42;">isoLevel) cubeIndex </span><span style="color:#0184bc;">|= </span><span style="color:#986801;">1</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">grid</span><span style="color:#383a42;">.val[</span><span style="color:#986801;">1</span><span style="color:#383a42;">] </span><span style="color:#0184bc;">&gt; </span><span style="color:#383a42;">isoLevel) cubeIndex </span><span style="color:#0184bc;">|= </span><span style="color:#986801;">2</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">grid</span><span style="color:#383a42;">.val[</span><span style="color:#986801;">2</span><span style="color:#383a42;">] </span><span style="color:#0184bc;">&gt; </span><span style="color:#383a42;">isoLevel) cubeIndex </span><span style="color:#0184bc;">|= </span><span style="color:#986801;">4</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">grid</span><span style="color:#383a42;">.val[</span><span style="color:#986801;">3</span><span style="color:#383a42;">] </span><span style="color:#0184bc;">&gt; </span><span style="color:#383a42;">isoLevel) cubeIndex </span><span style="color:#0184bc;">|= </span><span style="color:#986801;">8</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">grid</span><span style="color:#383a42;">.val[</span><span style="color:#986801;">4</span><span style="color:#383a42;">] </span><span style="color:#0184bc;">&gt; </span><span style="color:#383a42;">isoLevel) cubeIndex </span><span style="color:#0184bc;">|= </span><span style="color:#986801;">16</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">grid</span><span style="color:#383a42;">.val[</span><span style="color:#986801;">5</span><span style="color:#383a42;">] </span><span style="color:#0184bc;">&gt; </span><span style="color:#383a42;">isoLevel) cubeIndex </span><span style="color:#0184bc;">|= </span><span style="color:#986801;">32</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">grid</span><span style="color:#383a42;">.val[</span><span style="color:#986801;">6</span><span style="color:#383a42;">] </span><span style="color:#0184bc;">&gt; </span><span style="color:#383a42;">isoLevel) cubeIndex </span><span style="color:#0184bc;">|= </span><span style="color:#986801;">64</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">grid</span><span style="color:#383a42;">.val[</span><span style="color:#986801;">7</span><span style="color:#383a42;">] </span><span style="color:#0184bc;">&gt; </span><span style="color:#383a42;">isoLevel) cubeIndex </span><span style="color:#0184bc;">|= </span><span style="color:#986801;">128</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">return </span><span style="color:#383a42;">cubeIndex;
+</span><span style="color:#383a42;">}
+</span><span style="color:#383a42;">
+</span><span style="color:#a626a4;">let </span><span style="color:#383a42;">edgeIndex </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">edgeTable</span><span style="color:#383a42;">[cubeIndex];
+</span></pre>
+<p>In the above example when just vertex 3 is above surface level, we get cubeIndex is 8. Correspondingly the edgeTable[8] gives:</p>
+<pre style="background-color:#fafafa;">
+<span style="color:#383a42;">{</span><span style="color:#986801;">3</span><span style="color:#383a42;">, </span><span style="color:#986801;">11</span><span style="color:#383a42;">, </span><span style="color:#986801;">2</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">}
+</span></pre>
+<ol start="2">
+<li>Now we know which edges to connect, but we also need to get a point on each edge and connect them to make a triangular mesh. Either we can take the mid point of the edge or take a weighted distance between the two vertices of the edge.</li>
+</ol>
+<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord mathnormal">so</span><span class="mord mathnormal">Va</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mord">1</span><span class="mclose">)</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord">1</span><span class="mclose">)</span><span class="mord">/</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></span></p>
+<p>where,</p>
+<p>V1 = Value of vertex 1<br>
+V2 = Value of Vertex 2<br>
+P1 = position of Vertex 1<br>
+P2 = position of Vertex 2</p>
+<p>You can play with the interactive demo below and check out how the mesh is drawn in each combination. You can click a corner of cube to make the point active or inactive.</p>
+<div style="position: relative;">
+<canvas id="canvas-iso-surface" height=300 width=600></canvas>
+<div id="gui-canvas-iso-surface" class="gui-canvas"></div>
+<div id="index-canvas-iso-surface">
+<div style="color: white;">Vertex Index</div>
+<div style="color: green;">Edge Index</div>
+</div>
+</div>
+<br>
+<p>Btw if you really check there are just 15 unique combinations<sup class="footnote-reference"><a href="#rf_wiki">3</a></sup> possible.</p>
+<h4>Step 4: Iterate over whole field and draw</h4>
+<p>Now we just need to iterate over the whole field and apply the step 3. You can play with the interactive demo below. Try changing the surface level and field type.</p>
+<div style="position: relative;">
+<canvas id="canvas-algo" height=360 width=600></canvas>
+<div id="gui-canvas-algo" class="gui-canvas"></div>
+</div>
+<br>
+<p>For spherical field, I have just assigned the field values using the sphere distance function.</p>
+<pre style="background-color:#fafafa;">
+<span style="color:#e45649;">getFieldValue</span><span style="color:#383a42;">(x, y, z, type) {
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(type </span><span style="color:#0184bc;">=== </span><span style="color:#50a14f;">&quot;Random&quot;</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#e45649;">MathUtil</span><span style="color:#383a42;">.</span><span style="color:#e45649;">randomInt</span><span style="color:#383a42;">(</span><span style="color:#0184bc;">-</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.range, </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.range);
+</span><span style="color:#383a42;">  } </span><span style="color:#a626a4;">else </span><span style="color:#383a42;">{
+</span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// type === &quot;Sphere&quot;
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.radius </span><span style="color:#0184bc;">* </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.radius </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">(x </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">x </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">y </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">y </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">z </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">z);
+</span><span style="color:#383a42;">  }
+</span><span style="color:#383a42;">}
+</span></pre>
+<h3>Creating A Procedural Terrain</h3>
+<p>As you have realized, you can generate any shape as long as you have the field function figured out. So for terrain we will use a noise function - <a href="https://wikipedia.org/wiki/Simplex_noise">Simplex Noise</a>. It is just like <a href="https://wikipedia.org/wiki/Perlin_noise#">Perlin Noise</a> but with fewer directional artifacts and lower computation overhead. You can read wikipedia in more detail on how to generate it.</p>
+<p>It is often used in procedural generation because the randomness vary very smoothly but still gives a natural looking feel.</p>
+<pre style="background-color:#fafafa;">
+<span style="font-style:italic;color:#a0a1a7;">// constants which affect the shape of generated terrain
+</span><span style="color:#a626a4;">const </span><span style="color:#383a42;">numOctaves </span><span style="color:#0184bc;">= </span><span style="color:#986801;">4</span><span style="color:#383a42;">;
+</span><span style="color:#a626a4;">const </span><span style="color:#383a42;">lacunarity </span><span style="color:#0184bc;">= </span><span style="color:#986801;">2</span><span style="color:#383a42;">;
+</span><span style="color:#a626a4;">const </span><span style="color:#383a42;">persistence </span><span style="color:#0184bc;">= </span><span style="color:#986801;">0.5</span><span style="color:#383a42;">;
+</span><span style="color:#a626a4;">const </span><span style="color:#383a42;">noiseWeight </span><span style="color:#0184bc;">= </span><span style="color:#986801;">7</span><span style="color:#383a42;">;
+</span><span style="color:#a626a4;">const </span><span style="color:#383a42;">weightMultiplier </span><span style="color:#0184bc;">= </span><span style="color:#986801;">3.6</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">
+</span><span style="color:#e45649;">getFieldValue</span><span style="color:#383a42;">(x, y, z) {
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">noise </span><span style="color:#0184bc;">= </span><span style="color:#986801;">0</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">frequency </span><span style="color:#0184bc;">= </span><span style="color:#986801;">0.02</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">amplitude </span><span style="color:#0184bc;">= </span><span style="color:#986801;">1</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">weight </span><span style="color:#0184bc;">= </span><span style="color:#986801;">1</span><span style="color:#383a42;">;
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">for </span><span style="color:#383a42;">(</span><span style="color:#a626a4;">var </span><span style="color:#383a42;">j </span><span style="color:#0184bc;">= </span><span style="color:#986801;">0</span><span style="color:#383a42;">; j </span><span style="color:#0184bc;">&lt; </span><span style="color:#383a42;">numOctaves; j</span><span style="color:#0184bc;">++</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">n </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.simplex.</span><span style="color:#e45649;">noise3D</span><span style="color:#383a42;">(
+</span><span style="color:#383a42;">            x </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">frequency, y </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">frequency, z </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">frequency,
+</span><span style="color:#383a42;">        );
+</span><span style="color:#383a42;">        </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">v </span><span style="color:#0184bc;">= </span><span style="color:#986801;">1 </span><span style="color:#0184bc;">- </span><span style="color:#c18401;">Math</span><span style="color:#383a42;">.</span><span style="color:#e45649;">abs</span><span style="color:#383a42;">(n);
+</span><span style="color:#383a42;">        v </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">v </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">v </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">weight;
+</span><span style="color:#383a42;">        weight </span><span style="color:#0184bc;">= </span><span style="color:#c18401;">Math</span><span style="color:#383a42;">.</span><span style="color:#e45649;">max</span><span style="color:#383a42;">(</span><span style="color:#c18401;">Math</span><span style="color:#383a42;">.</span><span style="color:#e45649;">min</span><span style="color:#383a42;">(v </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">weightMultiplier, </span><span style="color:#986801;">1</span><span style="color:#383a42;">), </span><span style="color:#986801;">0</span><span style="color:#383a42;">);
+</span><span style="color:#383a42;">        noise </span><span style="color:#0184bc;">+= </span><span style="color:#383a42;">v </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">amplitude;
+</span><span style="color:#383a42;">        amplitude </span><span style="color:#0184bc;">*= </span><span style="color:#383a42;">persistence;
+</span><span style="color:#383a42;">        frequency </span><span style="color:#0184bc;">*= </span><span style="color:#383a42;">lacunarity;
+</span><span style="color:#383a42;">    }
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">finalVal </span><span style="color:#0184bc;">= -</span><span style="color:#383a42;">y </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">noise </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">noiseWeight;
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#0184bc;">-</span><span style="color:#383a42;">finalVal;
+</span><span style="color:#383a42;">}
+</span></pre>
+<p>Lets see how these values affect the generated terrain.</p>
+<ol>
+<li><strong>NumOctaves</strong>: Each octave run adds layer of details to the surface. So more the number of octaves more detailed terrain you have.</li>
+</ol>
+<div style="text-align:center">
+<img src="/assets/images/2022-06/comparison-octaves.png" alt="Num Octaves Comparison" width=600></img>
+<div>Number of Octaves Comparison</div>
+<br>
+</div>
+<ol start="2">
+<li><strong>Lacunarity</strong>: It determines how much detail is added or removed at each octave. Lacunarity of more than 1 means each octave will increase its level of detail, 1 means it will stay same &amp; less than 1 means it will decrease. We don't want last two, so a number greater than 1 works quite well.</li>
+</ol>
+<div style="text-align:center">
+<img src="/assets/images/2022-06/comparison-lacunarity.png" alt="Lacunarity Comparison" width=650></img>
+<div>Lacunarity Comparison</div>
+</div>
+<br>
+<ol start="3">
+<li><strong>Persistence</strong>: It determines how much each octave contributes to the overall shape. A Persistence of 1 means each octave contribute equally, more than 1 means successive octave contribute more and less than 1 means successive octaves contribute less. We usually want to keep it less than 1 else output will be just noise.</li>
+</ol>
+<div style="text-align:center">
+<img src="/assets/images/2022-06/comparison-persistence.png" alt="Persistence Comparison" width=600></img>
+<div>Persistence Comparison</div>
+</div>
+<br>
+<p>Other factors just helps in increasing or decreasing the noise amplitude. You can play around in the above terrain interactive with these values.</p>
+<h3>Editing the Generated Terrain</h3>
+<p>Once you have a terrain setup, to edit we just have to manipulate the field values. Consider we have a brush size of radius r, we just need to manipulate the spherical field around the position on terrain which we want to edit. It is same as creating a spherical mesh, we can just put distance from center as field value.</p>
+<pre style="background-color:#fafafa;">
+<span style="font-style:italic;color:#a0a1a7;">/**
+</span><span style="font-style:italic;color:#a0a1a7;"> * @brushSize float: Radius of brush
+</span><span style="font-style:italic;color:#a0a1a7;"> * @point Vector3: Position on terrain
+</span><span style="font-style:italic;color:#a0a1a7;"> * @multiplier int: +1 for raising the terrain and -1 for depress
+</span><span style="font-style:italic;color:#a0a1a7;"> */
+</span><span style="color:#e45649;">makeShape</span><span style="color:#383a42;">(brushSize, point, multiplier) {
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">for </span><span style="color:#383a42;">(</span><span style="color:#a626a4;">let </span><span style="color:#383a42;">x </span><span style="color:#0184bc;">= -</span><span style="color:#383a42;">brushSize; x </span><span style="color:#0184bc;">&lt;= </span><span style="color:#383a42;">brushSize; x</span><span style="color:#0184bc;">++</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">      </span><span style="color:#a626a4;">for </span><span style="color:#383a42;">(</span><span style="color:#a626a4;">let </span><span style="color:#383a42;">y </span><span style="color:#0184bc;">= -</span><span style="color:#383a42;">brushSize; y </span><span style="color:#0184bc;">&lt;= </span><span style="color:#383a42;">brushSize; y</span><span style="color:#0184bc;">++</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">          </span><span style="color:#a626a4;">for </span><span style="color:#383a42;">(</span><span style="color:#a626a4;">let </span><span style="color:#383a42;">z </span><span style="color:#0184bc;">= -</span><span style="color:#383a42;">brushSize; z </span><span style="color:#0184bc;">&lt;= </span><span style="color:#383a42;">brushSize; z</span><span style="color:#0184bc;">++</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">              </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">distance </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#e45649;">sphereDistance</span><span style="color:#383a42;">(</span><span style="color:#e45649;">point</span><span style="color:#383a42;">.</span><span style="color:#e45649;">clone</span><span style="color:#383a42;">(), </span><span style="color:#0184bc;">new </span><span style="color:#e45649;">THREE</span><span style="color:#383a42;">.</span><span style="color:#e45649;">Vector3</span><span style="color:#383a42;">(</span><span style="color:#e45649;">point</span><span style="color:#383a42;">.x </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">x, </span><span style="color:#e45649;">point</span><span style="color:#383a42;">.y </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">y, </span><span style="color:#e45649;">point</span><span style="color:#383a42;">.z </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">z), brushSize);
+</span><span style="color:#383a42;">              </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(distance </span><span style="color:#0184bc;">&lt; </span><span style="color:#986801;">0</span><span style="color:#383a42;">) {
+</span><span style="color:#383a42;">                  </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">xi </span><span style="color:#0184bc;">= </span><span style="color:#c18401;">Math</span><span style="color:#383a42;">.</span><span style="color:#e45649;">round</span><span style="color:#383a42;">(</span><span style="color:#e45649;">point</span><span style="color:#383a42;">.x </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">x);
+</span><span style="color:#383a42;">                  </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">yi </span><span style="color:#0184bc;">= </span><span style="color:#c18401;">Math</span><span style="color:#383a42;">.</span><span style="color:#e45649;">round</span><span style="color:#383a42;">(</span><span style="color:#e45649;">point</span><span style="color:#383a42;">.y </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">y);
+</span><span style="color:#383a42;">                  </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">zi </span><span style="color:#0184bc;">= </span><span style="color:#c18401;">Math</span><span style="color:#383a42;">.</span><span style="color:#e45649;">round</span><span style="color:#383a42;">(</span><span style="color:#e45649;">point</span><span style="color:#383a42;">.z </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">z);
+</span><span style="color:#383a42;">
+</span><span style="color:#383a42;">                  </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.field.</span><span style="color:#e45649;">set</span><span style="color:#383a42;">(xi, yi, zi, </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.field.</span><span style="color:#e45649;">get</span><span style="color:#383a42;">(xi, yi, zi) </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">distance </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">multiplier);
+</span><span style="color:#383a42;">              }
+</span><span style="color:#383a42;">          }
+</span><span style="color:#383a42;">      }
+</span><span style="color:#383a42;">  }
+</span><span style="color:#383a42;">}
+</span><span style="color:#383a42;">
+</span><span style="color:#4078f2;">sphereDistance </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">(spherePos, point, radius) </span><span style="color:#a626a4;">=&gt; </span><span style="color:#383a42;">{
+</span><span style="color:#383a42;">  </span><span style="color:#a626a4;">return </span><span style="color:#e45649;">spherePos</span><span style="color:#383a42;">.</span><span style="color:#e45649;">distanceTo</span><span style="color:#383a42;">(point) </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">radius;
+</span><span style="color:#383a42;">}
+</span></pre>
+<h3>Final Notes</h3>
+<p>You can find the full source code on my <a href="https://github.com/deep110/terrain-editor-js">github</a>. If you enjoyed the article, please leave a comment below.</p>
+<h3 id="references">References</h3>
+<div class="footnote-definition" id="rf_pb"><sup class="footnote-definition-label">1</sup>
+<p><a href="http://paulbourke.net/geometry/polygonise/">Implementation by Paul Broke</a></p>
+</div>
+<div class="footnote-definition" id="rf_3js"><sup class="footnote-definition-label">2</sup>
+<p><a href="https://github.com/mrdoob/three.js/blob/master/examples/webgl_marchingcubes.html">Three.js marching cubes demo</a></p>
+</div>
+<div class="footnote-definition" id="rf_wiki"><sup class="footnote-definition-label">3</sup>
+<p><a href="https://wikipedia.org/wiki/Marching_cubes">Wikipedia - Marching Cubes</a></p>
+</div>
+<div class="footnote-definition" id="rf_sl"><sup class="footnote-definition-label">4</sup>
+<p><a href="https://www.youtube.com/watch?v=M3iI2l0ltbE">Marching Cubes by Sebastian Lague</a></p>
+</div>
+<style>canvas{display:block;margin:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;}#toggle-fs{position:absolute;width:32px;height:32px;top:-16px;right:-16px;cursor:pointer;z-index:2;}.gui-canvas{position:absolute;top:0;right:70px;}#index-canvas-iso-surface{position:absolute;right:70px;bottom:0;padding:10px;font-size:13px;}.lil-gui{--width:200px;--name-width:65%;}#gui-canvas-main{right:0;}#index-canvas-main{position:absolute;top:5px;left:10px;color:white;}canvas.fullscreen{position:fixed;width:100%;height:100%;top:0;left:0;right:0;bottom:0;z-index:10;}#toggle-fs.fullscreen{position:fixed;top:8px;right:8px;z-index:10;}#gui-canvas-main.fullscreen{position:fixed;z-index:10;right:50px;}#index-canvas-main.fullscreen{position:fixed;z-index:10;}@media only screen and (max-width:740px){canvas{width:calc(100vw - 2em);}.gui-canvas,#index-canvas-iso-surface{right:0;}}</style>
+</div>
+<div class="post-navigation">
+<a class="next" href="https://deep110.github.io/posts/blogs/2022-01-15-uniform-dist-poisson-disc-sampling.html">←&nbsp;Prev Post</a>
+</div>
+<div>
+<script src="https://utteranc.es/client.js" repo="deep110/deep110.github.io" issue-term="pathname" label="comment" theme="github-light" crossorigin="anonymous" async></script>
+</div>
+</article>
+</div>
+</div>
+<footer class="site-footer">
+<div class="wrapper">
+<a class="footer-icon icon" href="https://github.com/deep110" aria-label="Github">
+<svg viewBox="0 0 438.55 438.55">
+<path d="m409.13 114.57c-19.608-33.596-46.205-60.194-79.798-79.8-33.598-19.607-70.277-29.408-110.06-29.408-39.781 0-76.472 9.804-110.06 29.408-33.596 19.605-60.192 46.204-79.8 79.8-19.605 33.595-29.408 70.281-29.408 110.06 0 47.78 13.94 90.745 41.827 128.91 27.884 38.164 63.906 64.572 108.06 79.227 5.14.954 8.945.283 11.419-1.996 2.475-2.282 3.711-5.14 3.711-8.562 0-.571-.049-5.708-.144-15.417-.098-9.709-.144-18.179-.144-25.406l-6.567 1.136c-4.187.767-9.469 1.092-15.846 1-6.374-.089-12.991-.757-19.842-1.999-6.854-1.231-13.229-4.086-19.13-8.559-5.898-4.473-10.085-10.328-12.56-17.556l-2.855-6.57c-1.903-4.374-4.899-9.233-8.992-14.559-4.093-5.331-8.232-8.945-12.419-10.848l-1.999-1.431c-1.332-.951-2.568-2.098-3.711-3.429-1.142-1.331-1.997-2.663-2.568-3.997-.572-1.335-.098-2.43 1.427-3.289s4.281-1.276 8.28-1.276l5.708.853c3.807.763 8.516 3.042 14.133 6.851 5.614 3.806 10.229 8.754 13.846 14.842 4.38 7.806 9.657 13.754 15.846 17.847 6.184 4.093 12.419 6.136 18.699 6.136s11.704-.476 16.274-1.423c4.565-.952 8.848-2.383 12.847-4.285 1.713-12.758 6.377-22.559 13.988-29.41-10.848-1.14-20.601-2.857-29.264-5.14-8.658-2.286-17.605-5.996-26.835-11.14-9.235-5.137-16.896-11.516-22.985-19.126-6.09-7.614-11.088-17.61-14.987-29.979-3.901-12.374-5.852-26.648-5.852-42.826 0-23.035 7.52-42.637 22.557-58.817-7.044-17.318-6.379-36.732 1.997-58.24 5.52-1.715 13.706-.428 24.554 3.853 10.85 4.283 18.794 7.952 23.84 10.994 5.046 3.041 9.089 5.618 12.135 7.708 17.705-4.947 35.976-7.421 54.818-7.421s37.117 2.474 54.823 7.421l10.849-6.849c7.419-4.57 16.18-8.758 26.262-12.565 10.088-3.805 17.802-4.853 23.134-3.138 8.562 21.509 9.325 40.922 2.279 58.24 15.036 16.18 22.559 35.787 22.559 58.817 0 16.178-1.958 30.497-5.853 42.966-3.9 12.471-8.941 22.457-15.125 29.979-6.191 7.521-13.901 13.85-23.131 18.986-9.232 5.14-18.182 8.85-26.84 11.136-8.662 2.286-18.415 4.004-29.263 5.146 9.894 8.562 14.842 22.077 14.842 40.539v60.237c0 3.422 1.19 6.279 3.572 8.562 2.379 2.279 6.136 2.95 11.276 1.995 44.163-14.653 80.185-41.062 108.07-79.226 27.88-38.161 41.825-81.126 41.825-128.91-.01-39.771-9.818-76.454-29.414-110.05z"/>
+</svg>
+</a>
+<a class="footer-icon icon" href="https://www.linkedin.com/in/deepankar-agrawal-318aab96/" aria-label="LinkedIn">
+<svg enable-background="new 0 0 486.392 486.392" version="1.1" viewBox="0 0 486.39 486.39">
+<path d="m243.2 0c-134.3 0-243.2 108.89-243.2 243.2s108.89 243.2 243.2 243.2 243.2-108.89 243.2-243.2c0-134.34-108.89-243.2-243.2-243.2zm-60.799 360.99h-60.799v-212.8h60.799v212.8zm-28.515-225.84c-15.747 0-28.484-12.768-28.484-28.515s12.768-28.515 28.484-28.515c15.747 0.03 28.515 12.798 28.515 28.515 0 15.747-12.768 28.515-28.515 28.515zm241.31 225.84h-60.799v-131.57c0-15.413-4.408-26.204-23.347-26.204-31.403 0-37.452 26.204-37.452 26.204v131.57h-60.799v-212.8h60.799v20.337c8.694-6.657 30.399-20.307 60.799-20.307 19.699 0 60.799 11.795 60.799 83.051v129.72z"/>
+</svg>
+</a>
+<a class="footer-icon icon" href="https://deep110.github.io/rss.xml" aria-label="RSS">
+<svg viewBox="0 0 48 48">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M24 0C10.7452 0 0 10.7452 0 24C0 37.2548 10.7452 48 24 48C37.2548 48 48 37.2548 48 24C48 10.7452 37.2548 0 24 0ZM17.6002 33.6C15.833 33.6 14.4002 32.1672 14.4002 30.4C14.4002 28.6328 15.833 27.2 17.6002 27.2C19.3674 27.2 20.8002 28.6328 20.8002 30.4C20.8002 32.1672 19.3674 33.6 17.6002 33.6ZM36.8 33.6C36.8 21.2488 26.7513 11.2 14.4002 11.2V15.4664C24.3993 15.4664 32.5336 23.6008 32.5336 33.6H36.8ZM14.4 18.6664C22.6343 18.6664 29.3334 25.3656 29.3334 33.6H25.0671C25.0671 27.7184 20.2815 22.9336 14.4 22.9336V18.6664Z"/>
+</svg>
+</a>
+<a class="footer-icon icon" href="mailto:deepankar11093@gmail.com" aria-label="Mail">
+<svg enable-background="new 0 0 299.997 299.997" viewBox="0 0 299.997 299.997"><path d="m149.996 0c-82.839 0-149.995 67.158-149.995 149.997 0 82.837 67.156 150 149.995 150s150-67.163 150-150c0-82.839-67.161-149.997-150-149.997zm.003 52.686 88.763 55.35h-177.526zm89.869 143.737h-.009c0 8.878-7.195 16.072-16.072 16.072h-147.576c-8.878 0-16.072-7.195-16.072-16.072v-84.865c0-.939.096-1.852.252-2.749l84.808 52.883c.104.065.215.109.322.169.112.062.226.122.34.179.599.309 1.216.558 1.847.721.065.018.13.026.195.041.692.163 1.393.265 2.093.265h.005.01c.7 0 1.401-.099 2.093-.265.065-.016.13-.023.195-.041.63-.163 1.245-.412 1.847-.721.114-.057.228-.117.34-.179.106-.06.218-.104.322-.169l84.808-52.883c.156.897.252 1.808.252 2.749z"/></svg>
+</a>
+</div>
+</footer>
+<script type="text/javascript" src="https://deep110.github.io/assets/js/main.js"></script>
+<script defer type="text/javascript" src="https://deep110.github.io/assets/js/lib/three.min.js"></script>
+<script defer type="text/javascript" src="https://deep110.github.io/assets/js/lib/orbit-controls.min.js"></script>
+<script defer type="text/javascript" src="https://deep110.github.io/assets/js/lib/simplex-noise.min.js"></script>
+<script defer type="text/javascript" src="https://deep110.github.io/assets/js/lib/lil-gui.min.js"></script>
+<script defer type="text/javascript" src="https://deep110.github.io/assets/js/extras/terrain-editor-marching-cubes.js"></script>
+<link rel="stylesheet" href="https://deep110.github.io/assets/css/katex.min.css"></script>
+</body>
+</html>
