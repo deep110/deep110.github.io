@@ -13,7 +13,7 @@ data:
   <svg id="toggle-fs"><circle cx="16" cy="16" r="14" style="fill: rgb(255, 255, 255); stroke: rgb(204, 204, 204); stroke-width: 4;"><title>Toggle fullscreen</title></circle><path transform="translate(16,16)rotate(-45)scale(5)translate(-1.85,0)" d="M0,0L0,.5 2,.5 2,1.5 4,0 2,-1.5 2,-.5 0,-.5Z" style="pointer-events: none; fill: rgb(170, 170, 170);"></path>
 </svg>
   <div id="gui-canvas-main" class="gui-canvas"></div>
-  <div id="index-canvas-main">Click on Terrain to Edit it</div>
+  <div id="index-canvas-main">Long Press on Terrain to Edit It</div>
 </div>
 
 <br>
@@ -107,7 +107,7 @@ P2 = position of Vertex 2
 You can play with the interactive demo below and check out how the mesh is drawn in each combination. You can click a corner of cube to make the point active or inactive.
 
 <div style="position: relative;">
-  <canvas id="canvas-iso-surface" height=300 width=600></canvas>
+  <canvas id="canvas-iso-surface" height=400 width=600></canvas>
   <div id="gui-canvas-iso-surface" class="gui-canvas"></div>
   <div id="index-canvas-iso-surface">
     <div style="color: white;">Vertex Index</div>
@@ -123,7 +123,7 @@ Btw if you really check there are just 15 unique combinations[^rf_wiki] possible
 Now we just need to iterate over the whole field and apply the step 3. You can play with the interactive demo below. Try changing the surface level and field type.
 
 <div style="position: relative;">
-  <canvas id="canvas-algo" height=360 width=600></canvas>
+  <canvas id="canvas-algo" height=400 width=600></canvas>
   <div id="gui-canvas-algo" class="gui-canvas"></div>
 </div>
 <br>
@@ -270,7 +270,7 @@ You can find the full source code on my [github](https://github.com/deep110/terr
     width: 32px;
     height: 32px;
     top: -16px;
-    right: -16px;
+    right: -14px;
     cursor: pointer;
     z-index: 2;
   }
@@ -342,6 +342,10 @@ You can find the full source code on my [github](https://github.com/deep110/terr
     .gui-canvas,
     #index-canvas-iso-surface {
       right: 0;
+    }
+
+    #index-canvas-main {
+      font-size: 10px;
     }
   }
 </style>
