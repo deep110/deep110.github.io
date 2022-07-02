@@ -836,17 +836,14 @@ class MainScene {
 
         this.changeShape = false;
         const mousePointer = new THREE.Vector2();
-        this.canvas.onmousemove = (e) => {
+        this.canvas.onpointermove = (e) => {
             this.changeShape = false;
-            var canvasBoundingRect = canvas.getBoundingClientRect();
-
-            mousePointer.x = ((e.clientX - canvasBoundingRect.left) / canvas.clientWidth) * 2 - 1;
-            mousePointer.y = - ((e.clientY - canvasBoundingRect.top) / canvas.clientHeight) * 2 + 1;
-            this.updateBrushPosition(mousePointer, this.brush);
+            this.updateBrushPosition(e, mousePointer);
         };
 
         var interval;
-        this.canvas.onmousedown = () => {
+        this.canvas.onpointerdown = (e) => {
+            this.updateBrushPosition(e, mousePointer);
             this.changeShape = true;
             setTimeout(() => {
                 if (this.changeShape) {
@@ -859,7 +856,7 @@ class MainScene {
             }, 200);
         };
 
-        this.canvas.onmouseup = () => {
+        this.canvas.onpointerup = () => {
             this.changeShape = false;
             clearInterval(interval);
         };
@@ -910,6 +907,7 @@ class MainScene {
             this.render();
         });
         noiseGUI.close();
+        if (isMobile()) this.gui.close();
     }
 
     render() {
@@ -929,8 +927,12 @@ class MainScene {
         this.render();
     }
 
-    updateBrushPosition(mousePosition) {
-        this.raycaster.setFromCamera(mousePosition, this.camera);
+    updateBrushPosition(e, mousePointer) {
+        var canvasBoundingRect = this.canvas.getBoundingClientRect();
+        mousePointer.x = ((e.clientX - canvasBoundingRect.left) / this.canvas.clientWidth) * 2 - 1;
+        mousePointer.y = - ((e.clientY - canvasBoundingRect.top) / this.canvas.clientHeight) * 2 + 1;
+
+        this.raycaster.setFromCamera(mousePointer, this.camera);
         const result = this.raycaster.intersectObject(this.terrain.getMesh());
         if (result.length > 0) {
             const point = result[0].point;
@@ -974,6 +976,7 @@ class IsoSurfaceScene {
         this.scene.background = new THREE.Color("#3a3a3a");
         this.setLabelRenderer();
         this.gui.add(this.guiController, 'Toggle Numbering');
+        if (isMobile()) this.gui.close();
 
         // setup camera
         this.camera.layers.enableAll();
@@ -1177,6 +1180,7 @@ class AlgoScene {
             this.marchingCubes.generateMesh(this.mcGeometry, this.isoLevel, this.field);
             this.render();
         });
+        if (isMobile()) this.gui.close();
 
         const dLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
         dLight.position.set(-5, 2, 10);
@@ -1257,6 +1261,10 @@ class AlgoScene {
         var colorHex = colorPartHex + colorPartHex + colorPartHex;
         return parseInt(colorHex, 16);
     }
+}
+
+function isMobile(){
+    return (screen.width <= 740);
 }
 
 new MainScene().setup();

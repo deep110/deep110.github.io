@@ -60,7 +60,7 @@ Minute Read
 <svg id="toggle-fs"><circle cx="16" cy="16" r="14" style="fill: rgb(255, 255, 255); stroke: rgb(204, 204, 204); stroke-width: 4;"><title>Toggle fullscreen</title></circle><path transform="translate(16,16)rotate(-45)scale(5)translate(-1.85,0)" d="M0,0L0,.5 2,.5 2,1.5 4,0 2,-1.5 2,-.5 0,-.5Z" style="pointer-events: none; fill: rgb(170, 170, 170);"></path>
 </svg>
 <div id="gui-canvas-main" class="gui-canvas"></div>
-<div id="index-canvas-main">Click on Terrain to Edit it</div>
+<div id="index-canvas-main">Long Press on Terrain to Edit It</div>
 </div>
 <br>
 <p>According to wikipedia, <a href="https://wikipedia.org/wiki/Marching_cubes">Marching Cubes</a> is an algorithm for creating a polygonal mesh out of a discrete 3d scalar field.</p>
@@ -131,7 +131,7 @@ P1 = position of Vertex 1<br>
 P2 = position of Vertex 2</p>
 <p>You can play with the interactive demo below and check out how the mesh is drawn in each combination. You can click a corner of cube to make the point active or inactive.</p>
 <div style="position: relative;">
-<canvas id="canvas-iso-surface" height=300 width=600></canvas>
+<canvas id="canvas-iso-surface" height=400 width=600></canvas>
 <div id="gui-canvas-iso-surface" class="gui-canvas"></div>
 <div id="index-canvas-iso-surface">
 <div style="color: white;">Vertex Index</div>
@@ -143,7 +143,7 @@ P2 = position of Vertex 2</p>
 <h4>Step 4: Iterate over whole field and draw</h4>
 <p>Now we just need to iterate over the whole field and apply the step 3. You can play with the interactive demo below. Try changing the surface level and field type.</p>
 <div style="position: relative;">
-<canvas id="canvas-algo" height=360 width=600></canvas>
+<canvas id="canvas-algo" height=400 width=600></canvas>
 <div id="gui-canvas-algo" class="gui-canvas"></div>
 </div>
 <br>
@@ -262,7 +262,7 @@ P2 = position of Vertex 2</p>
 <div class="footnote-definition" id="rf_sl"><sup class="footnote-definition-label">4</sup>
 <p><a href="https://www.youtube.com/watch?v=M3iI2l0ltbE">Marching Cubes by Sebastian Lague</a></p>
 </div>
-<style>canvas{display:block;margin:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;}#toggle-fs{position:absolute;width:32px;height:32px;top:-16px;right:-16px;cursor:pointer;z-index:2;}.gui-canvas{position:absolute;top:0;right:70px;}#index-canvas-iso-surface{position:absolute;right:70px;bottom:0;padding:10px;font-size:13px;}.lil-gui{--width:200px;--name-width:65%;}#gui-canvas-main{right:0;}#index-canvas-main{position:absolute;top:5px;left:10px;color:white;}canvas.fullscreen{position:fixed;width:100%;height:100%;top:0;left:0;right:0;bottom:0;z-index:10;}#toggle-fs.fullscreen{position:fixed;top:8px;right:8px;z-index:10;}#gui-canvas-main.fullscreen{position:fixed;z-index:10;right:50px;}#index-canvas-main.fullscreen{position:fixed;z-index:10;}@media only screen and (max-width:740px){canvas{width:calc(100vw - 2em);}.gui-canvas,#index-canvas-iso-surface{right:0;}}</style>
+<style>canvas{display:block;margin:auto;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;}#toggle-fs{position:absolute;width:32px;height:32px;top:-16px;right:-14px;cursor:pointer;z-index:2;}.gui-canvas{position:absolute;top:0;right:70px;}#index-canvas-iso-surface{position:absolute;right:70px;bottom:0;padding:10px;font-size:13px;}.lil-gui{--width:200px;--name-width:65%;}#gui-canvas-main{right:0;}#index-canvas-main{position:absolute;top:5px;left:10px;color:white;}canvas.fullscreen{position:fixed;width:100%;height:100%;top:0;left:0;right:0;bottom:0;z-index:10;}#toggle-fs.fullscreen{position:fixed;top:8px;right:8px;z-index:10;}#gui-canvas-main.fullscreen{position:fixed;z-index:10;right:50px;}#index-canvas-main.fullscreen{position:fixed;z-index:10;}@media only screen and (max-width:740px){canvas{width:calc(100vw - 2em);}.gui-canvas,#index-canvas-iso-surface{right:0;}#index-canvas-main{font-size:10px;}}</style>
 </div>
 <div class="post-navigation">
 <a class="next" href="https://deep110.github.io/posts/blogs/2022-01-15-uniform-dist-poisson-disc-sampling.html">←&nbsp;Prev Post</a>
