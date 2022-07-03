@@ -1,10 +1,11 @@
+let canvas = document.getElementById("canvas");
+let context = canvas.getContext("2d");
+
 var points = [];
 var pInitialIndex = null;
 var pSelect = null;
 var hull = [];
 
-let canvas;
-let context;
 let stayCounter = 0;
 
 function distSq(p1, p2) {
@@ -101,17 +102,10 @@ function* GrahamScan() {
   }
 }
 
-window.addEventListener('DOMContentLoaded', (_) => {
-  canvas = document.getElementById("canvas");
-  context = canvas.getContext("2d");
-
-  setup();
+function setup() {
   context.translate(0, canvas.height);
   context.scale(1, -1);
-  GameLoopController.loop(draw, 8);
-});
 
-function setup() {
   gs = GrahamScan();
   points = [];
   pInitialIndex = null;
@@ -127,6 +121,7 @@ function setup() {
     ));
   }
 
+  GameLoopController.loop(draw, 8);
 }
 
 function draw(dt) {
@@ -220,3 +215,5 @@ function drawPoints(ctx) {
   }
   ctx.fill();
 }
+
+setup();
