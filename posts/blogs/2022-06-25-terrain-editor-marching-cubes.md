@@ -5,7 +5,7 @@ categories: ["blog"]
 data:
   keywords: "html5, canvas, marching, cubes, terrain, procedural, generation, tutorial, threejs"
   css: [katex.min.css]
-  scripts: [lib/three.min.js, lib/orbit-controls.min.js, lib/simplex-noise.min.js, lib/lil-gui.min.js ,extras/terrain-editor-marching-cubes.js]
+  scripts: [lib/three.min.js, lib/orbit-controls.min.js, lib/simplex-noise.min.js, lib/lil-gui.min.js, extras/terrain-editor-marching-cubes.js]
 ---
 
 <div id="canvas-container" style="position: relative;">

@@ -42,6 +42,7 @@ window.raf = (function () {
 
 var GameLoopController = {
 	loop: function (loopFunc, targetFps) {
+		GameLoopController.toStop = false;
 		window.raf(function (now) {
 			var dt = now - GameLoopController.stamp || 0;
 			GameLoopController.stamp = now;
@@ -114,8 +115,7 @@ class Vector2 {
 
 	moveTowards(vector, t) {
 		// Linearly interpolates between vectors A and B by t.
-		// t = 0 returns A, t = 1 returns B
-		t = Math.min(t, 1); // still allow negative t
+		t = Math.min(t, 1);
 		var diff = vector.subtract(this);
 		return this.add(diff.scale(t));
 	}
@@ -178,6 +178,14 @@ class MathUtil {
 	/* random float between min and max [excluded] */
 	static randomFloat(min, max) {
 		return Math.random() * (max - min) + min
+	}
+
+	static toRadian(angleDeg) {
+		return angleDeg * 0.0174533;
+	}
+
+	static toDegree(angleRad) {
+		return angleRad * 57.2958;
 	}
 };
 

@@ -49,8 +49,8 @@ You can click on the start button to start the simulation. Use the slider to cha
         height: 96px;
         transition: all .2s ease-in-out;
         position: absolute;
-        top: 40%;
-        left: 44%;
+        top: calc(50% - 48px);
+        left: calc(50% - 48px);
     }
 
     #icon-play:hover {
@@ -69,15 +69,10 @@ You can click on the start button to start the simulation. Use the slider to cha
         margin: 0 9%;
     }
 
-    @media only screen and (max-width: 700px) {
+    @media only screen and (max-width: 740px) {
         #canvas-container {
             width: calc(100vw - 2em);
-            height: 320px;
-        }
-
-        #icon-play {
-            top: 37%;
-            left: 37%;
+            height: calc(calc(100vw - 2em) * 0.8334);
         }
     }
 </style>
