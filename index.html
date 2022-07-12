@@ -2,59 +2,40 @@
 layout: default.liquid
 title: Home
 permalink: /
-pagination:
-  include: Categories
-  per_page: 7
-  permalink_suffix: "./{{ num }}/"
-  order: Desc
-  sort_by: ["published_date"]
 ---
 
 <div class="home">
-  <h1 class="page-heading">Recent Posts</h1>
-  {% if paginator.indexes %}
-  {% for ptag in paginator.indexes %}
-    {% if ptag.index_title.first == 'blog' %}
-      <ul class="post-list">
-        {% for post in ptag.pages %}
-        <li>
-          <h2>
-            <a class="post-link" href="/{{ post.permalink }}">{{ post.title }}</a>
-          </h2>
-          <p class="post-meta">
-            <time datetime="{{ post.published_date }}" itemprop="datePublished">
-               {{ post.published_date | date: "%b %-d, %Y" }}
-            </time>
-             | <span class="time">
-                 {{ post.content | split:" " | size | divided_by:180 }}
-               </span>
-                Minute Read
-         </p>
-          <p class="description">
-            {{ post.content | strip_html | strip_newlines | truncate: 250 }}
-          </p>
-        </li>
-        {% endfor %}
-      </ul>
-
-      {% if ptag.total_indexes > 1 %}
-      <div class="pagination">
-        {% if ptag.previous_index %}
-        <a href="/{{ ptag.previous_index_permalink }}" class="prev">Newer Posts</a>
-        {% endif %}
-
-        {% if ptag.next_index %}
-        <a href="/{{ ptag.next_index_permalink }}" class="next">Older Posts</a>
-        {% endif %}
-      </div>
-      {% endif %}
-
+  <h1 class="page-heading">Latest</h1>
+  <ul class="post-list">
+    {% assign num_posts = 1 %}
+    {% for post in collections.posts.pages %}
+    {% if post.categories contains "blog" and num_posts < 8 %}
+    {% assign num_posts = num_posts | plus: 1 %}
+    <li>
+      <h2>
+        <a class="post-link" href="/{{ post.permalink }}">{{ post.title }}</a>
+      </h2>
+      <p class="post-meta">
+        <time datetime="{{ post.published_date }}" itemprop="datePublished">
+           {{ post.published_date | date: "%b %-d, %Y" }}
+        </time>
+         | <span class="time">
+             {{ post.content | strip_html | split:" " | size | divided_by:180 | at_least: 1 }}
+           </span>
+            Minute Read
+     </p>
+    </li>
     {% endif %}
-  {% endfor %}
-  
-  {% else %}
-    <ul class="post-list">
-      {% for post in paginator.pages %}
+    {% endfor %}
+  </ul>
+
+  <a id="visit-archive" href="/archive.html">View Full Archives</a>
+  <hr class="separator">
+
+  <h1 class="page-heading">Travel</h1>
+  <ul class="post-list">
+    {% for post in collections.posts.pages %}
+      {% if post.categories contains 'travel' %}
       <li>
         <h2>
           <a class="post-link" href="/{{ post.permalink }}">{{ post.title }}</a>
@@ -64,26 +45,12 @@ pagination:
              {{ post.published_date | date: "%b %-d, %Y" }}
           </time>
            | <span class="time">
-               {{ post.content | split:" " | size | divided_by:180 }}
+               {{ post.content | strip_html | split:" " | size | divided_by:220 | at_least: 1 }}
              </span>
               Minute Read
        </p>
-        <p class="description">
-          {{ post.content | strip_html | strip_newlines | truncate: 250 }}
-        </p>
       </li>
-      {% endfor %}
-    </ul>
-    {% if paginator.total_indexes > 1 %}
-    <div class="pagination">
-      {% if paginator.previous_index %}
-      <a href="/{{ paginator.previous_index_permalink }}" class="prev">Newer Posts</a>
       {% endif %}
-  
-      {% if paginator.next_index %}
-      <a href="/{{ paginator.next_index_permalink }}" class="next">Older Posts</a>
-      {% endif %}
-    </div>
-    {% endif %}
-  {% endif %}
+    {% endfor %}
+  </ul>
 </div>

@@ -7,6 +7,7 @@
 
     #menu-icon {
         display: none;
+
         @include media-query($on-palm) {
             display: block;
             float: left;
@@ -18,7 +19,7 @@
             padding-top: 10px;
             text-align: center;
 
-            > svg {
+            >svg {
                 width: 18px;
                 height: 15px;
 
@@ -34,7 +35,7 @@
         line-height: 56px;
         margin-left: 20px;
 
-        > svg {
+        >svg {
             width: 18px;
             height: 18px;
             vertical-align: middle;
@@ -111,7 +112,8 @@
             &:not(:last-child) {
                 margin-right: 0;
             }
-            &:hover{
+
+            &:hover {
                 background-color: var(--color-hover);
             }
         }
@@ -132,7 +134,7 @@
 .footer-icon {
     text-decoration: none !important;
 
-    > svg {
+    >svg {
         display: inline-block;
         width: 32px;
         height: 32px;
@@ -156,56 +158,45 @@
 
 .wrapper {
     max-width: -webkit-calc(#{$content-width} - (#{$spacing-unit} * 2));
-    max-width:         calc(#{$content-width} - (#{$spacing-unit} * 2));
+    max-width: calc(#{$content-width} - (#{$spacing-unit} * 2));
     margin-right: auto;
     margin-left: auto;
     padding-right: $spacing-unit;
     padding-left: $spacing-unit;
-    @extend %clearfix;
 
     @include media-query($on-laptop) {
         max-width: -webkit-calc(#{$content-width} - (#{$spacing-unit}));
-        max-width:         calc(#{$content-width} - (#{$spacing-unit}));
+        max-width: calc(#{$content-width} - (#{$spacing-unit}));
         padding-right: $spacing-unit / 2;
         padding-left: $spacing-unit / 2;
     }
 }
 
 /**
- * Clearfix
- */
-%clearfix {
-
-    &:after {
-        content: "";
-        display: table;
-        clear: both;
-    }
-}
+* Home
+*/
 
 .page-heading {
-    font-size: 20px;
+    font-size: 38px;
+    font-weight: bold;
 }
 
 .post-list {
     margin-left: 0;
     list-style: none;
 
-    > li {
-        margin-bottom: $spacing-unit;
+    >li {
+        margin-bottom: $spacing-unit * 0.5;
     }
-    h2{
-      margin: 0;
-    }
-    .description{
-      padding: 12px 0;
-      text-align: justify;
+
+    h2 {
+        margin: 0;
     }
 }
 
 .post-link {
-    font-size: 24px;
-    font-weight: bold;
+    font-size: 22px;
+    font-weight: 600;
     color: var(--color-theme);
 
     &:visited {
@@ -218,6 +209,25 @@
     color: var(--color-text-light);
 }
 
+.separator {
+    margin: 40px 0 20px 0;
+    background-color: var(--color-theme-light);
+}
+
+#visit-archive {
+    padding: 10px;
+    display: block;
+    width: fit-content;
+    background-color: var(--color-theme);
+    color: var(--color-background);
+    margin-top: 20px;
+    border-radius: 4px;
+
+    &:hover {
+        background-color: var(--color-btn-hover);
+        text-decoration: none;
+    }
+}
 
 /**
  * Posts
@@ -225,6 +235,7 @@
 .post {
     padding: 40px 0;
 }
+
 .post-header {
     margin-bottom: $spacing-unit + 10;
     text-align: center;
@@ -276,6 +287,7 @@
         font-size: unset;
         margin-right: 4px;
     }
+
     sup::after {
         content: ".";
     }
@@ -285,64 +297,78 @@
     }
 }
 
-.pagination, .post-navigation {
-  a{
-    padding: 5px 10px;
-    color: var(--color-theme);
-    border: 1px solid var(--color-theme);
-  }
-    .prev{
+.post-navigation {
+    a {
+        padding: 5px 10px;
+        color: var(--color-theme);
+        border: 1px solid var(--color-theme);
+    }
+
+    .prev {
         float: right;
     }
-    .next{
+
+    .next {
         float: left;
     }
 }
 
+/**
+ * 404 Page
+ */
 .not-found {
-  text-align: center;
+    text-align: center;
 
-  h1{
-    font-size: 5em;
-  }
-
-  p{
-    font-size: 0.3em;
-    margin-bottom: 3em;
-  }
-
-  a{
-    background: var(--color-theme);
-    padding: 12px;
-    border-radius: 3px;
-    text-decoration: none;
-    color: var(--color-theme-light);
-    font-size: 0.3em;
-
-    &+a{
-      margin-left: 10px;
+    h1 {
+        font-size: 5em;
     }
-  }
+
+    p {
+        font-size: 0.3em;
+        margin-bottom: 3em;
+    }
+
+    a {
+        background: var(--color-theme);
+        padding: 12px;
+        border-radius: 3px;
+        text-decoration: none;
+        color: var(--color-theme-light);
+        font-size: 0.3em;
+
+        &+a {
+            margin-left: 10px;
+        }
+    }
 }
 
+/**
+ * Archive Page
+ */
 .archive-header {
     width: 100%;
     overflow: hidden;
+
     h2 {
         float: left;
     }
 }
+
 .archive-lists {
     list-style: none;
     margin: 0;
+
     h3 {
         margin: 0;
         float: left;
     }
+
     .by-year {
         padding: 9px 0;
+
         li {
             padding: 2px 0 5px 50px;
+
             .date {
                 padding: 0 5px;
             }
@@ -356,6 +382,9 @@ span.last-update {
     float: right;
 }
 
+/**
+ * Comments bar
+ */
 .utterances {
     margin-top: $spacing-unit*3;
 }

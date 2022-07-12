@@ -3,15 +3,16 @@ layout: default.liquid
 title: Archive
 permalink: /archive.html
 ---
+
 <div class="archive-header">
-  <h2>Travel Archives</h2>
+  <h2>Blog Archives</h2>
 </div>
 
 <ul class="archive-lists">
   {% assign pyear = "0" %}
 
   {% for post in collections.posts.pages %}
-    {% if post.categories contains 'travel' %}
+    {% if post.categories contains 'blog' %}
       {% capture year %}{{ post.published_date | date: '%Y' }}{% endcapture %}
       {% if year != pyear %}
         {% if pyear != "0" %}</div>{% endif %}
@@ -27,15 +28,17 @@ permalink: /archive.html
   {% endfor %}
 </ul>
 
+<hr style="margin: 20px 0 20px 0;">
+
 <div class="archive-header">
-  <h2>Blog Archives</h2>
+  <h2>Travel Archives</h2>
 </div>
 
 <ul class="archive-lists">
   {% assign pyear = "0" %}
 
   {% for post in collections.posts.pages %}
-    {% if post.categories contains 'blog' %}
+    {% if post.categories contains 'travel' %}
       {% capture year %}{{ post.published_date | date: '%Y' }}{% endcapture %}
       {% if year != pyear %}
         {% if pyear != "0" %}</div>{% endif %}
