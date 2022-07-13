@@ -38,7 +38,7 @@ There are mainly three types of L systems:
     text-align: left;
   }
 
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 740px) {
     #container {
       flex-direction: column;
     }

@@ -16,7 +16,7 @@ For polygons I wanted to create random shaped [convex polygons](https://en.wikip
 
 Here is a demo of the steps the algorithm takes.
 
-<canvas id="canvas" height=450 width=550></canvas>
+<canvas id="canvas" height=500 width=600></canvas>
 <style>
   canvas {
     background: #3a3a3a;
@@ -24,7 +24,7 @@ Here is a demo of the steps the algorithm takes.
     margin: auto;
   }
 
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 740px) {
     #canvas {
         width: calc(100vw - 2em);
     }

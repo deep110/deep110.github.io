@@ -31,9 +31,6 @@ class Circle {
         ctx.arc(this.x, this.y, this.radius, 0, MathUtil.PI2);
         ctx.strokeStyle = this.color;
         ctx.stroke();
-
-        // ctx.fillStyle = this.color;
-        // ctx.fillRect(this.x - 1, this.y - 1, 2, 2);
     }
 }
 
@@ -118,7 +115,6 @@ function setup() {
     );
 
     setupGUI();
-    GameLoopController.loop(update, 30);
 }
 
 function setCenterOrigin() {
@@ -165,3 +161,4 @@ function update() {
 }
 
 setup();
+GameLoopController.loop(update, 30);
