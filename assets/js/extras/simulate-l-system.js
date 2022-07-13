@@ -390,22 +390,6 @@ function render(code) {
   context.stroke();
 }
 
-function drawTurtle(context, turtle, angle) {
-  context.beginPath();
-  var l = 10 * Math.pow(2, 0.5);
-  var cp = turtle.position;
-
-  var cp1 = cp.subtract(new Vector2(l * Math.sin((45 + angle) * 0.01745), l * Math.cos((45 + angle) * 0.01745)));
-  var cp2 = cp.add(new Vector2(l * Math.sin((45 - angle ) * 0.01745), -1 * l * Math.cos((45 - angle) * 0.01745)));
-
-  context.moveTo(cp.x, turtle.cartToScreen(cp.y));
-
-  context.lineTo(cp1.x, turtle.cartToScreen(cp1.y));
-  context.lineTo(cp2.x, turtle.cartToScreen(cp2.y));
-  context.closePath();
-  context.stroke();
-}
-
 function setupInteractiveSystem() {
   let select = document.getElementById("system-selector");
   for (const sys_name in systems) {
