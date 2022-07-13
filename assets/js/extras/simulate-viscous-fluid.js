@@ -149,6 +149,10 @@ class Utils {
 
     return [i, f];
   }
+
+  static insideCircle(x, y, cx, cy, radius) {
+    return (Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy)) - radius);
+  }
 }
 
 class FluidSim {
@@ -207,29 +211,41 @@ class FluidSim {
     let t = 0;
 
     while (t < dt) {
-      let substep = this.#cfl();
+      let subStep = this.#cfl();
 
-      if (t + substep > dt) {
-        substep = dt - t;
+      if (t + subStep > dt) {
+        subStep = dt - t;
       }
       // Passively advect particles
-      this.#advectParticles(substep);
+      this.#advectParticles(subStep);
 
       // Estimate the liquid signed distance for density
       this.#computePhi();
 
       // Advance the velocity
-      this.#advect(substep);
-      this.#addGravity(substep);
+      this.#advect(subStep);
+      this.#addGravity(subStep);
 
-      this.#applyViscosity(substep);
+      this.#applyViscosity(subStep);
 
 
-      //For extrapolated velocities, replace the normal component with
-      //that of the object.
+      //For extrapolated velocities, replace the normal component with that of the object.
       this.#constrainVelocity();
 
-      t += substep;
+      t += subStep;
+    }
+  }
+
+  render(displayLen) {
+    this.fluidGraphics.clear();
+
+    for (let i = 0; i < this.particles.length; i++) {
+      let x = this.particles[i].x * displayLen;
+      let y = (1 - this.particles[i].y) * displayLen;
+
+      this.fluidGraphics.beginFill(0xDE3249, 1);
+      this.fluidGraphics.drawCircle(x, y, 5);
+      this.fluidGraphics.endFill();
     }
   }
 
@@ -443,6 +459,10 @@ function setupGridContainer(sim, displayLen) {
   const width = sim.ni * displayDX;
   const height = sim.nj * displayDX;
 
+  grid.beginFill(0x000000, 0.1);
+  grid.drawRect(0, 0, width, height);
+  grid.endFill();
+
   grid.lineStyle(1, 0xFFFFFF, 0.5);
 
   for (let i = 0; i <= sim.nj; i++) {
@@ -454,105 +474,76 @@ function setupGridContainer(sim, displayLen) {
     grid.lineTo(width, j * displayDX);
   }
 
-  grid.x = app.screen.width / 2;
-  grid.y = app.screen.height / 2;
+  // center the grid
+  grid.x = (app.screen.width - width) / 2;
+  grid.y = (app.screen.height - height) / 2;
 
-  grid.pivot.x = grid.width / 2;
-  grid.pivot.y = grid.height / 2;
+  // setup drag controls on grid
+  let dragging = false;
+  let data = null;
+  function onDragStart(event) {
+    data = event.data;
+    dragging = true;
+  }
 
+  function onDragEnd() {
+    dragging = false;
+    data = null;
+  }
+
+  function onDragMove() {
+    if (dragging) {
+      const newPosition = data.getLocalPosition(this.parent);
+      let x = (newPosition.x - grid.x) / GRID_DISPLAY_LENGTH;
+      let y = 1 - ((newPosition.y - grid.y) / GRID_DISPLAY_LENGTH);
+
+      if (Utils.insideCircle(x, y, 0.5, 0.5, BEAKER_RADIUS) < 0) {
+        fluidSim.addParticle(x, y);
+      }
+    }
+  }
+
+  grid.interactive = true;
+  grid.on('mousedown', onDragStart);
+  grid.on('pointerup', onDragEnd);
+  grid.on('pointerupoutside', onDragEnd);
+  grid.on('pointermove', onDragMove);
 
   return grid;
 }
 
-function setupFluidContainer(sim, displayLen) {
+function setupFluidContainer(sim, displayLen, beakerRadius) {
   const container = new PIXI.Container();
   container.interactiveChildren = false;
 
   // set container position
   container.width = displayLen;
   container.height = displayLen;
-  container.x = (app.view.width - displayLen) / 2;
-  container.y = (app.view.height - displayLen) / 2;
+  container.x = (app.screen.width - displayLen) / 2;
+  container.y = (app.screen.height - displayLen) / 2;
 
   sim.fluidGraphics = new PIXI.Graphics();
   container.addChild(sim.fluidGraphics);
 
+  // add its container
+  const beaker = new PIXI.Graphics();
+  beaker.lineStyle(1, 0xFFBD01, 1);
+  beaker.drawCircle(displayLen / 2, displayLen / 2, beakerRadius * displayLen);
+  beaker.endFill();
+  container.addChild(beaker);
+
   const blurFilter1 = new PIXI.filters.BlurFilter();
-  container.filters = [blurFilter1];
+  sim.fluidGraphics.filters = [blurFilter1];
   blurFilter1.blur = 2;
 
   return container;
 }
 
-function setUpDragBackground(sim, displayLen) {
-  const bg = new PIXI.Graphics();
-  bg.beginFill(0x3a3a3a, 0.1);
-  bg.drawRect(0, 0, displayLen, displayLen);
-  bg.endFill();
-
-  bg.lineStyle(1, 0xFFBD01, 1);
-  bg.drawCircle(bg.width / 2, bg.height / 2, 0.4 * displayLen);
-  bg.endFill();
-
-  bg.x = app.view.width / 2;
-  bg.y = app.view.height / 2;
-
-  bg.pivot.x = bg.width / 2;
-  bg.pivot.y = bg.height / 2;
-
-  bg.interactive = true;
-
-  // add drag events to fluid container
-  bg
-    .on('pointerdown', onDragStart)
-    .on('pointerup', onDragEnd)
-    .on('pointerupoutside', onDragEnd)
-    .on('pointermove', onDragMove);
-
-  return bg;
-}
-
-function onDragStart(event) {
-  this.data = event.data;
-  this.dragging = true;
-}
-
-function onDragEnd() {
-  this.dragging = false;
-  this.data = null;
-}
-
-function onDragMove() {
-  if (this.dragging) {
-    const newPosition = this.data.getLocalPosition(this.parent);
-    let x = (newPosition.x - (app.view.width - GRID_DISPLAY_LENGTH) / 2) / GRID_DISPLAY_LENGTH;
-    let y = (newPosition.y - (app.view.height - GRID_DISPLAY_LENGTH) / 2) / GRID_DISPLAY_LENGTH;
-
-    if (x > 0 && x <= 1.0 && y > 0 && y <= 1.0) {
-      fluidSim.addParticle(x, 1 - y);
-    }
-  }
-}
-
-function renderFluid(sim, displayLen) {
-  const particles = sim.particles;
-  sim.fluidGraphics.clear();
-
-  for (let i = 0; i < particles.length; i++) {
-    let x = particles[i].x * displayLen;
-    let y = (1 - particles[i].y) * displayLen;
-
-    sim.fluidGraphics.beginFill(0xDE3249, 1);
-    sim.fluidGraphics.drawCircle(x, y, 5);
-    sim.fluidGraphics.endFill();
-  }
-}
-
-function update(dt) {
+function update() {
   // render fluid every 100ms
   renderTimeElapsed += app.ticker.elapsedMS;
   if (renderTimeElapsed > 100) {
-    renderFluid(fluidSim, GRID_DISPLAY_LENGTH);
+    fluidSim.render(GRID_DISPLAY_LENGTH);
     renderTimeElapsed -= 100;
   }
 
@@ -568,10 +559,6 @@ function update(dt) {
   }
 }
 
-function insideCircle(x, y, cx, cy, radius) {
-  return (Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy)) - radius);
-}
-
 let app = new PIXI.Application({
   view: document.getElementById("canvas"),
   width: 500,
@@ -580,31 +567,35 @@ let app = new PIXI.Application({
 });
 app.ticker.add(update);
 app.ticker.maxFPS = 30;
+app.renderer.plugins.interaction.moveWhenInside = true;
 var renderTimeElapsed = 0;
 
 const GRID_RES = 30;
-const GRID_DISPLAY_LENGTH = 400;
+const GRID_DISPLAY_LENGTH = 450;
+const BEAKER_RADIUS = 0.4;
 
 // setup fluid physics stuff
 let fluidSim = new FluidSim(GRID_RES);
 fluidSim.setBoundary((x, y) => {
-  return -1 * insideCircle(x, y, 0.5, 0.5, 0.4);
+  return -1 * Utils.insideCircle(x, y, 0.5, 0.5, BEAKER_RADIUS);
 });
 
 // setup rendering stuff
 let gridContainer = setupGridContainer(fluidSim, GRID_DISPLAY_LENGTH);
-let fluidContainer = setupFluidContainer(fluidSim, GRID_DISPLAY_LENGTH);
-let background = setUpDragBackground(fluidSim, GRID_DISPLAY_LENGTH);
+let fluidContainer = setupFluidContainer(fluidSim, GRID_DISPLAY_LENGTH, BEAKER_RADIUS);
 
 app.stage.addChild(gridContainer);
 app.stage.addChild(fluidContainer);
-app.stage.addChild(background);
 
 
 // Add some particles for testing
-fluidSim.addParticle(0.662281, 0.59606);
+// fluidSim.addParticle(0.662281, 0.59606);
 // fluidSim.addParticle(0.582053, 0.648958);
 // fluidSim.addParticle(0.60656, 0.586516);
+
+fluidSim.addParticle(0, 0);
+fluidSim.addParticle(0, 1);
+fluidSim.addParticle(1, 0);
 
 
 var playSimulation = false;

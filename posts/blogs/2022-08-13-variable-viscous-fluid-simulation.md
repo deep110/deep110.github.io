@@ -22,7 +22,7 @@ hello world
     margin: auto;
   }
 
-  @media only screen and (max-width: 600px) {
+  @media only screen and (max-width: 740px) {
     canvas {
         width: calc(100vw - 2em);
     }
