@@ -216,3 +216,5 @@ Though it can be desirable if you would want to fill those areas with some other
 [^robert]:  [Fast Poisson Disk Sampling in Arbitrary Dimensions](https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf) by Robert Bridson, University of British Columbia
 
 [^wikipedia]: [Wikipedia](https://en.wikipedia.org/wiki/Supersampling#Poisson_disk)
+
+If you enjoyed the article and want to see more of these interactive tutorials then you can subscribe below.

@@ -22,7 +22,9 @@
           <div class="post-content" itemprop="articleBody">
             {{ page.content }}
           </div>
-          <!-- Post Navigation -->
+
+          {% include "subscribe.liquid" %}
+
           <div class="post-navigation">
             {% assign is_next_post_found = false %}
             {% assign find_prev_post = false %}
@@ -44,23 +46,18 @@
                 {% endif %}
             {% endfor %}
             {% if prev_post %}
-              <a class="next" href="{{ prev_post | prepend: '/' | prepend: site.base_url }}">←&nbsp;Prev Post</a>
+              <a href="{{ prev_post | prepend: '/' | prepend: site.base_url }}">←&nbsp;Prev Post</a>
             {% endif %}
             {% if next_post %}
-              <a class="prev" href="{{ next_post | prepend: '/' | prepend: site.base_url }}">Next Post&nbsp;→</a>
+              <a href="{{ next_post | prepend: '/' | prepend: site.base_url }}">Next Post&nbsp;→</a>
             {% endif %}
           </div>
 
           {% if site.base_url != "http://localhost:3000" %}
           <div>
-            <script src="https://utteranc.es/client.js"
-              repo="deep110/deep110.github.io"
-              issue-term="pathname"
-              label="comment"
-              theme="github-light"
-              crossorigin="anonymous"
-              async>
-            </script>
+            <script src="https://utteranc.es/client.js" repo="deep110/deep110.github.io" issue-term="pathname"
+              label="comment" theme="github-light" crossorigin="anonymous" async>
+              </script>
           </div>
           {% endif %}
 

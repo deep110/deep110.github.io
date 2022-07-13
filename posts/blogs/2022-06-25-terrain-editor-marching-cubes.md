@@ -241,7 +241,7 @@ sphereDistance = (spherePos, point, radius) => {
 
 ### Final Notes
 
-You can find the full source code on my [github](https://github.com/deep110/terrain-editor-js). If you enjoyed the article, please leave a comment below.
+You can find the full source code on my [github](https://github.com/deep110/terrain-editor-js). If you enjoyed the article and want to see more of them then please subscribe below.
 
 ### References { #references }
 
