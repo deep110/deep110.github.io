@@ -232,6 +232,10 @@ class FluidSim {
       //For extrapolated velocities, replace the normal component with that of the object.
       this.#constrainVelocity();
 
+      let p = this.particles[0];
+      let v = this.#getVelocity(p);
+      console.log(p.x, p.y, "velocity:", v.x, v.y);
+
       t += subStep;
     }
   }
@@ -244,7 +248,7 @@ class FluidSim {
       let y = (1 - this.particles[i].y) * displayLen;
 
       this.fluidGraphics.beginFill(0xDE3249, 1);
-      this.fluidGraphics.drawCircle(x, y, 5);
+      this.fluidGraphics.drawCircle(x, y, 8);
       this.fluidGraphics.endFill();
     }
   }
@@ -366,9 +370,6 @@ class FluidSim {
     this.#solveViscosity(dt);
   }
 
-  #solveViscosity(dt) {
-  }
-
   #constrainVelocity() {
     this.tempU.copy(this.u);
     this.tempV.copy(this.v);
@@ -412,6 +413,10 @@ class FluidSim {
     //update
     this.u.copy(this.tempU);
     this.v.copy(this.tempV);
+  }
+
+  #solveViscosity(dt) {
+    
   }
 
   #getVelocity(position) {
@@ -589,13 +594,9 @@ app.stage.addChild(fluidContainer);
 
 
 // Add some particles for testing
-// fluidSim.addParticle(0.662281, 0.59606);
+fluidSim.addParticle(0.662281, 0.59606);
 // fluidSim.addParticle(0.582053, 0.648958);
 // fluidSim.addParticle(0.60656, 0.586516);
-
-fluidSim.addParticle(0, 0);
-fluidSim.addParticle(0, 1);
-fluidSim.addParticle(1, 0);
 
 
 var playSimulation = false;

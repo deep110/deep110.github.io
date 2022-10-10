@@ -1,4 +1,12 @@
 var visitedCountries = ['IN', 'TR', 'NP', 'AE'];
+
+var visitedCities = {
+    "2022": [
+
+    ],
+    ""
+}
+
 var visitedCities = {
     "Turkey": [
         // 2022
