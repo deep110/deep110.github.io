@@ -2,14 +2,10 @@ var visitedCountries = ['IN', 'TR', 'NP', 'AE'];
 
 var visitedCities = {
     "2022": [
+        // Nepal
+        { name: "Kathmandu", coords: [27.7172, 85.3240], image: "kathmandu.webp", date: "Aug, 2022" },
 
-    ],
-    ""
-}
-
-var visitedCities = {
-    "Turkey": [
-        // 2022
+        // Turkey
         { name: "Cappadocia", coords: [38.3535, 35.0911], image: "cappadocia.webp", post: "2022-05-13-turkey.html#cappadocia", date: "May, 2022" },
         { name: "Antalya", coords: [36.8969, 30.7133], image: "antalya.webp", post: "2022-05-13-turkey.html#antalya", date: "May, 2022" },
         { name: "Pamukkale", coords: [37.9137, 29.1187], image: "pamukkale.webp", post: "2022-05-13-turkey.html#pamukkale", date: "May, 2022" },
@@ -17,13 +13,7 @@ var visitedCities = {
         { name: "Kuşadası", coords: [37.8579, 27.2610], image: "kusadasi.webp", post: "2022-05-13-turkey.html#kusadasi", date: "May, 2022" },
         { name: "Istanbul", coords: [41.0082, 28.9784], image: "istanbul.webp", post: "2022-05-13-turkey.html", date: "April, 2022" },
     ],
-    "United Arab Emirates": [
-        // 2019
-        { name: "Abu Dhabi", coords: [24.4539, 54.3773], image: "abu-dhabi.webp", post: "2019-11-28-uae.html#dubai", date: "Nov, 2019" },
-        { name: "Dubai", coords: [25.2048, 55.2708], image: "dubai.webp", post: "2019-11-28-uae.html#abu-dhabi", date: "Nov, 2019" },
-    ],
-    "India": [
-        // 2021
+    "2021": [
         { name: "Kolkata", coords: [22.5726, 88.3639], image: "kolkata.webp", date: "Dec, 2021" },
         { name: "Diu", coords: [20.7144, 70.9874], image: "diu.webp", date: "Nov, 2021" },
         { name: "Pondicherry", coords: [11.9416, 79.8083], image: "pondicherry.webp", date: "Oct, 2021" },
@@ -31,13 +21,18 @@ var visitedCities = {
         { name: "Spiti Valley", coords: [32.2461, 78.0349], image: "spiti-valley.webp", date: "Sept, 2021" },
         { name: "Manali", coords: [32.2432, 77.1892], image: "manali.webp", date: "Sept, 2021" },
         { name: "Indore", coords: [22.7196, 75.8577], image: "indore.webp", date: "Sept, 2021" },
-
-        // 2018
+    ],
+    "2019": [
+        // United Arab Emirates
+        { name: "Abu Dhabi", coords: [24.4539, 54.3773], image: "abu-dhabi.webp", post: "2019-11-28-uae.html#dubai", date: "Nov, 2019" },
+        { name: "Dubai", coords: [25.2048, 55.2708], image: "dubai.webp", post: "2019-11-28-uae.html#abu-dhabi", date: "Nov, 2019" },
+    ],
+    "2018": [
         { name: "Sikkim", coords: [27.5330, 88.5122], image: "sikkim.webp", date: "Nov, 2018" },
         { name: "Darjeeling", coords: [27.0410, 88.2663], image: "darjeeling.webp", date: "Nov, 2018" },
         { name: "Gokarna", coords: [14.5479, 74.3188], image: "gokarna.webp", date: "Feb, 2018" },
-
-        // 2017
+    ],
+    "2017": [
         { name: "Kodaikanal", coords: [10.2381, 77.4892], image: "kodaikanal.webp", date: "Oct, 2017" },
         { name: "Amritsar", coords: [31.6340, 74.8723], image: "amritsar.webp", date: "March, 2017" },
         { name: "Jodhpur", coords: [26.2389, 73.0243], image: "jodhpur.webp", date: "Jan, 2017" },
@@ -45,24 +40,18 @@ var visitedCities = {
         { name: "Mount Abu", coords: [24.5926, 72.7156], image: "mount-abu.webp", date: "Jan, 2017" },
         { name: "Udaipur", coords: [24.5854, 73.7125], image: "udaipur.webp", date: "Jan, 2017" },
         { name: "Chittorgarh", coords: [24.8829, 74.6230], image: "chittorgarh.webp", date: "Jan, 2017" },
-
-        // 2016
+    ],
+    "2016": [
         { name: "Wayanad", coords: [11.6854, 76.1320], image: "wayanad.webp", date: "Dec, 2016" },
         { name: "Mahabaleshwar", coords: [17.9307, 73.6477], image: "mahabaleshwar.webp", date: "June, 2016" },
         { name: "Pune", coords: [18.5204, 73.8567], image: "pune.webp", date: "June, 2016" },
-
-        // 2015
+    ],
+    "2015": [
         { name: "Shimla", coords: [31.1048, 77.1734], image: "shimla.webp", date: "Jan, 2015" },
         { name: "Nainital", coords: [29.3919, 79.4542], image: "nainital.webp", date: "Oct, 2015" },
-
-        // 2014
-        { name: "Rishikesh", coords: [30.0869, 78.2676], image: "rishikesh.webp", date: "Nov, 2014" },
+        { name: "Rishikesh", coords: [30.0869, 78.2676], image: "rishikesh.webp", date: "Nov, 2015" },
     ],
-    "Nepal": [
-        // Old
-        { name: "Kathmandu", coords: [27.7172, 85.3240], image: "kathmandu.webp", date: "" },
-    ]
-};
+}
 
 var citiesCoords = [];
 for (var item in visitedCities) {
@@ -128,19 +117,21 @@ function toggleMarkers(markerBtn) {
 
 function addPlaces() {
     var countryContainer = document.getElementById("places-container");
-    for (var country in visitedCities) {
+    const cities = Object.keys(visitedCities).sort().reverse();
+
+    cities.forEach(yearTravel => {
         var countryDiv = document.createElement("div");
 
         // add heading
         var heading = document.createElement("h2");
-        heading.id = country.toLowerCase();
-        heading.innerHTML = "<b>" + country + "</b>";
+        heading.id = yearTravel.toLowerCase();
+        heading.innerHTML = "<b>" + yearTravel + "</b>";
         countryDiv.appendChild(heading);
 
         // add its cities
         var citiesDiv = document.createElement("div");
         citiesDiv.classList.add("cities-container");
-        visitedCities[country].forEach((city) => {
+        visitedCities[yearTravel].forEach((city) => {
             var cityDiv = document.createElement("div");
             cityDiv.classList.add("img-city");
 
@@ -183,5 +174,5 @@ function addPlaces() {
 
         countryContainer.appendChild(countryDiv);
         countryContainer.appendChild(document.createElement("br"));
-    }
+    });
 };
