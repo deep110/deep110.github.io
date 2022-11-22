@@ -2,6 +2,12 @@ var visitedCountries = ['IN', 'TR', 'NP', 'AE'];
 
 var visitedCities = {
     "2022": [
+        // Kerala
+        { name: "Munnar", coords: [10.0889, 77.0595], image: "munnar.webp", post: "2022-11-13-kerala.html#munnar", date: "Nov, 2022" },
+        { name: "Alleppey", coords: [9.4981, 76.3388], image: "alleppey.webp", post: "2022-11-13-kerala.html#alleppey", date: "Oct, 2022" },
+        { name: "Kanyakumari", coords: [8.0883, 77.5385], image: "kanyakumari.webp", post: "2022-11-13-kerala.html#kanyakumari", date: "Oct, 2022" },
+        { name: "Kovalam", coords: [8.3988, 76.9820], image: "kovalam.webp", post: "2022-11-13-kerala.html", date: "Oct, 2022" },
+
         // Nepal
         { name: "Kathmandu", coords: [27.7172, 85.3240], image: "kathmandu.webp", date: "Aug, 2022" },
 
