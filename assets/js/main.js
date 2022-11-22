@@ -139,7 +139,7 @@ class Vector2 {
 	}
 
 	normalize() {
-		var mag = this.magnitude();
+		var mag = Math.sqrt(this.x * this.x + this.y * this.y);
 		this.x /= mag;
 		this.y /= mag;
 		return this;

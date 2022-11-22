@@ -59,8 +59,8 @@ Minute Read
 <p>For polygons I wanted to create random shaped <a href="https://en.wikipedia.org/wiki/Convex_polygon">convex polygons</a>. One way to do that is to generate a set of random points and compute its convex hull. There are many <a href="https://en.wikipedia.org/wiki/Convex_hull_algorithms">convex hull algorithms</a> but the one we are discussing below is <a href="https://en.wikipedia.org/wiki/Graham_scan">Graham Scan</a> which takes O(n log n) time.</p>
 <h3>Visualizing Steps</h3>
 <p>Here is a demo of the steps the algorithm takes.</p>
-<p><canvas id="canvas" height=450 width=550></canvas></p>
-<style>canvas{background:#3a3a3a;display:block;margin:auto;}@media only screen and (max-width:600px){#canvas{width:calc(100vw - 2em);}}</style>
+<p><canvas id="canvas" height=500 width=600></canvas></p>
+<style>canvas{background:#3a3a3a;display:block;margin:auto;}@media only screen and (max-width:740px){#canvas{width:calc(100vw - 2em);}}</style>
 <h3>How does it work</h3>
 <h4><strong>Step1:</strong> Get the bottom most point P</h4>
 <p>We will start by finding the point with lowest y coordinate. If two points have same y-coordinate we will take the one with least x-coordinate. In the above demo, bottom most point is colored red.</p>
