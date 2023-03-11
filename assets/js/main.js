@@ -5,6 +5,9 @@ window.onload = function () {
 
 	// setup things
 	setTheme();
+
+	carousel.init();
+	videoPlayer.init();
 };
 
 function setTheme() {

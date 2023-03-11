@@ -51,9 +51,6 @@ var map = new jsVectorMap({
 });
 
 window.addEventListener('DOMContentLoaded', (_) => {
-    carousel.init();
-    videoPlayer.init();
-
     ['touchmove','mousedown'].forEach(evt => {
         document.getElementById("map-container").addEventListener(evt, (e) => {
             e.preventDefault();
