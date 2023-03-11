@@ -5,7 +5,6 @@ window.onload = function () {
 
 	// setup things
 	setTheme();
-
 	carousel.init();
 	videoPlayer.init();
 };
@@ -32,6 +31,20 @@ function toggleTheme(themeButton) {
 		themeButton.setAttribute("title", "Switch to dark theme");
 	}
 };
+
+function loadFileAjaxSync(filePath, mimeType="application/json") {
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.open("GET", filePath, false);
+	if (xmlhttp.overrideMimeType) {
+		xmlhttp.overrideMimeType(mimeType);
+	}
+	xmlhttp.send();
+	if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
+		return xmlhttp.responseText;
+	} else {
+		return null;
+	}
+}
 
 // create a basic game loop controller to run simulations at target FPS
 window.raf = (function () {

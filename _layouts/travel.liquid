@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
   {% include "head.liquid" %}
+  
+  <script type="text/javascript" src="{{'/assets/js/main.js' | prepend:site.base_url }}"></script>
+  {% for script in page.data.scripts %}
+      <script type="text/javascript" src="{{'/assets/js/' | prepend:site.base_url | append: script }}"></script>
+  {% endfor %}
+  {% for css in page.data.css %}
+      <link rel="stylesheet" href="{{'/assets/css/' | prepend:site.base_url | append: css }}"></script>
+  {% endfor %}
   <body>
     {% include "header.liquid" %}
-    {% include "scripts.liquid" %}
     <div class="page-content">
       <div class="wrapper">
 
