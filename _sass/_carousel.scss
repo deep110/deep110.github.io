@@ -107,7 +107,14 @@
 
 @media (max-width: 600px) {
     .carousel {
-        width: 95%;
-        padding: 3% 3% 6% 3%;
+        padding: 0 0 6% 0;
+    }
+
+    .carousel-portrait {
+        width: 100%;
+    }
+
+    .carousel-nav {
+        display: none;
     }
 }

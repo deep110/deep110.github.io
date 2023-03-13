@@ -296,11 +296,17 @@ const carousel = function () {
 			const slideWidth = container.children[0].offsetWidth + parseInt(window.getComputedStyle(container).columnGap);
 			const slideIndex = parseInt(container.dataset.slideNum, 10);
 			const startingPosition = slideIndex * slideWidth;
-			const mouseDownStartingPos = e.clientX || e.touches[0].clientX;
+			const mouseDownStartingPosX = e.clientX || e.touches[0].clientX;
+			const mouseDownStartingPosY = e.clientY || e.touches[0].clientY;
+			const touchStartTime = window.performance.now();
 			let mouseMovedPosition = 0;
 
 			const moveProgress = (e) => {
-				mouseMovedPosition = (e.clientX || e.touches[0].clientX) - mouseDownStartingPos;
+				mouseMovedPosition = (e.clientX || e.touches[0].clientX) - mouseDownStartingPosX;
+				// don't move if vertical scroll
+				if (Math.abs((e.clientY || e.touches[0].clientY) - mouseDownStartingPosY) > Math.abs(mouseMovedPosition)) {
+					return;
+				}
 				const edgeLimit = 0.3;
 				if (slideIndex == 0 && mouseMovedPosition > edgeLimit * slideWidth) {
 					mouseMovedPosition = edgeLimit * slideWidth;
@@ -316,8 +322,9 @@ const carousel = function () {
 				container.removeEventListener('mousemove', moveProgress);
 				container.removeEventListener('touchmove', moveProgress);
 
+				const moveSpeed = Math.abs(mouseMovedPosition)/ (window.performance.now() - touchStartTime);
 				let newSlideIndex = slideIndex;
-				if (Math.abs(mouseMovedPosition) > slideWidth / 2) {
+				if (Math.abs(mouseMovedPosition) > slideWidth / 2 || moveSpeed > 0.3) {
 					newSlideIndex = slideIndex - Math.sign(mouseMovedPosition);
 					if (newSlideIndex < 0) newSlideIndex = 0;
 					if (newSlideIndex == slideCount) newSlideIndex = slideCount - 1;
