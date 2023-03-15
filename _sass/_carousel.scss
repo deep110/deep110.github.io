@@ -4,12 +4,16 @@
     width: 100%;
     margin: 0 auto 20px auto;
     box-sizing: border-box;
-    padding: 30px 60px;
+    padding-bottom: 30px;
     background: var(--color-theme-light);
 }
 
 .carousel-portrait {
-    width: 620px;
+    width: 500px;
+}
+
+.carousel:hover > .carousel-nav {
+    display: block;
 }
 
 .carousel-list {
@@ -35,6 +39,10 @@
 
 .carousel-list div {
     text-align: center;
+}
+
+.carousel-list li img {
+    width: 100%;
 }
 
 .carousel-indicators {
@@ -74,29 +82,23 @@
 }
 
 .carousel-nav {
+    display: none;
     position: absolute;
     top: 50%;
-    left: 1em;
     bottom: 0;
     border: 0;
     border-radius: 50%;
-    cursor: pointer;
     opacity: 0.8;
-    align-items: center;
-    width: 2em;
-    height: 2em;
-    transform: translateY(-50%);
+    width: 3em;
+    height: 3em;
+    transform: translateY(-75%);
     z-index: 1;
-    justify-content: center;
     background: #ccc url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' width='22' height='22' focusable='false'><path d='m15.5 0.932-4.3 4.38 14.5 14.6-14.5 14.5 4.3 4.4 14.6-14.6 4.4-4.3-4.4-4.4-14.6-14.6z'></path></svg>") no-repeat center;
-
-    :hover {
-        opacity: 1;
-    }
 }
 
 .carousel-nav.carousel-nav-prev {
-    transform: scaleX(-1) translateY(-50%);
+    left: 1em;
+    transform: scaleX(-1) translateY(-75%);
 }
 
 .carousel-nav.carousel-nav-next {
@@ -105,16 +107,12 @@
 }
 
 
-@media (max-width: 600px) {
-    .carousel {
-        padding: 0 0 6% 0;
-    }
-
+@media (max-width: $on-palm) {
     .carousel-portrait {
         width: 100%;
     }
 
-    .carousel-nav {
+    .carousel:hover > .carousel-nav {
         display: none;
     }
 }
