@@ -1,0 +1,78 @@
+svg {
+    -ms-touch-action: none;
+    touch-action: none;
+}
+
+image,
+text,
+.jvm-zoomin,
+.jvm-zoomout {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.jvm-container {
+    -ms-touch-action: none;
+    touch-action: none;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+}
+
+.jvm-tooltip {
+    border-radius: 3px;
+    background-color: #5c5cff;
+    font-size: smaller;
+    box-shadow: 1px 2px 12px rgba(0, 0, 0, 0.2);
+    padding: 3px 5px;
+    white-space: nowrap;
+    position: absolute;
+    display: none;
+    color: #FFF;
+}
+
+.jvm-tooltip.active {
+    display: block;
+}
+
+.jvm-zoom-btn {
+    border-radius: 3px;
+    background-color: #292929;
+    padding: 3px;
+    box-sizing: border-box;
+    position: absolute;
+    line-height: 10px;
+    cursor: pointer;
+    color: #FFF;
+    height: 15px;
+    width: 15px;
+    left: 10px;
+}
+
+.jvm-zoom-btn.jvm-zoomout {
+    top: 30px;
+}
+
+.jvm-zoom-btn.jvm-zoomin {
+    top: 10px;
+}
+
+.jvm-line[animation=true] {
+    -webkit-animation: jvm-line-animation 10s linear forwards infinite;
+    animation: jvm-line-animation 10s linear forwards infinite;
+}
+
+@-webkit-keyframes jvm-line-animation {
+    from {
+        stroke-dashoffset: 250;
+    }
+}
+
+@keyframes jvm-line-animation {
+    from {
+        stroke-dashoffset: 250;
+    }
+}

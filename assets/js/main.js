@@ -218,7 +218,7 @@ const carousel = function () {
 			const slideCount = container.children.length;
 			const carouselIndicator = sliderElement.querySelector(".carousel-indicators");
 
-			if (carouselIndicator !== null) {
+			if (carouselIndicator !== null && slideCount > 1) {
 				for (var i = 0; i < slideCount; i++) {
 					var indicatorChild = document.createElement("li");
 					if (i == 0) {
@@ -269,12 +269,9 @@ const carousel = function () {
 		},
 
 		handleIndicators(sliderElement, newSlideNum) {
-			for (let scrollIndicatorContainers of sliderElement.querySelectorAll(".carousel-indicators")) {
-				let scrollIndicators = scrollIndicatorContainers.children;
-				for (let element of scrollIndicators)
-					element.classList.remove("active");
-				scrollIndicators[newSlideNum].classList.add("active");
-			}
+			let scrollIndicators = sliderElement.querySelector(".carousel-indicators").children;
+			for (let element of scrollIndicators) element.classList.remove("active");
+			if (scrollIndicators.length > 1) scrollIndicators[newSlideNum].classList.add("active");
 		},
 
 		scrollX(element, scrollFinalPosition, duration = 400) {
