@@ -274,9 +274,8 @@ const carousel = function () {
 			if (scrollIndicators.length > 1) scrollIndicators[newSlideNum].classList.add("active");
 		},
 
-		scrollX(element, scrollFinalPosition, duration = 400) {
+		scrollX(element, scrollFinalPosition) {
 			element.style.transform = `translateX(${scrollFinalPosition}px)`;
-			element.style.transition = `transform ${duration}ms cubic-bezier(0.25, 1, 0.5, 1) 0s`;
 		},
 
 		getNewSlideNum(container, next, slideCount) {
