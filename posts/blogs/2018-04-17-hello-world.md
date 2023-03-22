@@ -2,6 +2,7 @@
 layout: blog.liquid
 title:  "Hello World!"
 categories: ["blog"]
+description: "Starting a new blog, this is just an introductory post"
 data:
     keywords: "blog, hello, world"
 ---

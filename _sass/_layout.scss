@@ -1,6 +1,3 @@
-/**
- * Site header
- */
 .site-header {
     min-height: 56px;
     background-color: var(--color-theme-light);
@@ -79,6 +76,7 @@
         color: var(--color-theme);
         line-height: $base-line-height;
         font-weight: 700;
+        text-decoration: none;
 
         // Gaps between nav items, but not on the last one
         &:not(:last-child) {
@@ -147,10 +145,6 @@
     }
 }
 
-
-/**
-* Page content
-*/
 .page-content {
     padding: $spacing-unit*1.2 0;
     flex: 1 0 auto;
@@ -199,6 +193,7 @@
     font-size: 22px;
     font-weight: 600;
     color: var(--color-theme);
+    text-decoration: none;
 
     &:visited {
         color: var(--color-theme);
@@ -208,6 +203,10 @@
 .post-meta {
     font-size: $small-font-size;
     color: var(--color-text-light);
+}
+
+.post-description {
+    color: var(--color-btn-hover);
 }
 
 .separator {
@@ -223,6 +222,7 @@
     color: var(--color-background);
     margin-top: 20px;
     border-radius: 4px;
+    text-decoration: none;
 
     &:hover {
         background-color: var(--color-btn-hover);
@@ -307,6 +307,7 @@
         padding: 5px 10px;
         color: var(--color-theme);
         border: 1px solid var(--color-theme);
+        text-decoration: none;
     }
 }
 

@@ -2,6 +2,7 @@
 layout: blog.liquid
 title:  "Terrain Generation and Editing using Marching Cubes"
 categories: ["blog"]
+description: "Trying to generate an editable and realistic looking terrain using Marching Cubes algorithm. The writeup goes into little more depth on how various parameters of used noise function (Simplex Noise) can affect the terrain quality."
 data:
   keywords: "html5, canvas, marching, cubes, terrain, procedural, generation, tutorial, threejs"
   css: [katex.min.css]

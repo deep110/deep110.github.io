@@ -1,6 +1,7 @@
 ---
 layout: blog.liquid
 title:  "Understanding difference between Digital and Paint Colors"
+description: "This is my attempt to dig into understanding digital colors better and how they can different from the paints or printing colors."
 categories: ["blog"]
 data:
     keywords: "rgb, cmyk, digital, paint"

@@ -1,6 +1,7 @@
 ---
 layout: blog.liquid
 title:  "Uniform Random Distribution using Poisson Disc Sampling"
+description: "Poisson disc sampling is a technique used to generate a set of points that are evenly spaced apart in a given region. It is very useful if you need a random but uniform distribution in either 2d or 3d space."
 categories: ["blog"]
 data:
   keywords: "html5, canvas, poisson, disc, sampling, games, javascript, tutorial"

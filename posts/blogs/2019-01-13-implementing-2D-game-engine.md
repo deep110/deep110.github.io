@@ -1,6 +1,7 @@
 ---
 layout: blog.liquid
 title: "Implementing your Own 2D game engine"
+description: "Talks about how to create your own 2d physics engine from scratch. The concepts are pretty generic and can be extended to 3d as well."
 categories: ["blog"]
 data:
   css: [katex.min.css]
@@ -108,45 +109,44 @@ Then we proceed to **NarrowPhase calculation** i.e which actually determines whi
 It can be implemented using [Separating Axis Theorem](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem). The basic principle is:  *If two bodies are not colliding, there will be a certain axis for which their projections will not overlap.*
 
 For a general convex polygon there could be a lot of axes to check, but for simplification purposes, I have just taken the shape of the colliders to be *Circle* and *Axis-Aligned Bounding Box (AABB)* i.e just a rectangle. Now for collision checks, we will like to implement four combinations (not taking rotation into account):
-* Circle-Circle:
-  
-  For this, test is easy - Distance between circles should be less than sum of their radii
-  ```java
-  // distance must be less for overlap
-  isColliding = distance(circle1, circle2) <= circle1.radius + circle2.radius
-  ```
 
-* Circle-AABB
+#### Circle-Circle
   
-  We will first find the nearest point of contact on AABB between AABB and circle.
-  ```java
-  positionDiff = AABB.pos - circle.pos
-  
-  // on x-axis take the point which is near, the bounds or diff
-  nearestPoint.x = clamp(-AABB.width/2, AABB.width/2, positionDiff.x)
-  // same for y-axis
-  nearestPoint.y = clamp(-AABB.height/2, AABB.height/2, positionDiff.y)
+For this, test is easy - Distance between circles should be less than sum of their radii
 
-  // distance between nearest point on rectangle and circle's center should
-  // be less than circle's radius
-  isColliding = distance(circle1, nearestPoint) <= circle.radius
-  ```
-* AABB-Circle
-  
-  Same procedure as above
+```java
+// distance must be less for overlap
+isColliding = distance(circle1, circle2) <= circle1.radius + circle2.radius
+```
 
-* AABB-AABB
-  
-  ```java
-  positionDiff = AABB2.pos - AABB1.pos
+#### Circle-AABB / AABB-Circle
 
-  // find overlap values
-  xOverlap = AABB1.width/2 + AABB2.width/2 - abs(positionDiff.x) // x-axis overlap
-  yOverlap = AABB1.height/2 + AABB2.height/2 - abs(positionDiff.y) // y-axis overlap
-  
-  // for bodies to be colliding both axis must overlap
-  isColliding = xOverlap > 0 && yOverlap > 0
-  ```
+We will first find the nearest point of contact on AABB between AABB and circle.
+
+```java
+positionDiff = AABB.pos - circle.pos
+
+// on x-axis take the point which is near, the bounds or diff
+nearestPoint.x = clamp(-AABB.width/2, AABB.width/2, positionDiff.x)
+// same for y-axis
+nearestPoint.y = clamp(-AABB.height/2, AABB.height/2, positionDiff.y)
+
+// distance between nearest point on rectangle and circle's center should be less than circle's radius
+isColliding = distance(circle1, nearestPoint) <= circle.radius
+```
+
+#### AABB-AABB
+
+```java
+positionDiff = AABB2.pos - AABB1.pos
+
+// find overlap values
+xOverlap = AABB1.width/2 + AABB2.width/2 - abs(positionDiff.x) // x-axis overlap
+yOverlap = AABB1.height/2 + AABB2.height/2 - abs(positionDiff.y) // y-axis overlap
+
+// for bodies to be colliding both axis must overlap
+isColliding = xOverlap > 0 && yOverlap > 0
+```
 
 For a convex polygon its implementation will be more complex, there is a good [video](https://gdcvault.com/play/1017646/Physics-for-Game-Programmers-The) in GDC Vault explaining the process. Also you can go through the [Box2D](https://github.com/erincatto/Box2D) code for the same. It is next in my list for implementation.
 
@@ -177,12 +177,12 @@ Impulse (j) is calculated using [Momentum Conservation](https://en.wikipedia.org
 
 #### Normal Impulse
 Let us define some variables,
-<pre><code>v<sub>A</sub>, u<sub>A</sub> = final and initial velocity of body A
+<pre>v<sub>A</sub>, u<sub>A</sub> = final and initial velocity of body A
 v<sub>B</sub>, u<sub>B</sub> = final and initial velocity of body B
 j<sub>A</sub> = change in momentum of A
 j<sub>B</sub> = change in momentum of B
 n = normal vector in direction of collision normal (n.n = 1)
-</code></pre>
+</pre>
 
 According to Newton's law of restitution,
 ```
@@ -218,6 +218,7 @@ p = linear momentum
 I = Moment of Inertial about Center of Mass (COM)
 r = radius vector perpendicular to COM
 ```
+
 Some basic definitions,
 {% equation %}
 L = I\omega = r x p\\
@@ -246,15 +247,15 @@ t = -[V_{AB} − (V_{AB}⋅n)∗n]
 {% endequation %}
 
 But wait there is a catch, friction acts differently for static and dynamic objects, that is why two coefficients of friction. How to use them can be determined using [Coulomb's Law](https://en.wikipedia.org/wiki/Friction#Dry_friction).
-<pre><code>j<sub>f</sub> <= μj<sub>n</sub></code></pre>
+<pre>j<sub>f</sub> <= μj<sub>n</sub></pre>
 
 Let us understand this definition, if our solved `jf` (representing the force of friction ) is less than μ<sub>static</sub> times the normal force (`jn`), then we can use our `jf` magnitude as friction. If not, then we must use our normal force times μ<sub>dynamic</sub> instead.
-<pre><code>if (abs(jf) < μ<sub>s</sub>jn) {
+<pre>if (abs(jf) < μ<sub>s</sub>jn) {
     // no change
 } else {
     jf = μ<sub>d</sub>jn
 }
-</code></pre>
+</pre>
 
 <br>
 

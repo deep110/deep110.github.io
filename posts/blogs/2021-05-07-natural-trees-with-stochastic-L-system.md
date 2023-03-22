@@ -1,6 +1,7 @@
 ---
 layout: blog.liquid
 title:  "Natural Looking Trees with Stochastic L-Systems"
+description: "I have always been fascinated by L systems and how a simple recursive formula can create so natural shape of trees. Lindenmayer system is a perfect example of beauty in simplicity."
 categories: ["blog"]
 data:
   keywords: "canvas, html5, lsystems, procedural generation, lindenmayer, nomanssky, stochastic, tutorial"

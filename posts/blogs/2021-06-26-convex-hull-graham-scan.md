@@ -1,6 +1,7 @@
 ---
 layout: blog.liquid
 title:  "Generating Convex Hull using Graham Scan"
+description: "Convex Hull Generation is an important problem in the field of Computational Geometry and is widely used in 3d collision detection between meshes. Though in this blog, I would be nothing of the sorts and will go through the algorithm in 2d for understanding the idea."
 categories: ["blog"]
 data:
   keywords: "html5, canvas, convex, hull, graham, polygon"
@@ -10,7 +11,7 @@ data:
 
 I am trying to experiment with rendering some basic shapes on a pixel buffer for another [side project](https://github.com/deep110/verlet.rs) of mine. After trying out a few rust crates out there and not liking any, I eventually fell into the classic software engineering trap and wrote a small library - [ada](https://github.com/deep110/ada). It supports some basic shapes like - Line2D, Rectangle2D, Ellipse2D, Polygon2D and Bezier2D.
 
-For polygons I wanted to create random shaped [convex polygons](https://en.wikipedia.org/wiki/Convex_polygon). One way to do that is to generate a set of random points and compute its convex hull. There are many [convex hull algorithms](https://en.wikipedia.org/wiki/Convex_hull_algorithms) but the one we are discussing below is [Graham Scan](https://en.wikipedia.org/wiki/Graham_scan) which takes O(n log n) time.
+For polygons I wanted to create random shaped [convex polygon](https://en.wikipedia.org/wiki/Convex_polygon). One way to do that is to generate a set of random points and compute its convex hull. There are many [convex hull algorithms](https://en.wikipedia.org/wiki/Convex_hull_algorithms) but the one we are discussing below is [Graham Scan](https://en.wikipedia.org/wiki/Graham_scan) which takes O(n log n) time.
 
 ### Visualizing Steps
 

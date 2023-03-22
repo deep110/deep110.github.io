@@ -1,6 +1,7 @@
 ---
 layout: blog.liquid
 title:  "Simulating Warp Speed in HTML5"
+description: "This whole blog is an ellaborate attempt to understand how perspective camera projection from 3d space to 2d screen works. Nice looking warp effect is a bonus."
 categories: ["blog"]
 data:
   scripts: [extras/simulate-warp-speed.js]

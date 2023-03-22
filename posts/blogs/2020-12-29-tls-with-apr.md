@@ -1,12 +1,13 @@
 ---
 layout: blog.liquid
 title:  "Adding TLS/SSL support with APR Network library and OpenSSL"
+description: "Apache Portable Runtime Project provides low level networking library in C for cross platform consistency.However its networking library does not support SSL sockets."
 categories: ["blog"]
 data:
     keywords: "ssl, apr, mrcp, openssl, tls"
 ---
 
-During my work at [vernacular.ai](https://vernacular.ai) I came across a problem in our telephony setup. Some of our clients wanted TLS support even if the setup runs on premise without any internet access.
+During my work at [vernacular.ai](https://vernacular.ai) I came across a problem in our telephony setup that some of our clients wanted TLS support even if the setup runs on premise without any internet access.
 
 [Unimrcp](https://github.com/unispeech/unimrcp) uses apr library for MRCP and SIP. APR does not have out of box support for TLS, hence the blog. Instructions on installing APR can be found their [homepage](https://apr.apache.org/compiling_unix.html).
 
