@@ -1,6 +1,3 @@
-/**
- * Reset some basic elements
- */
 body, h1, h2, h3, h4, h5, h6,
 p, blockquote, pre, hr,
 dl, dd, ol, ul, figure {
@@ -13,9 +10,6 @@ html {
 }
 
 
-/**
- * Basic styling
- */
 body {
     font: $base-font-weight #{$base-font-size}/#{$base-line-height} $base-font-family;
     color: var(--color-text);
@@ -51,17 +45,12 @@ ul, ol, dl, figure,
     margin-bottom: $spacing-unit / 2;
 }
 
-/**
- * Images
- */
+
 img {
     max-width: 100%;
     vertical-align: middle;
 }
 
-/**
- * Figures
- */
 figure > img {
     display: block;
 }
@@ -71,10 +60,6 @@ figcaption {
 }
 
 
-
-/**
- * Lists
- */
 ul, ol {
     margin-left: $spacing-unit;
 }
@@ -87,19 +72,11 @@ li {
 }
 
 
-
-/**
- * Headings
- */
 h1, h2, h3, h4, h5, h6 {
     font-weight: $base-font-weight;
 }
 
 
-
-/**
- * Links
- */
 a {
     color: $link-color;
     text-decoration: underline;
@@ -110,10 +87,6 @@ a {
 }
 
 
-
-/**
- * Blockquotes
- */
 blockquote {
     color: var(--color-text-light);
     border-left: 4px solid $border-color;
@@ -156,9 +129,7 @@ pre {
     }
 }
 
-/**
- * Tables
- */
+
 table {
   margin-bottom: 1rem;
   border: 1px solid $border-color;
@@ -177,9 +148,6 @@ table {
   }
 }
 
-/**
- * buttons
- */
 button {
     background-color: var(--color-theme);
     color: var(--color-background);

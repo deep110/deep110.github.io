@@ -107,4 +107,10 @@
     .carousel:hover > .carousel-nav {
         display: none;
     }
+
+    .carousel, .img-w-full {
+        margin-left: -$spacing-unit / 2;
+        width: calc(100% + #{$spacing-unit});
+        max-width: calc(100% + #{$spacing-unit});
+    }
 }

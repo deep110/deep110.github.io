@@ -2,7 +2,7 @@
 <html lang="en">
   {% include "head.liquid" %}
   
-  <script type="text/javascript" src="{{'/assets/js/main.js' | prepend:site.base_url }}"></script>
+  <script type="text/javascript" src="{{'/assets/js/base.js' | prepend:site.base_url }}"></script>
   {% for script in page.data.scripts %}
       <script type="text/javascript" src="{{'/assets/js/' | prepend:site.base_url | append: script }}"></script>
   {% endfor %}

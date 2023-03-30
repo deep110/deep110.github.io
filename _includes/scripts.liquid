@@ -1,4 +1,4 @@
-<script type="text/javascript" src="{{'/assets/js/main.js' | prepend:site.base_url }}"></script>
+<script type="text/javascript" src="{{'/assets/js/base.js' | prepend:site.base_url }}"></script>
 {% for script in page.data.scripts %}
     <script defer type="text/javascript" src="{{'/assets/js/' | prepend:site.base_url | append: script }}"></script>
 {% endfor %}
