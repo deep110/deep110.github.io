@@ -5,6 +5,8 @@ window.onload = function () {
 
 	// setup things
 	setTheme();
+	carousel.init();
+	videoPlayer.init();
 };
 
 function setTheme() {
@@ -29,6 +31,20 @@ function toggleTheme(themeButton) {
 		themeButton.setAttribute("title", "Switch to dark theme");
 	}
 };
+
+function loadFileAjaxSync(filePath, mimeType="application/json") {
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.open("GET", filePath, false);
+	if (xmlhttp.overrideMimeType) {
+		xmlhttp.overrideMimeType(mimeType);
+	}
+	xmlhttp.send();
+	if (xmlhttp.status == 200 && xmlhttp.readyState == 4) {
+		return xmlhttp.responseText;
+	} else {
+		return null;
+	}
+}
 
 // create a basic game loop controller to run simulations at target FPS
 window.raf = (function () {
@@ -202,7 +218,7 @@ const carousel = function () {
 			const slideCount = container.children.length;
 			const carouselIndicator = sliderElement.querySelector(".carousel-indicators");
 
-			if (carouselIndicator !== null) {
+			if (carouselIndicator !== null && slideCount > 1) {
 				for (var i = 0; i < slideCount; i++) {
 					var indicatorChild = document.createElement("li");
 					if (i == 0) {
@@ -253,17 +269,13 @@ const carousel = function () {
 		},
 
 		handleIndicators(sliderElement, newSlideNum) {
-			for (let scrollIndicatorContainers of sliderElement.querySelectorAll(".carousel-indicators")) {
-				let scrollIndicators = scrollIndicatorContainers.children;
-				for (let element of scrollIndicators)
-					element.classList.remove("active");
-				scrollIndicators[newSlideNum].classList.add("active");
-			}
+			let scrollIndicators = sliderElement.querySelector(".carousel-indicators").children;
+			for (let element of scrollIndicators) element.classList.remove("active");
+			if (scrollIndicators.length > 1) scrollIndicators[newSlideNum].classList.add("active");
 		},
 
-		scrollX(element, scrollFinalPosition, duration = 400) {
+		scrollX(element, scrollFinalPosition) {
 			element.style.transform = `translateX(${scrollFinalPosition}px)`;
-			element.style.transition = `transform ${duration}ms cubic-bezier(0.25, 1, 0.5, 1) 0s`;
 		},
 
 		getNewSlideNum(container, next, slideCount) {
@@ -280,11 +292,17 @@ const carousel = function () {
 			const slideWidth = container.children[0].offsetWidth + parseInt(window.getComputedStyle(container).columnGap);
 			const slideIndex = parseInt(container.dataset.slideNum, 10);
 			const startingPosition = slideIndex * slideWidth;
-			const mouseDownStartingPos = e.clientX || e.touches[0].clientX;
+			const mouseDownStartingPosX = e.clientX || e.touches[0].clientX;
+			const mouseDownStartingPosY = e.clientY || e.touches[0].clientY;
+			const touchStartTime = window.performance.now();
 			let mouseMovedPosition = 0;
 
 			const moveProgress = (e) => {
-				mouseMovedPosition = (e.clientX || e.touches[0].clientX) - mouseDownStartingPos;
+				mouseMovedPosition = (e.clientX || e.touches[0].clientX) - mouseDownStartingPosX;
+				// don't move if vertical scroll
+				if (Math.abs((e.clientY || e.touches[0].clientY) - mouseDownStartingPosY) > Math.abs(mouseMovedPosition)) {
+					return;
+				}
 				const edgeLimit = 0.3;
 				if (slideIndex == 0 && mouseMovedPosition > edgeLimit * slideWidth) {
 					mouseMovedPosition = edgeLimit * slideWidth;
@@ -300,8 +318,9 @@ const carousel = function () {
 				container.removeEventListener('mousemove', moveProgress);
 				container.removeEventListener('touchmove', moveProgress);
 
+				const moveSpeed = Math.abs(mouseMovedPosition)/ (window.performance.now() - touchStartTime);
 				let newSlideIndex = slideIndex;
-				if (Math.abs(mouseMovedPosition) > slideWidth / 2) {
+				if (Math.abs(mouseMovedPosition) > slideWidth / 2 || moveSpeed > 0.3) {
 					newSlideIndex = slideIndex - Math.sign(mouseMovedPosition);
 					if (newSlideIndex < 0) newSlideIndex = 0;
 					if (newSlideIndex == slideCount) newSlideIndex = slideCount - 1;

@@ -80,21 +80,21 @@ So for example if you take yellow light [wavelength = 580nm], it will be sensiti
 <p>This is exactly how we also see colors on a display screen. You can read more about how we <a href="https://www.chem.purdue.edu/gchelp/cchem/RGBColors/body_rgbcolors.html">see colors on a screen</a>.</p>
 <p>Now let us talk about mixing of monochromatic light. You can roughly get a final color by this formula:</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#a626a4;">function </span><span style="color:#4078f2;">mix_color_light</span><span style="color:#383a42;">(Color c1, Color c2) {
+<code><span style="color:#a626a4;">function </span><span style="color:#4078f2;">mix_color_light</span><span style="color:#383a42;">(Color c1, Color c2) {
 </span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#0184bc;">new </span><span style="color:#e45649;">Color</span><span style="color:#383a42;">(
 </span><span style="color:#383a42;">        </span><span style="color:#e45649;">min</span><span style="color:#383a42;">(</span><span style="color:#e45649;">c1</span><span style="color:#383a42;">.r</span><span style="color:#0184bc;">+</span><span style="color:#e45649;">c2</span><span style="color:#383a42;">.r, </span><span style="color:#986801;">255</span><span style="color:#383a42;">),
 </span><span style="color:#383a42;">        </span><span style="color:#e45649;">min</span><span style="color:#383a42;">(</span><span style="color:#e45649;">c1</span><span style="color:#383a42;">.g</span><span style="color:#0184bc;">+</span><span style="color:#e45649;">c2</span><span style="color:#383a42;">.g, </span><span style="color:#986801;">255</span><span style="color:#383a42;">),
 </span><span style="color:#383a42;">        </span><span style="color:#e45649;">min</span><span style="color:#383a42;">(</span><span style="color:#e45649;">c1</span><span style="color:#383a42;">.b</span><span style="color:#0184bc;">+</span><span style="color:#e45649;">c2</span><span style="color:#383a42;">.b, </span><span style="color:#986801;">255</span><span style="color:#383a42;">),
 </span><span style="color:#383a42;">    );
 </span><span style="color:#383a42;">}
-</span></pre>
+</span></code></pre>
 <p>Let us think what this formula will give,</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#383a42;">Red + Black        = Red
+<code><span style="color:#383a42;">Red + Black        = Red
 </span><span style="color:#383a42;">Red + Green        = Yellow
 </span><span style="color:#383a42;">Red + Green + Blue = White
 </span><span style="color:#383a42;">Red + White        = White
-</span></pre>
+</span></code></pre>
 <p>Black is nothing but absence of light, which makes sense, if you add red light into nothing you should see red light.
 Similarly white light is a mixture of all three light components, hence adding more red, or green or blue won't change the color of final light produced.</p>
 <p>Because of this, RGB color model is called as <strong>Additive Color Model</strong>. Mixing lights of all colors will eventually get you to white.</p>
@@ -107,10 +107,10 @@ Similarly white light is a mixture of all three light components, hence adding m
 </ul>
 <p>That is why primary colors for paints are as follows:</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#383a42;">Cyan =&gt; Reflects all color except Red
+<code><span style="color:#383a42;">Cyan =&gt; Reflects all color except Red
 </span><span style="color:#383a42;">Magenta =&gt; Reflects all color except Green
 </span><span style="color:#383a42;">Yellow =&gt; Reflects all color except Blue
-</span></pre>
+</span></code></pre>
 <p>This is thus called <strong>Subtractive Model</strong> because paint color subtracts that color from white light.</p>
 <blockquote>
 <p>Then what about K in CMYK?</p>

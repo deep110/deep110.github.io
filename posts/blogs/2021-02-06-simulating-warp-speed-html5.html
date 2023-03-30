@@ -74,16 +74,16 @@ Minute Read
 <li>First define some constants. We will consider a <code>2000 * 2000 * 2000</code> cube in 3d space. You can choose any number, it doesn't matter.</li>
 </ol>
 <pre style="background-color:#fafafa;">
-<span style="color:#a626a4;">const </span><span style="color:#986801;">MAX_DISTANCE </span><span style="color:#0184bc;">= </span><span style="color:#986801;">1000
+<code><span style="color:#a626a4;">const </span><span style="color:#986801;">MAX_DISTANCE </span><span style="color:#0184bc;">= </span><span style="color:#986801;">1000
 </span><span style="color:#a626a4;">const </span><span style="color:#986801;">NUM_STARS </span><span style="color:#0184bc;">= </span><span style="color:#986801;">300
 </span><span style="color:#a626a4;">const </span><span style="color:#986801;">STAR_SPEED </span><span style="color:#0184bc;">= </span><span style="color:#986801;">50
-</span></pre>
+</span></code></pre>
 <ol start="2">
 <li>Create a class <code>Star</code> to store its position at any given point of time.</li>
 </ol>
 <p>I am considering that a star will travel from <code>(x, y, 1000)</code> to <code>(x, y, 0)</code>. So it does not move in x and y direction, just the z direction. Also I have initialized z coordinate as a random number to create some randomness in animation.</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#a626a4;">function </span><span style="color:#4078f2;">random</span><span style="color:#383a42;">(min, max) {
+<code><span style="color:#a626a4;">function </span><span style="color:#4078f2;">random</span><span style="color:#383a42;">(min, max) {
 </span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#c18401;">Math</span><span style="color:#383a42;">.</span><span style="color:#e45649;">random</span><span style="color:#383a42;">() </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">(max </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">min) </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">min
 </span><span style="color:#383a42;">}
 </span><span style="color:#383a42;">
@@ -94,12 +94,12 @@ Minute Read
 </span><span style="color:#c18401;">        </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">z </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">random</span><span style="color:#c18401;">(</span><span style="color:#986801;">100</span><span style="color:#383a42;">, </span><span style="color:#986801;">MAX_DISTANCE</span><span style="color:#c18401;">)</span><span style="color:#383a42;">;
 </span><span style="color:#c18401;">    }
 </span><span style="color:#c18401;">}
-</span></pre>
+</span></code></pre>
 <ol start="3">
 <li>Now create the <code>update</code> method. It just decreases the star's z position by the given speed. Also you can reuse the star objects once they go out of bounds, just reinitialize its position.</li>
 </ol>
 <pre style="background-color:#fafafa;">
-<span style="color:#a626a4;">class </span><span style="color:#c18401;">Star {
+<code><span style="color:#a626a4;">class </span><span style="color:#c18401;">Star {
 </span><span style="color:#c18401;">    ...
 </span><span style="color:#c18401;">
 </span><span style="color:#c18401;">    </span><span style="color:#4078f2;">update</span><span style="color:#c18401;">() {
@@ -113,17 +113,17 @@ Minute Read
 </span><span style="color:#c18401;">        }
 </span><span style="color:#c18401;">    }
 </span><span style="color:#c18401;">}
-</span></pre>
+</span></code></pre>
 <ol start="4">
 <li>Before going on to create <code>draw</code> function for the star, let us initialize the canvas.</li>
 </ol>
 <p>Add a canvas in html</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#383a42;">&lt;</span><span style="color:#e45649;">canvas </span><span style="color:#4078f2;">id</span><span style="color:#383a42;">=</span><span style="color:#50a14f;">&quot;myCanvas&quot; </span><span style="color:#986801;">width</span><span style="color:#383a42;">=</span><span style="color:#50a14f;">&quot;500&quot; </span><span style="color:#986801;">height</span><span style="color:#383a42;">=</span><span style="color:#50a14f;">&quot;500&quot;</span><span style="color:#383a42;">&gt;&lt;/</span><span style="color:#e45649;">canvas</span><span style="color:#383a42;">&gt;
-</span></pre>
+<code><span style="color:#383a42;">&lt;</span><span style="color:#e45649;">canvas </span><span style="color:#4078f2;">id</span><span style="color:#383a42;">=</span><span style="color:#50a14f;">&quot;myCanvas&quot; </span><span style="color:#986801;">width</span><span style="color:#383a42;">=</span><span style="color:#50a14f;">&quot;500&quot; </span><span style="color:#986801;">height</span><span style="color:#383a42;">=</span><span style="color:#50a14f;">&quot;500&quot;</span><span style="color:#383a42;">&gt;&lt;/</span><span style="color:#e45649;">canvas</span><span style="color:#383a42;">&gt;
+</span></code></pre>
 <p>In your <code>script.js</code>,</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#a626a4;">let </span><span style="color:#383a42;">canvas;
+<code><span style="color:#a626a4;">let </span><span style="color:#383a42;">canvas;
 </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">context;
 </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">stars </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">[];
 </span><span style="color:#383a42;">
@@ -151,12 +151,12 @@ Minute Read
 </span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// call the draw function again
 </span><span style="color:#383a42;">    </span><span style="color:#0184bc;">window</span><span style="color:#383a42;">.</span><span style="color:#e45649;">requestAnimationFrame</span><span style="color:#383a42;">(draw);
 </span><span style="color:#383a42;">}
-</span></pre>
+</span></code></pre>
 <ol start="5">
 <li>Now let us create the <code>draw</code> function.</li>
 </ol>
 <pre style="background-color:#fafafa;">
-<span style="color:#a626a4;">function </span><span style="color:#4078f2;">map</span><span style="color:#383a42;">(value, low1, high1, low2, high2) {
+<code><span style="color:#a626a4;">function </span><span style="color:#4078f2;">map</span><span style="color:#383a42;">(value, low1, high1, low2, high2) {
 </span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#383a42;">low2 </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">(value </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">low1) </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">(high2 </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">low2) </span><span style="color:#0184bc;">/ </span><span style="color:#383a42;">(high1 </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">low1)
 </span><span style="color:#383a42;">}
 </span><span style="color:#383a42;">
@@ -175,14 +175,14 @@ Minute Read
 </span><span style="color:#c18401;">        </span><span style="color:#e45649;">ctx</span><span style="color:#383a42;">.</span><span style="color:#0184bc;">fill</span><span style="color:#c18401;">()</span><span style="color:#383a42;">;
 </span><span style="color:#c18401;">    }
 </span><span style="color:#c18401;">}
-</span></pre>
+</span></code></pre>
 <p>What I have done here is basically projected our 3d coordinates to the canvas along <code>z=0</code> plane. Actually this is the basis of <a href="https://en.wikipedia.org/wiki/3D_projection#Weak_perspective_projection">perspective projection</a> and it gives us good approximation of the result we want to obtain.</p>
 <p>I have also applied some randomness to star's initial radius to give it a twinkling effect and mapped star's z position to radius, to give the feeling of it appearing big when closer.</p>
 <ol start="6">
 <li>Now to make the streak behind the star is actually easy. Just save the previous z position of the star and draw the line between previous projected position and the current projected position.</li>
 </ol>
 <pre style="background-color:#fafafa;">
-<span style="color:#e45649;">draw</span><span style="color:#383a42;">(ctx) {
+<code><span style="color:#e45649;">draw</span><span style="color:#383a42;">(ctx) {
 </span><span style="color:#383a42;">    </span><span style="color:#0184bc;">...
 </span><span style="color:#383a42;">
 </span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// draw streak
@@ -198,7 +198,7 @@ Minute Read
 </span><span style="color:#383a42;">    </span><span style="font-style:italic;color:#a0a1a7;">// set the current z as previous z for next frame
 </span><span style="color:#383a42;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.previous_z </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.z;   
 </span><span style="color:#383a42;">}
-</span></pre>
+</span></code></pre>
 <p>Just remember to reset <code>previous_z</code> along with <code>this.z</code> when star goes out of bounds.</p>
 <p>Ok that's all. This is how you can make a cool warp speed effect.</p>
 </div>

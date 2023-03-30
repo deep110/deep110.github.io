@@ -100,7 +100,7 @@ Minute Read
 <li>Calculate the <code>cubeIndex</code> which will give a 12bit number in edge table where each bit corresponds to an edge. </li>
 </ol>
 <pre style="background-color:#fafafa;">
-<span style="color:#a626a4;">function </span><span style="color:#4078f2;">getCubeIndex</span><span style="color:#383a42;">() {
+<code><span style="color:#a626a4;">function </span><span style="color:#4078f2;">getCubeIndex</span><span style="color:#383a42;">() {
 </span><span style="color:#383a42;">  </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">cubeIndex </span><span style="color:#0184bc;">= </span><span style="color:#986801;">0</span><span style="color:#383a42;">;
 </span><span style="color:#383a42;">  </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">grid</span><span style="color:#383a42;">.val[</span><span style="color:#986801;">0</span><span style="color:#383a42;">] </span><span style="color:#0184bc;">&gt; </span><span style="color:#383a42;">isoLevel) cubeIndex </span><span style="color:#0184bc;">|= </span><span style="color:#986801;">1</span><span style="color:#383a42;">;
 </span><span style="color:#383a42;">  </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(</span><span style="color:#e45649;">grid</span><span style="color:#383a42;">.val[</span><span style="color:#986801;">1</span><span style="color:#383a42;">] </span><span style="color:#0184bc;">&gt; </span><span style="color:#383a42;">isoLevel) cubeIndex </span><span style="color:#0184bc;">|= </span><span style="color:#986801;">2</span><span style="color:#383a42;">;
@@ -115,11 +115,11 @@ Minute Read
 </span><span style="color:#383a42;">}
 </span><span style="color:#383a42;">
 </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">edgeIndex </span><span style="color:#0184bc;">= </span><span style="color:#e45649;">edgeTable</span><span style="color:#383a42;">[cubeIndex];
-</span></pre>
+</span></code></pre>
 <p>In the above example when just vertex 3 is above surface level, we get cubeIndex is 8. Correspondingly the edgeTable[8] gives:</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#383a42;">{</span><span style="color:#986801;">3</span><span style="color:#383a42;">, </span><span style="color:#986801;">11</span><span style="color:#383a42;">, </span><span style="color:#986801;">2</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">}
-</span></pre>
+<code><span style="color:#383a42;">{</span><span style="color:#986801;">3</span><span style="color:#383a42;">, </span><span style="color:#986801;">11</span><span style="color:#383a42;">, </span><span style="color:#986801;">2</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">, </span><span style="color:#0184bc;">-</span><span style="color:#986801;">1</span><span style="color:#383a42;">}
+</span></code></pre>
 <ol start="2">
 <li>Now we know which edges to connect, but we also need to get a point on each edge and connect them to make a triangular mesh. Either we can take the mid point of the edge or take a weighted distance between the two vertices of the edge.</li>
 </ol>
@@ -149,7 +149,7 @@ P2 = position of Vertex 2</p>
 <br>
 <p>For spherical field, I have just assigned the field values using the sphere distance function.</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#e45649;">getFieldValue</span><span style="color:#383a42;">(x, y, z, type) {
+<code><span style="color:#e45649;">getFieldValue</span><span style="color:#383a42;">(x, y, z, type) {
 </span><span style="color:#383a42;">  </span><span style="color:#a626a4;">if </span><span style="color:#383a42;">(type </span><span style="color:#0184bc;">=== </span><span style="color:#50a14f;">&quot;Random&quot;</span><span style="color:#383a42;">) {
 </span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#e45649;">MathUtil</span><span style="color:#383a42;">.</span><span style="color:#e45649;">randomInt</span><span style="color:#383a42;">(</span><span style="color:#0184bc;">-</span><span style="color:#e45649;">this</span><span style="color:#383a42;">.range, </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.range);
 </span><span style="color:#383a42;">  } </span><span style="color:#a626a4;">else </span><span style="color:#383a42;">{
@@ -157,12 +157,12 @@ P2 = position of Vertex 2</p>
 </span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.radius </span><span style="color:#0184bc;">* </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.radius </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">(x </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">x </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">y </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">y </span><span style="color:#0184bc;">+ </span><span style="color:#383a42;">z </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">z);
 </span><span style="color:#383a42;">  }
 </span><span style="color:#383a42;">}
-</span></pre>
+</span></code></pre>
 <h3>Creating A Procedural Terrain</h3>
 <p>As you have realized, you can generate any shape as long as you have the field function figured out. So for terrain we will use a noise function - <a href="https://wikipedia.org/wiki/Simplex_noise">Simplex Noise</a>. It is just like <a href="https://wikipedia.org/wiki/Perlin_noise#">Perlin Noise</a> but with fewer directional artifacts and lower computation overhead. You can read wikipedia in more detail on how to generate it.</p>
 <p>It is often used in procedural generation because the randomness vary very smoothly but still gives a natural looking feel.</p>
 <pre style="background-color:#fafafa;">
-<span style="font-style:italic;color:#a0a1a7;">// constants which affect the shape of generated terrain
+<code><span style="font-style:italic;color:#a0a1a7;">// constants which affect the shape of generated terrain
 </span><span style="color:#a626a4;">const </span><span style="color:#383a42;">numOctaves </span><span style="color:#0184bc;">= </span><span style="color:#986801;">4</span><span style="color:#383a42;">;
 </span><span style="color:#a626a4;">const </span><span style="color:#383a42;">lacunarity </span><span style="color:#0184bc;">= </span><span style="color:#986801;">2</span><span style="color:#383a42;">;
 </span><span style="color:#a626a4;">const </span><span style="color:#383a42;">persistence </span><span style="color:#0184bc;">= </span><span style="color:#986801;">0.5</span><span style="color:#383a42;">;
@@ -191,7 +191,7 @@ P2 = position of Vertex 2</p>
 </span><span style="color:#383a42;">
 </span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return </span><span style="color:#0184bc;">-</span><span style="color:#383a42;">finalVal;
 </span><span style="color:#383a42;">}
-</span></pre>
+</span></code></pre>
 <p>Lets see how these values affect the generated terrain.</p>
 <ol>
 <li><strong>NumOctaves</strong>: Each octave run adds layer of details to the surface. So more the number of octaves more detailed terrain you have.</li>
@@ -221,7 +221,7 @@ P2 = position of Vertex 2</p>
 <h3>Editing the Generated Terrain</h3>
 <p>Once you have a terrain setup, to edit we just have to manipulate the field values. Consider we have a brush size of radius r, we just need to manipulate the spherical field around the position on terrain which we want to edit. It is same as creating a spherical mesh, we can just put distance from center as field value.</p>
 <pre style="background-color:#fafafa;">
-<span style="font-style:italic;color:#a0a1a7;">/**
+<code><span style="font-style:italic;color:#a0a1a7;">/**
 </span><span style="font-style:italic;color:#a0a1a7;"> * @brushSize float: Radius of brush
 </span><span style="font-style:italic;color:#a0a1a7;"> * @point Vector3: Position on terrain
 </span><span style="font-style:italic;color:#a0a1a7;"> * @multiplier int: +1 for raising the terrain and -1 for depress
@@ -246,7 +246,7 @@ P2 = position of Vertex 2</p>
 </span><span style="color:#4078f2;">sphereDistance </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">(spherePos, point, radius) </span><span style="color:#a626a4;">=&gt; </span><span style="color:#383a42;">{
 </span><span style="color:#383a42;">  </span><span style="color:#a626a4;">return </span><span style="color:#e45649;">spherePos</span><span style="color:#383a42;">.</span><span style="color:#e45649;">distanceTo</span><span style="color:#383a42;">(point) </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">radius;
 </span><span style="color:#383a42;">}
-</span></pre>
+</span></code></pre>
 <h3>Final Notes</h3>
 <p>You can find the full source code on my <a href="https://github.com/deep110/terrain-editor-js">github</a>. If you enjoyed the article and want to see more of them then please subscribe below.</p>
 <h3 id="references">References</h3>

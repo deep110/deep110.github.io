@@ -66,7 +66,7 @@ Minute Read
 <h2>Client Side TLS/SSL Authentication</h2>
 <p>gRPC provides a way to establish a connection without any secure connection i.e just like HTTP.</p>
 <pre style="background-color:#fafafa;">
-<span style="font-style:italic;color:#a0a1a7;">// client.go
+<code><span style="font-style:italic;color:#a0a1a7;">// client.go
 </span><span style="color:#e45649;">conn</span><span style="color:#383a42;">, </span><span style="color:#e45649;">_ </span><span style="color:#383a42;">:= grpc.</span><span style="color:#e45649;">Dial</span><span style="color:#383a42;">(</span><span style="color:#50a14f;">&quot;localhost:5000&quot;</span><span style="color:#383a42;">, grpc.</span><span style="color:#e45649;">WithInsecure</span><span style="color:#383a42;">())
 </span><span style="color:#383a42;">
 </span><span style="color:#383a42;">
@@ -75,10 +75,10 @@ Minute Read
 </span><span style="color:#e45649;">s </span><span style="color:#383a42;">:= grpc.</span><span style="color:#e45649;">NewServer</span><span style="color:#383a42;">()
 </span><span style="font-style:italic;color:#a0a1a7;">// ... register gRPC services ...
 </span><span style="color:#383a42;">s.</span><span style="color:#e45649;">Serve</span><span style="color:#383a42;">(lis)
-</span></pre>
+</span></code></pre>
 <p>For secure communication we will create <strong>TransportCredentials</strong> which is a type of ChannelCredential object.</p>
 <pre style="background-color:#fafafa;">
-<span style="font-style:italic;color:#a0a1a7;">// client.go
+<code><span style="font-style:italic;color:#a0a1a7;">// client.go
 </span><span style="color:#e45649;">creds</span><span style="color:#383a42;">, </span><span style="color:#e45649;">_ </span><span style="color:#383a42;">:= credentials.</span><span style="color:#e45649;">NewClientTLSFromFile</span><span style="color:#383a42;">(certFile, </span><span style="color:#50a14f;">&quot;&quot;</span><span style="color:#383a42;">)
 </span><span style="color:#e45649;">conn</span><span style="color:#383a42;">, </span><span style="color:#e45649;">_ </span><span style="color:#383a42;">:= grpc.</span><span style="color:#e45649;">Dial</span><span style="color:#383a42;">(</span><span style="color:#50a14f;">&quot;localhost:5000&quot;</span><span style="color:#383a42;">, grpc.</span><span style="color:#e45649;">WithTransportCredentials</span><span style="color:#383a42;">(creds))
 </span><span style="color:#383a42;">
@@ -88,24 +88,24 @@ Minute Read
 </span><span style="color:#e45649;">s </span><span style="color:#383a42;">:= grpc.</span><span style="color:#e45649;">NewServer</span><span style="color:#383a42;">(grpc.</span><span style="color:#e45649;">Creds</span><span style="color:#383a42;">(creds))
 </span><span style="color:#383a42;">
 </span><span style="color:#383a42;">s.</span><span style="color:#e45649;">Serve</span><span style="color:#383a42;">(lis)
-</span></pre>
+</span></code></pre>
 <p>You can read more about <a href="https://www.linuxjournal.com/content/understanding-public-key-infrastructure-and-x509-certificates">generating own ssl certificates</a>.</p>
 <p>In case where you don't own the client, means you are creating a gRPC API for public use, you cannot give your certificate to every one using your client. In that case we rely on well known <a href="https://en.wikipedia.org/wiki/Certificate_authority">Certificate Authority</a> like LetsEncrypt, Amazon, etc. to generate us a certificate. So let us change our client code a little.</p>
 <pre style="background-color:#fafafa;">
-<span style="font-style:italic;color:#a0a1a7;">// client.go
+<code><span style="font-style:italic;color:#a0a1a7;">// client.go
 </span><span style="color:#e45649;">config </span><span style="color:#383a42;">:= &amp;tls.</span><span style="color:#e45649;">Config</span><span style="color:#383a42;">{
 </span><span style="color:#383a42;">	InsecureSkipVerify: </span><span style="color:#986801;">false</span><span style="color:#383a42;">,
 </span><span style="color:#383a42;">}
 </span><span style="color:#e45649;">conn</span><span style="color:#383a42;">, </span><span style="color:#e45649;">err </span><span style="color:#383a42;">:= grpc.</span><span style="color:#e45649;">Dial</span><span style="color:#383a42;">(address, grpc.</span><span style="color:#e45649;">WithTransportCredentials</span><span style="color:#383a42;">(credentials.</span><span style="color:#e45649;">NewTLS</span><span style="color:#383a42;">(config)))
 </span><span style="color:#383a42;">
 </span><span style="font-style:italic;color:#a0a1a7;">// server code remains the same
-</span></pre>
+</span></code></pre>
 <p>In this case what happens is that grpc loads the certificates of well known Certificate Authorities from the OS and send it to server, hence no need to manually provide a certificate.</p>
 <h2>Token Based Authentication / OAuth2</h2>
 <p>Many a times we want to differentiate a client by issuing them different tokens. TLS Authentication is good way to secure your connection but it does not tell us from which client the request is coming from. We will send the token in request metadata just like HTTP Headers.</p>
 <p>gRPC has <code>&quot;google.golang.org/grpc/metadata&quot;</code> package to send and receive metadata with a RPC request. </p>
 <pre style="background-color:#fafafa;">
-<span style="font-style:italic;color:#a0a1a7;">// client.go
+<code><span style="font-style:italic;color:#a0a1a7;">// client.go
 </span><span style="color:#383a42;">
 </span><span style="font-style:italic;color:#a0a1a7;">// add metadata to request context
 </span><span style="color:#383a42;">
@@ -114,10 +114,10 @@ Minute Read
 </span><span style="color:#383a42;">
 </span><span style="font-style:italic;color:#a0a1a7;">// use this context to call rpc
 </span><span style="color:#383a42;">_, err = client.</span><span style="color:#e45649;">CallRPC</span><span style="color:#383a42;">(ctx, requestObject)
-</span></pre>
+</span></code></pre>
 <p>We will use <strong>UnaryInterceptor</strong> on server which acts like a middleware and checks for the token for all the requests.</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#383a42;">
+<code><span style="color:#383a42;">
 </span><span style="font-style:italic;color:#a0a1a7;">// create a middleware 
 </span><span style="color:#a626a4;">func </span><span style="color:#4078f2;">AuthInterceptor</span><span style="color:#383a42;">(ctx context.Context, req </span><span style="color:#a626a4;">interface</span><span style="color:#383a42;">{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (</span><span style="color:#a626a4;">interface</span><span style="color:#383a42;">{}, </span><span style="color:#a626a4;">error</span><span style="color:#383a42;">) {
 </span><span style="color:#383a42;">    </span><span style="color:#e45649;">meta</span><span style="color:#383a42;">, </span><span style="color:#e45649;">ok </span><span style="color:#383a42;">:= metadata.</span><span style="color:#e45649;">FromContext</span><span style="color:#383a42;">(ctx)
@@ -139,7 +139,7 @@ Minute Read
 </span><span style="color:#e45649;">server </span><span style="color:#383a42;">:= grpc.</span><span style="color:#e45649;">NewServer</span><span style="color:#383a42;">(
 </span><span style="color:#383a42;">    grpc.</span><span style="color:#e45649;">UnaryInterceptor</span><span style="color:#383a42;">(AuthInterceptor),
 </span><span style="color:#383a42;">)
-</span></pre>
+</span></code></pre>
 <p>But above code only works for non-streaming RPCs. For Streaming RPCs you can implement <strong>StreamInterceptor</strong>. Instead of implementing it again you can use <a href="https://github.com/grpc-ecosystem/go-grpc-middleware">go-grpc-middleware</a> package.</p>
 <p>Hope this article helps you with authentication in gRPC.</p>
 <p>If you are interested in working with cutting-edge technologies, come work with <a href="https://vernacular.ai">Vernacular.ai</a>. Apply on <a href="https://angel.co/company/vernacular-ai/jobs">angel.co</a>.</p>

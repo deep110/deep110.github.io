@@ -105,23 +105,23 @@ Consider the following system:</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:6em;vertical-align:-2.75em;"></span><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.25em;"><span style="top:-5.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="mord mathnormal">x</span><span class="mord mathnormal">i</span><span class="mord mathnormal">o</span><span class="mord mathnormal">m</span></span></span><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.00773em;">R</span><span class="mord mathnormal">u</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">es</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"></span></span><span style="top:-0.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.75em;"><span></span></span></span></span></span><span class="col-align-l"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:3.25em;"><span style="top:-5.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mord mathnormal">AAAAA</span></span></span><span style="top:-3.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span></span></span><span style="top:-2.41em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span></span></span><span style="top:-0.91em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mord mathnormal">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:2.75em;"><span></span></span></span></span></span></span></span></span></span></span></span></p>
 <p>Now if you apply these rules on the axiom it will result in simulating B moving right.</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#383a42;">Pass0 =&gt; BAAAAA
+<code><span style="color:#383a42;">Pass0 =&gt; BAAAAA
 </span><span style="color:#383a42;">Pass1 =&gt; ABAAAA
 </span><span style="color:#383a42;">Pass2 =&gt; AABAAA
 </span><span style="color:#383a42;">Pass3 =&gt; AAABAA
 </span><span style="color:#383a42;">Pass4 =&gt; AAAABA
 </span><span style="color:#383a42;">Pass5 =&gt; AAAAAB
-</span></pre>
+</span></code></pre>
 <p>In the above example, sometimes people get confused that if first <code>B</code> turns into to <code>A</code> then how does second A turns to B. It is because you have two generations of axiom, you don't change the second letter based on new value of first letter but old value of first letter. For example in <code>Pass0 -&gt; Pass1</code> if I go letter by letter and apply rules:</p>
 <pre style="background-color:#fafafa;">
-<span style="font-style:italic;color:#a0a1a7;">// pass0 -&gt; pass1
+<code><span style="font-style:italic;color:#a0a1a7;">// pass0 -&gt; pass1
 </span><span style="color:#383a42;">     </span><span style="color:#986801;">B   </span><span style="color:#0184bc;">-&gt;   </span><span style="color:#986801;">A  </span><span style="font-style:italic;color:#a0a1a7;">// rule 2
 </span><span style="color:#383a42;">     </span><span style="color:#986801;">A   </span><span style="color:#0184bc;">-&gt;   </span><span style="color:#986801;">B  </span><span style="font-style:italic;color:#a0a1a7;">// rule 1 because before A there is a B
 </span><span style="color:#383a42;">     </span><span style="color:#986801;">A   </span><span style="color:#0184bc;">-&gt;   </span><span style="color:#986801;">A  </span><span style="font-style:italic;color:#a0a1a7;">// no rule match hence same
 </span><span style="color:#383a42;">     </span><span style="color:#986801;">A   </span><span style="color:#0184bc;">-&gt;   </span><span style="color:#986801;">A  </span><span style="font-style:italic;color:#a0a1a7;">// no rule match hence same
 </span><span style="color:#383a42;">     </span><span style="color:#986801;">A   </span><span style="color:#0184bc;">-&gt;   </span><span style="color:#986801;">A  </span><span style="font-style:italic;color:#a0a1a7;">// no rule match hence same
 </span><span style="color:#383a42;">     </span><span style="color:#986801;">A   </span><span style="color:#0184bc;">-&gt;   </span><span style="color:#986801;">A  </span><span style="font-style:italic;color:#a0a1a7;">// no rule match hence same
-</span></pre>
+</span></code></pre>
 <h3>Stochastic Grammar</h3>
 <p>You cannot generate infinite variations of even same type of tree with these fixed grammar. So, for creating an infinite world we need to introduce some sort of randomness for generating the next iteration.</p>
 <p>It is simple to put randomness in generating this code structure. A simple example is given below.</p>
@@ -173,7 +173,7 @@ Source: <a href="https://en.wikipedia.org/wiki/Turtle_graphics">Wikipedia</a>
 </tbody></table>
 <p>Constants are tokens which are ignored during rendering.</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#a626a4;">class </span><span style="color:#c18401;">Turtle {
+<code><span style="color:#a626a4;">class </span><span style="color:#c18401;">Turtle {
 </span><span style="color:#c18401;">  </span><span style="color:#4078f2;">constructor</span><span style="color:#c18401;">(</span><span style="color:#383a42;">fixedAngle</span><span style="color:#c18401;">, </span><span style="color:#383a42;">fixedLength</span><span style="color:#c18401;">) {
 </span><span style="color:#c18401;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">fixedAngle </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">fixedAngle;
 </span><span style="color:#c18401;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">fixedLength </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">fixedLength;
@@ -182,13 +182,13 @@ Source: <a href="https://en.wikipedia.org/wiki/Turtle_graphics">Wikipedia</a>
 </span><span style="color:#c18401;">    </span><span style="color:#e45649;">this</span><span style="color:#383a42;">.</span><span style="color:#c18401;">stack </span><span style="color:#0184bc;">= </span><span style="color:#c18401;">[]</span><span style="color:#383a42;">;
 </span><span style="color:#c18401;">  }
 </span><span style="color:#c18401;">}
-</span></pre>
+</span></code></pre>
 <p>Let us consider the example:</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#383a42;">Code: F[+F]-F
+<code><span style="color:#383a42;">Code: F[+F]-F
 </span><span style="color:#383a42;">FixedLength: 10
 </span><span style="color:#383a42;">FixedAngle: 45°
-</span></pre>
+</span></code></pre>
 <p>Let us render the code token by token:</p>
 <div style="text-align:center">
 <img src="/assets/images/2021-05/rendering-steps.png" alt="Rendering Steps"></img>
@@ -206,7 +206,7 @@ Source: <a href="https://en.wikipedia.org/wiki/Turtle_graphics">Wikipedia</a>
 </tbody></table>
 <p>You can also refer the below for rendering.</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#a626a4;">class </span><span style="color:#c18401;">Turtle {
+<code><span style="color:#a626a4;">class </span><span style="color:#c18401;">Turtle {
 </span><span style="color:#c18401;">  ...
 </span><span style="color:#c18401;">
 </span><span style="color:#c18401;">  </span><span style="font-style:italic;color:#a0a1a7;">// @param ctx: Js Canvas context
@@ -240,7 +240,7 @@ Source: <a href="https://en.wikipedia.org/wiki/Turtle_graphics">Wikipedia</a>
 </span><span style="color:#c18401;">    }
 </span><span style="color:#c18401;">  }
 </span><span style="color:#c18401;">}
-</span></pre>
+</span></code></pre>
 <h3>Footnotes</h3>
 <div class="footnote-definition" id="fn1"><sup class="footnote-definition-label">1</sup>
 <p>Here X is a constant i.e it will get ignored during rendering. For more in-depth see <a href="#rendering">rendering</a> section. Dummy variables are used to give a more realistic look to generated fractal trees.</p>

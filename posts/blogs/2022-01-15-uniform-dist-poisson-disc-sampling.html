@@ -108,7 +108,7 @@ M834 80h400000v40h-400000z'/></svg></span></span></span><span class="vlist-s">â€
 <br>
 <p>Let us then start with declaring some variables:</p>
 <pre style="background-color:#fafafa;">
-<span style="color:#a626a4;">let </span><span style="color:#383a42;">radius </span><span style="color:#0184bc;">= </span><span style="color:#986801;">10</span><span style="color:#383a42;">;
+<code><span style="color:#a626a4;">let </span><span style="color:#383a42;">radius </span><span style="color:#0184bc;">= </span><span style="color:#986801;">10</span><span style="color:#383a42;">;
 </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">cellSize </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">radius </span><span style="color:#0184bc;">/ </span><span style="color:#c18401;">Math</span><span style="color:#383a42;">.</span><span style="color:#e45649;">sqrt</span><span style="color:#383a42;">(</span><span style="color:#986801;">2</span><span style="color:#383a42;">);
 </span><span style="color:#383a42;">
 </span><span style="font-style:italic;color:#a0a1a7;">// number of columns and rows grid will have
@@ -118,13 +118,13 @@ M834 80h400000v40h-400000z'/></svg></span></span></span><span class="vlist-s">â€
 </span><span style="font-style:italic;color:#a0a1a7;">// initialize grid
 </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">grid </span><span style="color:#0184bc;">= new </span><span style="color:#c18401;">Array</span><span style="color:#383a42;">(numColumns </span><span style="color:#0184bc;">* </span><span style="color:#383a42;">numRows);
 </span><span style="color:#e45649;">grid</span><span style="color:#383a42;">.</span><span style="color:#0184bc;">fill</span><span style="color:#383a42;">(</span><span style="color:#986801;">undefined</span><span style="color:#383a42;">);
-</span></pre>
+</span></code></pre>
 <ol start="2">
 <li>Next choose a random starting point in the 2D space. We will also define a variable <code>activeList</code> which will contain points which we still need to process. Put the startPoint in the grid as well as in <code>activeList</code>.</li>
 </ol>
 <p>In my simulation starting point is either canvas center or the mouse click position. Points in pink color are the ones present in activeList.</p>
 <pre style="background-color:#fafafa;">
-<span style="font-style:italic;color:#a0a1a7;">// ...
+<code><span style="font-style:italic;color:#a0a1a7;">// ...
 </span><span style="color:#383a42;">
 </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">activeList </span><span style="color:#0184bc;">= </span><span style="color:#383a42;">[];
 </span><span style="color:#383a42;">
@@ -140,7 +140,7 @@ M834 80h400000v40h-400000z'/></svg></span></span></span><span class="vlist-s">â€
 </span><span style="color:#a626a4;">function </span><span style="color:#4078f2;">toGrid</span><span style="color:#383a42;">(v) {
 </span><span style="color:#383a42;">  </span><span style="color:#a626a4;">return </span><span style="color:#383a42;">[</span><span style="color:#c18401;">Math</span><span style="color:#383a42;">.</span><span style="color:#e45649;">floor</span><span style="color:#383a42;">(</span><span style="color:#e45649;">v</span><span style="color:#383a42;">.y </span><span style="color:#0184bc;">/ </span><span style="color:#383a42;">cellSize), </span><span style="color:#c18401;">Math</span><span style="color:#383a42;">.</span><span style="color:#e45649;">floor</span><span style="color:#383a42;">(</span><span style="color:#e45649;">v</span><span style="color:#383a42;">.x </span><span style="color:#0184bc;">/ </span><span style="color:#383a42;">cellSize)];
 </span><span style="color:#383a42;">}
-</span></pre>
+</span></code></pre>
 <ol start="3">
 <li>Repeat the below steps until <code>activeList</code> is not empty:</li>
 </ol>
@@ -158,7 +158,7 @@ M834 80h400000v40h-400000z'/></svg></span></span></span><span class="vlist-s">â€
 <li>If no new point is found, remove the current point from the activeList.</li>
 </ul>
 <pre style="background-color:#fafafa;">
-<span style="font-style:italic;color:#a0a1a7;">// ...
+<code><span style="font-style:italic;color:#a0a1a7;">// ...
 </span><span style="color:#a626a4;">let </span><span style="color:#383a42;">maxTryLimit </span><span style="color:#0184bc;">= </span><span style="color:#986801;">10</span><span style="color:#383a42;">;
 </span><span style="color:#383a42;">
 </span><span style="color:#a626a4;">function </span><span style="color:#4078f2;">main</span><span style="color:#383a42;">() {
@@ -224,7 +224,7 @@ M834 80h400000v40h-400000z'/></svg></span></span></span><span class="vlist-s">â€
 </span><span style="color:#383a42;">  }
 </span><span style="color:#383a42;">  </span><span style="color:#a626a4;">return </span><span style="color:#986801;">true</span><span style="color:#383a42;">;
 </span><span style="color:#383a42;">}
-</span></pre>
+</span></code></pre>
 <h3>Effect of Max tries</h3>
 <p>Having a greater value of k [typically more than 30] will give you a dense packing while having a less value [&lt; 5] can leave holes in the generation.</p>
 <div style="text-align:center">
@@ -234,7 +234,7 @@ M834 80h400000v40h-400000z'/></svg></span></span></span><span class="vlist-s">â€
 <p>Though it can be desirable if you would want to fill those areas with some other things. For example with lakes when generating a forest. You can try playing around with <code>MaxTries</code> slider above to see the effect of k.</p>
 <h3 id="references">References</h3>
 <div class="footnote-definition" id="robert"><sup class="footnote-definition-label">1</sup>
-<p><a href="https://www.cs.ubc.ca/%7Erbridson/docs/bridson-siggraph07-poissondisk.pdf">Fast Poisson Disk Sampling in Arbitrary Dimensions</a> by Robert Bridson, University of British Columbia</p>
+<p><a href="https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf">Fast Poisson Disk Sampling in Arbitrary Dimensions</a> by Robert Bridson, University of British Columbia</p>
 </div>
 <div class="footnote-definition" id="wikipedia"><sup class="footnote-definition-label">2</sup>
 <p><a href="https://en.wikipedia.org/wiki/Supersampling#Poisson_disk">Wikipedia</a></p>
