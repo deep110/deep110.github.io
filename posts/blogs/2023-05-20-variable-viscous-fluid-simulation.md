@@ -16,10 +16,17 @@ hello world
 
 <button onclick="pause()">ClickMe</button>
 
+<div id="visualize"></div>
+
 <style>
   canvas {
     display: block;
     margin: auto;
+  }
+
+  table td {
+    padding: 0px;
+    font-size: 10px;
   }
 
   @media only screen and (max-width: 740px) {

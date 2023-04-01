@@ -66,7 +66,7 @@ class Array2f {
   }
 }
 
-class SparseMatrixf {
+class SparseMatrix {
   constructor(dim) {
     this.n = dim;
     this.index = Array.from({ length: dim }, () => []);
@@ -80,7 +80,7 @@ class SparseMatrixf {
     }
   }
 
-  setElement(i, j, newValue) {
+  set(i, j, newValue) {
     for (let k = 0; k < this.index[i].length; ++k) {
       if (this.index[i][k] == j) {
         this.value[i][k] = newValue;
@@ -95,7 +95,7 @@ class SparseMatrixf {
     this.value[i].push(newValue);
   }
 
-  addToElement(i, j, incrementValue) {
+  add(i, j, incrementValue) {
     for (let k = 0; k < this.index[i].length; ++k) {
       if (this.index[i][k] == j) {
         this.value[i][k] += incrementValue;
@@ -111,18 +111,49 @@ class SparseMatrixf {
   }
 }
 
-class FixedSparseMatrixf {
+class FixedSparseMatrix {
   constructor(dim) {
     this.n = dim;
     this.value = []; // nonzero values row by row
     this.colIndex = []; // corresponding column indices
-    this.rowStart = [];
+    this.rowStart = Array(dim + 1).fill(0);
   }
 
-  zero() {
+  resize(dim) {
+    this.n = dim;
+    this.rowStart = Array(dim + 1).fill(0);
   }
 
+  constructFromMatrix(matrix) {
+    this.resize(matrix.n);
+    this.rowStart[0] = 0;
+    for (let i = 0; i < this.n; ++i) {
+        this.rowStart[i + 1] = this.rowStart[i] + matrix.index[i].length;
+    }
+    this.value = new Array(this.rowStart[this.n]);
+    this.colIndex = new Array(this.rowStart[this.n]);
+    let j = 0;
+    for (let i = 0; i < this.n; ++i) {
+        for (let k = 0; k < matrix.index[i].length; ++k) {
+            this.value[j] = matrix.value[i][k];
+            this.colIndex[j] = matrix.index[i][k];
+            ++j;
+        }
+    }
+  }
 
+  // perform result = matrix * x
+  multiplyVector(x, result) {
+    if (this.n !== x.length) {
+      throw new Error('Invalid input sizes');
+    }
+    result = Array(this.n).fill(0);
+    for (let i = 0; i < this.n; ++i) {
+      for (let j = this.rowStart[i]; j < this.rowStart[i + 1]; ++j) {
+        result[i] += this.value[j] * x[this.colIndex[j]];
+      }
+    }
+  }
 }
 
 class Utils {
@@ -228,13 +259,12 @@ class FluidSim {
 
       this.#applyViscosity(subStep);
 
-
-      //For extrapolated velocities, replace the normal component with that of the object.
+      // For extrapolated velocities, replace the normal component with that of the object.
       this.#constrainVelocity();
 
       let p = this.particles[0];
       let v = this.#getVelocity(p);
-      console.log(p.x, p.y, "velocity:", v.x, v.y);
+      // console.log(p.x, p.y, "velocity:", v.x, v.y);
 
       t += subStep;
     }
@@ -254,13 +284,14 @@ class FluidSim {
   }
 
   #cfl() {
-    let maxvel = 0;
+    let maxVel = 0;
     for (let i = 0; i < this.u.data.length; ++i) {
-      maxvel = Math.max(maxvel, Math.abs(this.u.data[i]));
+      maxVel = Math.max(maxVel, Math.abs(this.u.data[i]));
     }
-    for (let i = 0; i < this.v.data.length; ++i)
-      maxvel = Math.max(maxvel, Math.abs(this.v.data[i]));
-    return this.dx / maxvel;
+    for (let i = 0; i < this.v.data.length; ++i) {
+      maxVel = Math.max(maxVel, Math.abs(this.v.data[i]));
+    }
+    return this.dx / maxVel;
   }
 
   // calculate new particles position based on current velocity
@@ -367,18 +398,21 @@ class FluidSim {
     this.#computeVolumeFractions(this.liquidPhi, this.uVol, new Vector2(-1, -0.5), 2);
     this.#computeVolumeFractions(this.liquidPhi, this.vVol, new Vector2(-0.5, -1), 2);
 
-    this.#solveViscosity(dt);
+    const ni = this.liquidPhi.ni;
+    const nj = this.liquidPhi.nj;
+
+
   }
 
   #constrainVelocity() {
     this.tempU.copy(this.u);
     this.tempV.copy(this.v);
 
-    //constrain u
+    // constrain u
     for (let j = 0; j < this.u.nj; ++j) {
       for (let i = 0; i < this.u.ni; ++i) {
         if (this.uWeights.get(i, j) == 0) {
-          //apply constraint
+          // apply constraint
           let pos = new Vector2(i * this.dx, (j + 0.5) * this.dx);
           let vel = this.#getVelocity(pos);
           pos.iscale(this.invDx);
@@ -392,7 +426,7 @@ class FluidSim {
       }
     }
 
-    //constrain v
+    // constrain v
     for (let j = 0; j < this.v.nj; ++j) {
       for (let i = 0; i < this.v.ni; ++i) {
         if (this.vWeights.get(i, j) == 0) {
@@ -410,20 +444,16 @@ class FluidSim {
       }
     }
 
-    //update
+    // update
     this.u.copy(this.tempU);
     this.v.copy(this.tempV);
   }
 
-  #solveViscosity(dt) {
-    
-  }
-
   #getVelocity(position) {
-    let u_val = this.u.interpolateValue(position.scale(this.invDx).subtract(new Vector2(0, 0.5)));
-    let v_val = this.v.interpolateValue(position.scale(this.invDx).subtract(new Vector2(0.5, 0)));
+    let uVal = this.u.interpolateValue(position.scale(this.invDx).subtract(new Vector2(0, 0.5)));
+    let vVal = this.v.interpolateValue(position.scale(this.invDx).subtract(new Vector2(0.5, 0)));
 
-    return new Vector2(u_val, v_val);
+    return new Vector2(uVal, vVal);
   }
 
   #traceRK2(position, dt) {
@@ -433,25 +463,25 @@ class FluidSim {
     return position.add(velocity.iscale(dt));
   }
 
-  #computeVolumeFractions(levelset, fractions, fraction_origin, subdivision) {
-    // Assumes levelset and fractions have the same dx
+  #computeVolumeFractions(levelSet, fractions, fraction_origin, subdivision) {
+    // Assumes levelSet and fractions have the same dx
     let sub_dx = 1.0 / subdivision;
     let sample_max = subdivision * subdivision;
     for (let j = 0; j < fractions.nj; ++j) {
       for (let i = 0; i < fractions.ni; ++i) {
         let start_x = fraction_origin.x + i;
         let start_y = fraction_origin.y + j;
-        let incount = 0;
+        let inCount = 0;
 
         for (let sub_j = 0; sub_j < subdivision; ++sub_j) {
           for (let sub_i = 0; sub_i < subdivision; ++sub_i) {
             let x_pos = start_x + (sub_i + 0.5) * sub_dx;
             let y_pos = start_y + (sub_j + 0.5) * sub_dx;
-            let phi_val = levelset.interpolateValue(new Vector2(x_pos, y_pos));
-            if (phi_val < 0) ++incount;
+            let phi_val = levelSet.interpolateValue(new Vector2(x_pos, y_pos));
+            if (phi_val < 0) ++inCount;
           }
         }
-        fractions.set(i, j, incount / sample_max);
+        fractions.set(i, j, inCount / sample_max);
       }
     }
   }
@@ -508,7 +538,7 @@ function setupGridContainer(sim, displayLen) {
     }
   }
 
-  grid.interactive = true;
+  grid.eventMode = "static";
   grid.on('mousedown', onDragStart);
   grid.on('pointerup', onDragEnd);
   grid.on('pointerupoutside', onDragEnd);
@@ -555,9 +585,10 @@ function update() {
   // advance simulation on every update i.e 1/FPS seconds.
   if (playSimulation) {
     var start = Date.now();
-    // for (let i = 0; i < 3; i++) {
-    // }
     fluidSim.advance(0.01);
+    // for (let i = 0; i < 2; i++) {
+    //   fluidSim.advance(0.01);
+    // }
     // playSimulation = false;
     var end = Date.now();
     console.log(`Execution time: ${end - start} ms`);
@@ -572,10 +603,9 @@ let app = new PIXI.Application({
 });
 app.ticker.add(update);
 app.ticker.maxFPS = 30;
-app.renderer.plugins.interaction.moveWhenInside = true;
 var renderTimeElapsed = 0;
 
-const GRID_RES = 30;
+const GRID_RES = 26;
 const GRID_DISPLAY_LENGTH = 450;
 const BEAKER_RADIUS = 0.4;
 
@@ -599,7 +629,29 @@ fluidSim.addParticle(0.662281, 0.59606);
 // fluidSim.addParticle(0.60656, 0.586516);
 
 
-var playSimulation = false;
+var playSimulation = true;
 function pause(e) {
   playSimulation = !playSimulation;
+}
+
+
+function visualize2dArr(arr) {
+  const visualize = document.getElementById("visualize");
+  const table = document.createElement("table");
+  const hd = document.createElement("div");
+
+  for (let i = 0; i < arr.ni; i++) {
+    let tr = document.createElement("tr");
+    for (let j = 0; j < arr.nj; j++) {
+      let td = document.createElement("td");
+      td.textContent = arr.get(i, j).toFixed(3);
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+
+  hd.textContent = "Heading";
+
+  visualize.appendChild(hd);
+  visualize.appendChild(table);
 }
