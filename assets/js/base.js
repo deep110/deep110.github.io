@@ -46,6 +46,26 @@ function loadFileAjaxSync(filePath, mimeType="application/json") {
 	}
 }
 
+// add background to marker labels
+function makeMarkerLabelBG(elem) {
+	var svgns = "http://www.w3.org/2000/svg";
+	var bounds = elem.getBBox();
+	var bg = document.createElementNS(svgns, "rect");
+	var style = getComputedStyle(elem);
+	bg.setAttribute("x", bounds.x - parseInt(style["padding-left"]));
+	bg.setAttribute("y", bounds.y - parseInt(style["padding-top"]));
+	bg.setAttribute("width", bounds.width + parseInt(style["padding-left"]) + parseInt(style["padding-right"]));
+	bg.setAttribute("height", bounds.height + parseInt(style["padding-top"]) + parseInt(style["padding-bottom"]));
+	bg.setAttribute("fill", style["background-color"]);
+	bg.setAttribute("rx", style["border-radius"]);
+	bg.setAttribute("stroke-width", style["border-top-width"]);
+	bg.setAttribute("stroke", style["border-top-color"]);
+	if (elem.hasAttribute("transform")) {
+		bg.setAttribute("transform", elem.getAttribute("transform"));
+	}
+	elem.parentNode.insertBefore(bg, elem);
+};
+
 // create a basic game loop controller to run simulations at target FPS
 window.raf = (function () {
 	return window.requestAnimationFrame ||

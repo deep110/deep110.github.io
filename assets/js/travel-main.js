@@ -1,4 +1,4 @@
-var visitedCountries = ['IN', 'TR', 'NP', 'AE'];
+var visitedCountries = ['IN', 'TR', 'NP', 'AE', 'VN'];
 
 var visitedCities = {
     "2022": [
@@ -73,7 +73,7 @@ var map = new jsVectorMap({
     selector: "#map",
     map: "world_merc",
     focusOn: {
-        regions: ['IN', 'RS'],
+        regions: ['IN', 'RS', 'VN'],
         animate: true
     },
     regionStyle: {
