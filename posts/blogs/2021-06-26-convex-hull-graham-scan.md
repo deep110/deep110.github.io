@@ -1,7 +1,7 @@
 ---
 layout: blog.liquid
 title:  "Generating Convex Hull using Graham Scan"
-description: "Convex Hull Generation is an important problem in the field of Computational Geometry and is widely used in 3d collision detection between meshes. Though in this blog, I would be nothing of the sorts and will go through the algorithm in 2d for understanding the idea."
+description: "Convex Hull Generation is an important problem in the field of Computational Geometry and is widely used in 3d collision detection between meshes. Though in this blog, I would be doing nothing of the sorts and will go through the algorithm in 2d for understanding the idea."
 categories: ["blog"]
 data:
   keywords: "html5, canvas, convex, hull, graham, polygon"

@@ -4,7 +4,7 @@ let ctxCircle = canvasCircle.getContext("2d");
 let ctxShape = canvasShape.getContext("2d");
 
 const WIDTH_2 = canvasCircle.width / 2;
-const HEIGHT_2 = canvasCircle.height / 2;
+const HEIGHT_2 = canvasCircle.height / 2 + 50;
 
 let system;
 let gui;
@@ -78,7 +78,7 @@ class System {
     }
 
     renderCircle(ctx) {
-        ctx.clearRect(-WIDTH_2, -HEIGHT_2, canvasCircle.width, canvasCircle.height);
+        ctx.clearRect(-WIDTH_2, -(canvasCircle.height - HEIGHT_2), canvasCircle.width, canvasCircle.height);
 
         for (let i = 0; i < this.numCircles; i++) {
             this.circles[i].draw(ctx);
@@ -96,32 +96,11 @@ class System {
     }
 }
 
-function setup() {
-    setCenterOrigin();
-
-    gui = new lil.GUI();
-    guiController = {
-        "StopSimulation": false,
-        "SimulationSpeed": 25,
-        "NumCircles": 10,
-        "RadiusFallOff": 3,
-        "RotationSpeed": -8,
-        "SpeedFallOff": 4,
-        "ColorSaturation": 50,
-    };
-    system = new System(
-        guiController["NumCircles"], guiController["RadiusFallOff"], guiController["RotationSpeed"],
-        guiController["SpeedFallOff"]
-    );
-
-    setupGUI();
-}
-
 function setCenterOrigin() {
-    ctxCircle.translate(canvasCircle.width / 2, canvasCircle.height / 2);
+    ctxCircle.translate(WIDTH_2, HEIGHT_2);
     ctxCircle.scale(1, -1);
 
-    ctxShape.translate(canvasShape.width / 2, canvasShape.height / 2);
+    ctxShape.translate(WIDTH_2, HEIGHT_2);
     ctxShape.scale(1, -1);
 }
 
@@ -141,13 +120,37 @@ function setupGUI() {
 
     const systemGUI = gui.addFolder("System");
     systemGUI.add(this.guiController, "NumCircles", 3, 30, 1);
-    systemGUI.add(this.guiController, "RadiusFallOff", 2, 6, 1);
     systemGUI.add(this.guiController, "RotationSpeed", -10, 10, 1);
+    systemGUI.add(this.guiController, "RadiusFallOff", 2, 6, 1);
     systemGUI.add(this.guiController, "SpeedFallOff", 2, 5, 1);
     systemGUI.onFinishChange(() => {
         system.reset(guiController["NumCircles"], guiController["RadiusFallOff"], guiController["RotationSpeed"], guiController["SpeedFallOff"]);
         ctxShape.clearRect(-WIDTH_2, -HEIGHT_2, canvasShape.width, canvasShape.height);
     });
+    gui.close();
+}
+
+function setup() {
+    setCenterOrigin();
+
+    gui = new lil.GUI({ container: document.getElementById("gui-main") });
+    guiController = {
+        "StopSimulation": false,
+        "SimulationSpeed": 25,
+        "NumCircles": 10,
+        "RadiusFallOff": 3,
+        "RotationSpeed": -8,
+        "SpeedFallOff": 4,
+        "ColorSaturation": 50,
+    };
+    setupGUI();
+
+    system = new System(
+        guiController["NumCircles"], 
+        guiController["RadiusFallOff"],
+        guiController["RotationSpeed"],
+        guiController["SpeedFallOff"]
+    );
 }
 
 function update() {
