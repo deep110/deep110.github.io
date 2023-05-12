@@ -9,7 +9,7 @@ data:
   scripts: [lib/lil-gui.min.js, extras/fractal-spirographs.js]
 ---
 
-I recently came across [this](https://softologyblog.wordpress.com/2017/02/27/fractal-spirographs/) blog which talks about creating 2d fractals from spirographs, so i decided to give it a shot and try to go a little more indepth on how we can generate various patterns by controlling few variables.
+In a [blog post](https://softologyblog.wordpress.com/2017/02/27/fractal-spirographs/) recently, I discovered how to create 2D fractals from spirographs. Intrigued by the possibilities of this technique, I decided to experiment with it further. I found that by controlling just a few variables, I could generate a wide variety of patterns. I hope you enjoy this exploration of a beautiful and complex mathematical concept just like I did.
 
 <div id="canvas-container" style="position: relative;">
   <canvas id="canvas-shape" height=700 width=600></canvas>
@@ -20,11 +20,9 @@ I recently came across [this](https://softologyblog.wordpress.com/2017/02/27/fra
 
 You can try to change variables such as `RadiusFallOff`, `RotationSpeed`, etc. to get more shapes. Color is added by mapping angle of rotation to HSL space. You can change saturation to give it a grayscale or more colorful look.
 
-Now, lets look at the setup and how we can code it up.
-
 ### The Setup
 
-According to [wikipedia](https://wikipedia.org/wiki/Spirograph), Spirograph is a geometric drawing device that produces mathematical roulette curves. But you may know them widely as stencils in shape of gears which we have used in childhood to draw amazing shapes.
+[Spirograph](https://wikipedia.org/wiki/Spirograph) is a geometric drawing device that produces mathematical roulette curves. But you may know them widely as stencils in shape of gears which we have used in childhood to draw beautiful works of art.
 
 <div style="text-align:center">
   <img src="/assets/images/2023-05/spirograph-example-set.webp" alt="Spirograph Example Set" width=350></img>
@@ -49,7 +47,7 @@ We can specify the size, position, and rotation speed of each circle to create a
 </div>
 <br>
 
-2. <b><u>Rotation Speed</u></b>: Rotation speed is another major parameter that dictates the generated fractal pattern. More the speed of rotation more detail can be rendered during the same revolution. Not only the speed, direction of rotation also changes the pattern. You can refer the comparison below:
+2. <b><u>Rotation Speed</u></b>: Rotation speed is another major parameter that dictates the generated fractal pattern. More the base speed of rotation more detail can be rendered during the same revolution. Not only the speed, direction of rotation also changes the pattern. You can refer the comparison below:
 
 <div style="text-align:center">
   <img src="/assets/images/2023-05/variation-rotation-speed.webp" alt="Variation Rotation Speed" width=500></img>
@@ -59,9 +57,9 @@ We can specify the size, position, and rotation speed of each circle to create a
 Rotation Speed of circles are distributed exponentially. So for an i-th circle speed is calculated as:
 
 {% equation %}
-rotate\text{\textunderscore}speed(i) = k ^ i - 1
+rotate\_speed(i) = k ^ i - 1
 {% endequation %}
-where, k = supplied rotation speed
+where, ***k*** = supplied rotation speed
 
 3. <u><b>Radius Falloff</u></b>: Radius fall off controls the radius of subsequent circles. For example: If radius fall off is 2 each subsequent circle's radius would be halved. So more the value, smaller would be the details; as you can see the in the figure below:
 
@@ -70,8 +68,23 @@ where, k = supplied rotation speed
 </div>
 <br>
 
-4. <u><b>Speed Falloff</u></b>:
+4. <u><b>Speed Falloff</u></b>: Speed fall off directly affects rotation speed of a circle along with the provided base speed.
 
+{% equation %}
+rotate\_speed(i) = \frac{k ^ i - 1}{k ^ {sf}}
+{% endequation %}
+where, 
+    ***k*** = supplied rotation speed,
+    ***sf*** = supplied speed fall off
+
+More the value of fall off, less would be the speed of rotation, hence more details can be rendered.
+
+<div style="text-align:center">
+  <img src="/assets/images/2023-05/variation-speed-fall-off.webp" alt="Variation Speed FallOff" width=700></img>
+</div>
+<br>
+
+Now lets see how we can use the above parameters in code.
 
 ## Implementation
 
@@ -131,33 +144,92 @@ class System {
         for (let i = 1; i < this.numCircles; i++) {
             let prevCircle = this.circles[i - 1];
 
-            let nextRadius = prevCircle.radius / radiusFallOff;
-            let nextY = prevCircle.y + prevCircle.radius + nextRadius;
-            let nextRotationSpeed = Math.pow(rotateSpeed, i - 1) / fallOff;
+            // calculate i-th circle radius using fall off value
+            let circleRadius = prevCircle.radius / radiusFallOff;
 
-            let next = new Circle(new Vector2(0, nextY), nextRadius, nextRotationSpeed);
+            // align this i-ith circle on top of previous circle
+            let circleY = prevCircle.y + prevCircle.radius + circleRadius;
+
+            // calculate its final speed
+            let circleRotationSpeed = Math.pow(rotateSpeed, i - 1) / fallOff;
+
+            let next = new Circle(new Vector2(0, circleY), circleRadius, circleRotationSpeed);
             this.circles.push(next);
-        }
-    }
-
-    renderCircle(ctx) {
-        ctx.clearRect(0, 0, canvasCircle.width, canvasCircle.height);
-
-        for (let i = 0; i < this.numCircles; i++) {
-            this.circles[i].draw(ctx);
         }
     }
 }
 ```
 
-4. Updating the circles
+We loop through number of circles, and for every circle we calculate its radius, position and speed and push into circles array.
 
-5. Rendering the pattern
+4. Next we update the system which is fairly straightforward. We loop through the circles and call its rotate function.
+
+```js
+class System {
+
+  ...
+
+  function update() {
+    for (let i = 1; i < this.numCircles; i++) {
+        this.circles[i].rotate(this.circles[i - 1]);
+    }
+  }
+}
+```
+
+5. Now comes the last step i.e Rendering the pattern, which is the path taken by last circle's center in our Spirograph system. To render it, we will store the last circle's center and draw a line from it to current center position.
+
+```js
+class System {
+
+  ...
+
+  function update() {
+    // save the center of last circle before updating, we will use it in render to draw the line
+    let lastCircle = this.circles[this.numCircles - 1];
+    this.prevPoint = new Vector2(lastCircle.x, lastCircle.y);
+
+    for (let i = 1; i < this.numCircles; i++) {
+        this.circles[i].rotate(this.circles[i - 1]);
+    }
+  }
+
+  function render() {
+    let lastCircle = this.circles[this.numCircles - 1];
+
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+
+    // draw the line from last circle's previous center to current center
+    ctx.moveTo(this.prevPoint.x, this.prevPoint.y);
+    ctx.lineTo(lastCircle.x, lastCircle.y);
+    ctx.stroke();
+  }
+}
+```
+
+Now tying up everything,
+
+```js
+
+function main() {
+  // taking example values
+  let system  = System(10, 3, -8, 4);
+
+  loop {
+    system.update();
+    system.render();
+  }
+}
+```
+
+That's all on this, I hope you enjoyed this post. If you're looking for more tech content, be sure to check out my [other](/) blog posts or subscribe below.
 
 ### References
 
-1. https://softologyblog.wordpress.com/2017/02/27/fractal-spirographs/
-2. http://benice-equation.blogspot.com.au/2012/01/fractal-spirograph.html
+1. [https://softologyblog.wordpress.com/2017/02/27/fractal-spirographs/](https://softologyblog.wordpress.com/2017/02/27/fractal-spirographs/)
+2. [https://benice-equation.blogspot.com.au/2012/01/fractal-spirograph.html](https://benice-equation.blogspot.com.au/2012/01/fractal-spirograph.html)
 
 <style>
   canvas {

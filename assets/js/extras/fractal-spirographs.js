@@ -133,7 +133,7 @@ function setup() {
     gui = new lil.GUI({ container: document.getElementById("gui-main") });
     guiController = {
         "StopSimulation": false,
-        "SimulationSpeed": 25,
+        "SimulationSpeed": 30,
         "NumCircles": 10,
         "RadiusFallOff": 3,
         "RotationSpeed": -8,
