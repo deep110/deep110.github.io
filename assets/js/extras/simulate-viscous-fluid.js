@@ -66,7 +66,7 @@ class Array2f {
   }
 }
 
-class SparseMatrixf {
+class SparseMatrix {
   constructor(dim) {
     this.n = dim;
     this.index = Array.from({ length: dim }, () => []);
@@ -80,7 +80,7 @@ class SparseMatrixf {
     }
   }
 
-  setElement(i, j, newValue) {
+  set(i, j, newValue) {
     for (let k = 0; k < this.index[i].length; ++k) {
       if (this.index[i][k] == j) {
         this.value[i][k] = newValue;
@@ -95,7 +95,7 @@ class SparseMatrixf {
     this.value[i].push(newValue);
   }
 
-  addToElement(i, j, incrementValue) {
+  add(i, j, incrementValue) {
     for (let k = 0; k < this.index[i].length; ++k) {
       if (this.index[i][k] == j) {
         this.value[i][k] += incrementValue;
@@ -111,18 +111,208 @@ class SparseMatrixf {
   }
 }
 
-class FixedSparseMatrixf {
-  constructor(dim) {
-    this.n = dim;
+class FixedSparseMatrix {
+  constructor() {
+    this.n = 0;
     this.value = []; // nonzero values row by row
     this.colIndex = []; // corresponding column indices
     this.rowStart = [];
   }
 
-  zero() {
+  resize(dim) {
+    if (this.n != dim) {
+      this.n = dim;
+      this.rowStart = Array(dim + 1);
+    }
   }
 
+  constructFromMatrix(matrix) {
+    this.resize(matrix.n);
+    this.rowStart[0] = 0;
+    for (let i = 0; i < this.n; ++i) {
+        this.rowStart[i + 1] = this.rowStart[i] + matrix.index[i].length;
+    }
+    this.value = new Float32Array(this.rowStart[this.n]);
+    this.colIndex = new Array(this.rowStart[this.n]);
+    let j = 0;
+    for (let i = 0; i < this.n; ++i) {
+        for (let k = 0; k < matrix.index[i].length; ++k) {
+            this.value[j] = matrix.value[i][k];
+            this.colIndex[j] = matrix.index[i][k];
+            ++j;
+        }
+    }
+  }
 
+  // perform result = matrix * x
+  multiplyVector(x, result) {
+    result.fill(0);
+    for (let i = 0; i < this.n; ++i) {
+      for (let j = this.rowStart[i]; j < this.rowStart[i + 1]; ++j) {
+        result[i] += this.value[j] * x[this.colIndex[j]];
+      }
+    }
+  }
+}
+
+class SparseColumnLowerFactor {
+  constructor() {
+    this.n = 0;
+    this.aDiag = [] // just used in factorization: minimum "safe" diagonal entry allowed
+    this.invDiag = [] // reciprocals of diagonal elements
+    this.colStart = [] // where each column begins in rowindex (plus an extra entry at the end, of #nonzeros)
+    this.value = []; // values below the diagonal, listed column by column
+    this.rowIndex = []; // a list of all row indices, for each column in turn
+  }
+
+  resize(dim) {
+    if (this.n != dim) {
+      this.n = n;
+      this.aDiag = new Float32Array(n);
+      this.invDiag = new Float32Array(n);
+      this.colStart = new Array(n + 1);
+    } else {
+      this.invDiag.fill(0);
+      this.aDiag.fill(0);
+    }
+    this.value = [];
+    this.rowIndex = [];
+  }
+}
+
+// Encapsulates the Conjugate Gradient algorithm with incomplete Cholesky
+// factorization preConditioner.
+class PCGSolver {
+  constructor() {
+    this.setSolverParameters(1e-5, 100, 0.97, 0.25);
+    this.fixedMatrix = new FixedSparseMatrix();
+    this.ltMatrix = new SparseColumnLowerFactor();
+  }
+
+  setSolverParameters(toleranceFactor = 1e-5, maxIterations = 100, modifiedIncompleteCholeskyParameter = 0.97, minDiagonalRatio = 0.25) {
+    this.toleranceFactor = toleranceFactor;
+    if (this.toleranceFactor < 1e-30) {
+      this.toleranceFactor = 1e-30;
+    }
+    this.maxIterations = maxIterations;
+    this.modifiedIncompleteCholeskyParameter = modifiedIncompleteCholeskyParameter;
+    this.minDiagonalRatio = minDiagonalRatio;
+  }
+
+  solve(matrix, rhs, result) {
+    let residualOut = 0;
+    const matrixLength = matrix.n;
+
+    this.Z = new Float32Array(matrixLength);
+    this.R = new Float32Array(rhs);
+    result.fill(0);
+
+    residualOut = Utils.listAbsMax(this.R);
+    if (residualOut === 0) {
+      return true;
+    }
+    const tol = this.toleranceFactor * residualOut;
+
+    this.formPreConditioner(matrix);
+    this.applyPreConditioner(this.R, this.Z);
+    let rho = Utils.listDot(this.Z, this.R);
+    if (rho === 0) {
+      return false;
+    }
+
+    this.S = this.Z.slice();
+    this.fixedMatrix.constructFromMatrix(matrix);
+    for (let iteration = 0; iteration < this.maxIterations; ++iteration) {
+      this.fixedMatrix.multiplyVector(this.S, this.Z);
+      const alpha = rho / Utils.listDot(this.S, this.Z);
+      Utils.listAddScaled(alpha, this.S, result);
+      Utils.listAddScaled(-alpha, this.Z, this.R);
+      residualOut = Utils.absMax(this.R);
+      if (residualOut <= tol) {
+        return true;
+      }
+      this.applyPreConditioner(this.R, this.Z);
+      const rhoNew = Utils.listDot(this.Z, this.R);
+      const beta = rhoNew / rho;
+
+      Utils.listAddScaled2(beta, this.S, this.Z); // s = beta * s + z
+      rho = rhoNew;
+    }
+    return false;
+  }
+
+  formPreConditioner(matrix) {
+    this.#factorModifiedIncompleteCholesky0(matrix, this.ltMatrix);
+  }
+
+  applyPreConditioner(x, result) {
+    solveLower(this.ltMatrix, x, result);
+    solveLowerTransposeInPlace(this.ltMatrix, result);
+  }
+
+  // It decomposes definite matrix into a lower-triangular matrix times its transpose, i.e.,
+  // A = L * L^T
+  //    where, A is the original matrix
+  //           L is the lower triangular matrix
+  #factorModifiedIncompleteCholesky0(matrix, factor, modification_parameter = 0.97, min_diagonal_ratio = 0.25) {
+    factor.resize(matrix.n);
+  
+    for (let i = 0; i < matrix.n; ++i) {
+      factor.colstart[i] = factor.rowindex.length;
+      for (let j = 0; j < matrix.index[i].length; ++j) {
+        if (matrix.index[i][j] > i) {
+          factor.rowindex.push(matrix.index[i][j]);
+          factor.value.push(matrix.value[i][j]);
+        } else if (matrix.index[i][j] === i) {
+          factor.invdiag[i] = factor.adiag[i] = matrix.value[i][j];
+        }
+      }
+    }
+  
+    factor.colstart[matrix.n] = factor.rowindex.length;
+  
+    for (let k = 0; k < matrix.n; ++k) {
+      if (factor.adiag[k] === 0) continue;
+  
+      if (factor.invdiag[k] < min_diagonal_ratio * factor.adiag[k]) {
+        factor.invdiag[k] = 1 / Math.sqrt(factor.adiag[k]);
+      } else {
+        factor.invdiag[k] = 1 / Math.sqrt(factor.invdiag[k]);
+      }
+  
+      for (let p = factor.colstart[k]; p < factor.colstart[k + 1]; ++p) {
+        factor.value[p] *= factor.invdiag[k];
+      }
+  
+      for (let p = factor.colstart[k]; p < factor.colstart[k + 1]; ++p) {
+        const j = factor.rowindex[p];
+        const multiplier = factor.value[p];
+        let missing = 0;
+        let a = factor.colstart[k];
+        let b = 0;
+  
+        while (a < factor.colstart[k + 1] && factor.rowindex[a] < j) {
+          while (b < matrix.index[j].length) {
+            if (matrix.index[j][b] < factor.rowindex[a]) {
+              ++b;
+            } else if (matrix.index[j][b] === factor.rowindex[a]) {
+              break;
+            } else {
+              missing += factor.value[a];
+              break;
+            }
+          }
+          ++a;
+        }
+  
+        if (a < factor.colstart[k + 1] && factor.rowindex[a] === j) {
+          factor.invdiag[j] -= multiplier * factor.value[a];
+        }
+  
+        ++a;
+      }
+    }
+  }
 }
 
 class Utils {
@@ -153,10 +343,36 @@ class Utils {
   static insideCircle(x, y, cx, cy, radius) {
     return (Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy)) - radius);
   }
+
+  static listAbsMax(array) {
+    return Math.max.apply(null, array.map(Math.abs));
+  }
+
+  static listDot(xArr, yArr) {
+    let sum = 0;
+    for (let i = 0; i < xArr.length; ++i) {
+      sum += xArr[i] * yArr[i];
+    }
+    return sum;
+  }
+
+  // y = alpha * x + y
+  static listAddScaled(alpha, xArr, yArr) {
+    for (let i = 0; i < xArr.length; i++) {
+      yArr[i] += alpha * xArr[i];
+    }
+  }
+
+  // x = alpha * x + y
+  static listAddScaled2(alpha, xArr, yArr) {
+    for (let i = 0; i < xArr.length; i++) {
+      xArr[i] = alpha * xArr[i] + yArr[i];
+    }
+  }
 }
 
 class FluidSim {
-  constructor(gridRes) {
+  constructor(gridRes, viscosity = 1.0) {
     this.ni = gridRes; // number rows
     this.nj = gridRes; // number columns
     this.dx = 1.0 / gridRes;
@@ -183,8 +399,7 @@ class FluidSim {
     this.vVol = new Array2f(this.ni, this.nj + 1);
     this.cVol = new Array2f(this.ni, this.nj);
     this.nVol = new Array2f(this.ni + 1, this.nj + 1);
-    this.viscosity = new Array2f(this.ni, this.nj);
-    this.viscosity.fill(1.0);
+    this.viscosity = viscosity;
 
     // extrapolation
     this.valid = new Array2f(this.ni + 1, this.nj + 1);
@@ -228,13 +443,12 @@ class FluidSim {
 
       this.#applyViscosity(subStep);
 
-
-      //For extrapolated velocities, replace the normal component with that of the object.
+      // For extrapolated velocities, replace the normal component with that of the object.
       this.#constrainVelocity();
 
       let p = this.particles[0];
       let v = this.#getVelocity(p);
-      console.log(p.x, p.y, "velocity:", v.x, v.y);
+      // console.log(p.x, p.y, "velocity:", v.x, v.y);
 
       t += subStep;
     }
@@ -254,20 +468,20 @@ class FluidSim {
   }
 
   #cfl() {
-    let maxvel = 0;
+    let maxVel = 0;
     for (let i = 0; i < this.u.data.length; ++i) {
-      maxvel = Math.max(maxvel, Math.abs(this.u.data[i]));
+      maxVel = Math.max(maxVel, Math.abs(this.u.data[i]));
     }
-    for (let i = 0; i < this.v.data.length; ++i)
-      maxvel = Math.max(maxvel, Math.abs(this.v.data[i]));
-    return this.dx / maxvel;
+    for (let i = 0; i < this.v.data.length; ++i) {
+      maxVel = Math.max(maxVel, Math.abs(this.v.data[i]));
+    }
+    return this.dx / maxVel;
   }
 
   // calculate new particles position based on current velocity
   //
   // Use 2nd order Runge Kutta for integration
   // x = v dt
-  // Maybe use 4th order RK in future
   #advectParticles(dt) {
     for (let p = 0; p < this.particles.length; p++) {
       let currentPosition = this.particles[p];
@@ -367,18 +581,21 @@ class FluidSim {
     this.#computeVolumeFractions(this.liquidPhi, this.uVol, new Vector2(-1, -0.5), 2);
     this.#computeVolumeFractions(this.liquidPhi, this.vVol, new Vector2(-0.5, -1), 2);
 
-    this.#solveViscosity(dt);
+    const ni = this.liquidPhi.ni;
+    const nj = this.liquidPhi.nj;
+
+
   }
 
   #constrainVelocity() {
     this.tempU.copy(this.u);
     this.tempV.copy(this.v);
 
-    //constrain u
+    // constrain u
     for (let j = 0; j < this.u.nj; ++j) {
       for (let i = 0; i < this.u.ni; ++i) {
         if (this.uWeights.get(i, j) == 0) {
-          //apply constraint
+          // apply constraint
           let pos = new Vector2(i * this.dx, (j + 0.5) * this.dx);
           let vel = this.#getVelocity(pos);
           pos.iscale(this.invDx);
@@ -392,7 +609,7 @@ class FluidSim {
       }
     }
 
-    //constrain v
+    // constrain v
     for (let j = 0; j < this.v.nj; ++j) {
       for (let i = 0; i < this.v.ni; ++i) {
         if (this.vWeights.get(i, j) == 0) {
@@ -410,20 +627,16 @@ class FluidSim {
       }
     }
 
-    //update
+    // update
     this.u.copy(this.tempU);
     this.v.copy(this.tempV);
   }
 
-  #solveViscosity(dt) {
-    
-  }
-
   #getVelocity(position) {
-    let u_val = this.u.interpolateValue(position.scale(this.invDx).subtract(new Vector2(0, 0.5)));
-    let v_val = this.v.interpolateValue(position.scale(this.invDx).subtract(new Vector2(0.5, 0)));
+    let uVal = this.u.interpolateValue(position.scale(this.invDx).subtract(new Vector2(0, 0.5)));
+    let vVal = this.v.interpolateValue(position.scale(this.invDx).subtract(new Vector2(0.5, 0)));
 
-    return new Vector2(u_val, v_val);
+    return new Vector2(uVal, vVal);
   }
 
   #traceRK2(position, dt) {
@@ -433,25 +646,25 @@ class FluidSim {
     return position.add(velocity.iscale(dt));
   }
 
-  #computeVolumeFractions(levelset, fractions, fraction_origin, subdivision) {
-    // Assumes levelset and fractions have the same dx
+  #computeVolumeFractions(levelSet, fractions, fraction_origin, subdivision) {
+    // Assumes levelSet and fractions have the same dx
     let sub_dx = 1.0 / subdivision;
     let sample_max = subdivision * subdivision;
     for (let j = 0; j < fractions.nj; ++j) {
       for (let i = 0; i < fractions.ni; ++i) {
         let start_x = fraction_origin.x + i;
         let start_y = fraction_origin.y + j;
-        let incount = 0;
+        let inCount = 0;
 
         for (let sub_j = 0; sub_j < subdivision; ++sub_j) {
           for (let sub_i = 0; sub_i < subdivision; ++sub_i) {
             let x_pos = start_x + (sub_i + 0.5) * sub_dx;
             let y_pos = start_y + (sub_j + 0.5) * sub_dx;
-            let phi_val = levelset.interpolateValue(new Vector2(x_pos, y_pos));
-            if (phi_val < 0) ++incount;
+            let phi_val = levelSet.interpolateValue(new Vector2(x_pos, y_pos));
+            if (phi_val < 0) ++inCount;
           }
         }
-        fractions.set(i, j, incount / sample_max);
+        fractions.set(i, j, inCount / sample_max);
       }
     }
   }
@@ -508,7 +721,7 @@ function setupGridContainer(sim, displayLen) {
     }
   }
 
-  grid.interactive = true;
+  grid.eventMode = "static";
   grid.on('mousedown', onDragStart);
   grid.on('pointerup', onDragEnd);
   grid.on('pointerupoutside', onDragEnd);
@@ -555,9 +768,10 @@ function update() {
   // advance simulation on every update i.e 1/FPS seconds.
   if (playSimulation) {
     var start = Date.now();
-    // for (let i = 0; i < 3; i++) {
-    // }
     fluidSim.advance(0.01);
+    // for (let i = 0; i < 2; i++) {
+    //   fluidSim.advance(0.01);
+    // }
     // playSimulation = false;
     var end = Date.now();
     console.log(`Execution time: ${end - start} ms`);
@@ -572,15 +786,14 @@ let app = new PIXI.Application({
 });
 app.ticker.add(update);
 app.ticker.maxFPS = 30;
-app.renderer.plugins.interaction.moveWhenInside = true;
 var renderTimeElapsed = 0;
 
-const GRID_RES = 30;
+const GRID_RES = 26;
 const GRID_DISPLAY_LENGTH = 450;
 const BEAKER_RADIUS = 0.4;
 
 // setup fluid physics stuff
-let fluidSim = new FluidSim(GRID_RES);
+let fluidSim = new FluidSim(GRID_RES, 1.0);
 fluidSim.setBoundary((x, y) => {
   return -1 * Utils.insideCircle(x, y, 0.5, 0.5, BEAKER_RADIUS);
 });
@@ -602,4 +815,26 @@ fluidSim.addParticle(0.662281, 0.59606);
 var playSimulation = false;
 function pause(e) {
   playSimulation = !playSimulation;
+}
+
+
+function visualize2dArr(arr) {
+  const visualize = document.getElementById("visualize");
+  const table = document.createElement("table");
+  const hd = document.createElement("div");
+
+  for (let i = 0; i < arr.ni; i++) {
+    let tr = document.createElement("tr");
+    for (let j = 0; j < arr.nj; j++) {
+      let td = document.createElement("td");
+      td.textContent = arr.get(i, j).toFixed(3);
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+
+  hd.textContent = "Heading";
+
+  visualize.appendChild(hd);
+  visualize.appendChild(table);
 }
