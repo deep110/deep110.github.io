@@ -56,14 +56,21 @@ We can specify the size, position, and rotation speed of each circle to create a
 </div>
 <br>
 
-3. <u><b>Radius Fall Off</u></b>: Radius fall off controls the radius of subsequent circles. For example: If radius fall off is 2 each subsequent circle's radius would be halved. So more the value, smaller would be the details; as you can see the in the figure below:
+Rotation Speed of circles are distributed exponentially. So for an i-th circle speed is calculated as:
+
+{% equation %}
+rotate\text{\textunderscore}speed(i) = k ^ i - 1
+{% endequation %}
+where, k = supplied rotation speed
+
+3. <u><b>Radius Falloff</u></b>: Radius fall off controls the radius of subsequent circles. For example: If radius fall off is 2 each subsequent circle's radius would be halved. So more the value, smaller would be the details; as you can see the in the figure below:
 
 <div style="text-align:center">
   <img src="/assets/images/2023-05/variation-radius-fall-off.webp" alt="Variation Radius FallOff" width=700></img>
 </div>
 <br>
 
-4. <u><b>Speed Fall Off</u></b>:
+4. <u><b>Speed Falloff</u></b>:
 
 
 ## Implementation
@@ -110,10 +117,12 @@ class Circle {
 const START_RADIUS = 140
 
 class System {
-    constructor(numCircles, k, radiusFallOff, speedFalloff) {
+    constructor(numCircles, rotateSpeed, radiusFallOff, speedFalloff) {
         this.circles = [];
         this.numCircles = numCircles;
 
+        // calculate the falloff based on rotation speed
+        let fallOff = Math.pow(rotateSpeed, speedFalloff);
 
         // add root circle, which does not rotate
         let root = new Circle(new Vector2(0, 0), START_RADIUS, 0);
@@ -124,12 +133,9 @@ class System {
 
             let nextRadius = prevCircle.radius / radiusFallOff;
             let nextY = prevCircle.y + prevCircle.radius + nextRadius;
-            let fallOff = 1;
-            for (var j = 0; j < speedFalloff; j++) {
-                fallOff *= k;
-            }
+            let nextRotationSpeed = Math.pow(rotateSpeed, i - 1) / fallOff;
 
-            let next = new Circle(new Vector2(0, nextY), nextRadius, Math.pow(k, i - 1) / fallOff);
+            let next = new Circle(new Vector2(0, nextY), nextRadius, nextRotationSpeed);
             this.circles.push(next);
         }
     }

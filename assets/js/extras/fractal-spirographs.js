@@ -42,11 +42,12 @@ class System {
         this.reset(numCircles, radiusRatio, k, speedFalloff);
     }
 
-    reset(numCircles, radiusRatio, k, speedFalloff) {
+    reset(numCircles, radiusRatio, rotateSpeed, speedFalloff) {
         let radiusStart = 140;
         let circleColor = "#ffffff50";
         this.circles = [];
         this.numCircles = numCircles;
+        let fallOff = Math.pow(rotateSpeed, speedFalloff);
 
         // add root circle
         let root = new Circle(new Vector2(0, 0), radiusStart, 0, circleColor);
@@ -57,12 +58,8 @@ class System {
 
             let nextRadius = prevCircle.radius / radiusRatio;
             let nextY = prevCircle.y + prevCircle.radius + nextRadius;
-            let fallOff = 1;
-            for (var j = 0; j < speedFalloff; j++) {
-                fallOff *= k;
-            }
 
-            let next = new Circle(new Vector2(0, nextY), nextRadius, Math.pow(k, i - 1) / fallOff, circleColor);
+            let next = new Circle(new Vector2(0, nextY), nextRadius, Math.pow(rotateSpeed, i - 1) / fallOff, circleColor);
             this.circles.push(next);
         }
 
@@ -122,7 +119,7 @@ function setupGUI() {
     systemGUI.add(this.guiController, "NumCircles", 3, 30, 1);
     systemGUI.add(this.guiController, "RotationSpeed", -10, 10, 1);
     systemGUI.add(this.guiController, "RadiusFallOff", 2, 6, 1);
-    systemGUI.add(this.guiController, "SpeedFallOff", 2, 5, 1);
+    systemGUI.add(this.guiController, "SpeedFallOff", 1, 5, 1);
     systemGUI.onFinishChange(() => {
         system.reset(guiController["NumCircles"], guiController["RadiusFallOff"], guiController["RotationSpeed"], guiController["SpeedFallOff"]);
         ctxShape.clearRect(-WIDTH_2, -HEIGHT_2, canvasShape.width, canvasShape.height);
