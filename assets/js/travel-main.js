@@ -1,6 +1,14 @@
 var visitedCountries = ['IN', 'TR', 'NP', 'AE', 'VN'];
 
 var visitedCities = {
+    "2023": [
+        // Vietnam
+        { name: "Hanoi", coords: [21.0278, 105.8342], image: "hanoi.webp", post: "2023-03-19-vietnam.html#hanoi", date: "Feb, 2023" },
+        { name: "Hoi An", coords: [15.8801, 108.3380], image: "hoian.webp", post: "2023-03-19-vietnam.html#danang", date: "Feb, 2023" },
+        { name: "Da Nang", coords: [16.0545, 108.0717], image: "danang.webp", post: "2023-03-19-vietnam.html#danang", date: "Feb, 2023" },
+        { name: "Dalat", coords: [11.9404, 108.4583], image: "dalat.webp", post: "2023-03-19-vietnam.html#dalat", date: "Feb, 2023" },
+        { name: "Ho Chi Minh", coords: [10.823099, 106.629664], image: "ho-chi-minh.webp", post: "2023-03-19-vietnam.html", date: "Feb, 2023" },
+    ],
     "2022": [
         // Kerala
         { name: "Munnar", coords: [10.0889, 77.0595], image: "munnar.webp", post: "2022-12-04-kerala.html#munnar", date: "Nov, 2022" },
