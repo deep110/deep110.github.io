@@ -9,7 +9,7 @@ var hull = [];
 let stayCounter = 0;
 
 function distSq(p1, p2) {
-  return p2.subtract(p1).distanceSqr();
+  return p2.sub(p1).distanceSqr();
 }
 
 /**
