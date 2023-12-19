@@ -2,6 +2,7 @@
 layout: blog.liquid
 title:  "Boids - Flock Simulation"
 categories: ["blog"]
+is_draft: true
 data:
   scripts: [lib/lil-gui.min.js, lib/pixi.min.js, extras/boids-simulation.js]
 ---
