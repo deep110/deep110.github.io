@@ -501,7 +501,7 @@ class FluidSim {
       if (phiValue < 0) {
         let normal = this.signedBoundary.interpolateGradient(scaledPos);
         normal.normalize();
-        this.particles[p] = newPosition.subtract(normal.iscale(phiValue));
+        this.particles[p] = newPosition.sub(normal.iscale(phiValue));
       }
     }
   }
@@ -633,8 +633,8 @@ class FluidSim {
   }
 
   #getVelocity(position) {
-    let uVal = this.u.interpolateValue(position.scale(this.invDx).subtract(new Vector2(0, 0.5)));
-    let vVal = this.v.interpolateValue(position.scale(this.invDx).subtract(new Vector2(0.5, 0)));
+    let uVal = this.u.interpolateValue(position.scale(this.invDx).sub(new Vector2(0, 0.5)));
+    let vVal = this.v.interpolateValue(position.scale(this.invDx).sub(new Vector2(0.5, 0)));
 
     return new Vector2(uVal, vVal);
   }

@@ -127,8 +127,14 @@ class Vector2 {
 		return this;
 	}
 
-	subtract(vector) {
+	sub(vector) {
 		return new Vector2(this.x - vector.x, this.y - vector.y);
+	}
+
+	isub(vector) {
+		this.x -= vector.x;
+		this.y -= vector.y;
+		return this;
 	}
 
 	scale(scalar) {
@@ -152,16 +158,23 @@ class Vector2 {
 	moveTowards(vector, t) {
 		// Linearly interpolates between vectors A and B by t.
 		t = Math.min(t, 1);
-		var diff = vector.subtract(this);
+		var diff = vector.sub(this);
 		return this.add(diff.scale(t));
 	}
 
 	magnitude() {
-		return Math.sqrt(this.magnitudeSqr());
+		return Math.sqrt(this.x * this.x + this.y * this.y);
 	}
 
 	magnitudeSqr() {
 		return (this.x * this.x + this.y * this.y);
+	}
+
+	setMagnitude(magnitude) {
+		const length = this.magnitude();
+
+		this.x = (this.x / length) * magnitude;
+		this.y = (this.y / length) * magnitude;
 	}
 
 	distance(vector) {
@@ -192,6 +205,14 @@ class Vector2 {
 		vector.x = this.x * cos - this.y * sin;
 		vector.y = this.x * sin + this.y * cos;
 		return vector;
+	}
+
+	limit(maxLength) {
+		const length = this.magnitude();
+		if (length > maxLength) {
+			this.x = (this.x / length) * maxLength;
+			this.y = (this.y / length) * maxLength;
+		}
 	}
 
 	/**
