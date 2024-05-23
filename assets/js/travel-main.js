@@ -38,8 +38,8 @@ var visitedCities = {
     ],
     "2019": [
         // United Arab Emirates
-        { name: "Abu Dhabi", coords: [24.4539, 54.3773], image: "abu-dhabi.webp", post: "2019-11-28-uae.html#dubai", date: "Nov, 2019" },
-        { name: "Dubai", coords: [25.2048, 55.2708], image: "dubai.webp", post: "2019-11-28-uae.html#abu-dhabi", date: "Nov, 2019" },
+        { name: "Abu Dhabi", coords: [24.4539, 54.3773], image: "abu-dhabi.webp", post: "2019-11-28-uae.html#abu-dhabi", date: "Nov, 2019" },
+        { name: "Dubai", coords: [25.2048, 55.2708], image: "dubai.webp", post: "2019-11-28-uae.html", date: "Nov, 2019" },
     ],
     "2018": [
         { name: "Sikkim", coords: [27.5330, 88.5122], image: "sikkim.webp", date: "Nov, 2018" },
