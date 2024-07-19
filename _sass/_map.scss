@@ -1,16 +1,18 @@
-#map svg {
+#map {
+    svg {
     -ms-touch-action: none;
     touch-action: none;
-}
+    }
 
-image,
-text,
-.jvm-zoomin,
-.jvm-zoomout {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    image,
+    text,
+    .jvm-zoomin,
+    .jvm-zoomout {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
 }
 
 .jvm-container {
@@ -25,6 +27,7 @@ text,
 .jvm-tooltip {
     border-radius: 3px;
     background-color: #5c5cff;
+    font-family: sans-serif, Verdana;
     font-size: smaller;
     box-shadow: 1px 2px 12px rgba(0, 0, 0, 0.2);
     padding: 3px 5px;
