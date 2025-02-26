@@ -1,6 +1,10 @@
-var visitedCountries = ['IN', 'TR', 'NP', 'AE', 'VN'];
+var visitedCountries = ['IN', 'TR', 'NP', 'AE', 'VN', 'HK', 'MO'];
 
 var visitedCities = {
+    "2024": [
+        { name: "Hong Kong", coords: [22.3193, 114.1694], image: "hong-kong.webp", post: "2024-08-18-hongkong.html", date: "July, 2024" },
+        { name: "Macau", coords: [22.1987, 113.5461], image: "macau.webp", post: "2024-12-18-macau.html", date: "July, 2024" },
+    ],
     "2023": [
         // Vietnam
         { name: "Hanoi", coords: [21.0278, 105.8342], image: "hanoi.webp", post: "2023-03-19-vietnam.html#hanoi", date: "Feb, 2023" },
@@ -81,7 +85,7 @@ var map = new jsVectorMap({
     selector: "#map",
     map: "world_merc",
     focusOn: {
-        regions: ['IN', 'RS', 'VN'],
+        regions: ['IN', 'RS', 'VN', 'HK'],
         animate: true
     },
     regionStyle: {
