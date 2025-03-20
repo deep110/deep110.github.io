@@ -273,6 +273,14 @@
             font-size: 18px;
         }
     }
+
+    h2:hover .anchor, h3:hover .anchor, h4:hover .anchor, h5:hover .anchor, h6:hover .anchor {
+        display: inline-flex;
+        color: red;
+        margin-inline-start: 8px;
+        font-weight: 500;
+        user-select: none;
+    }
 }
 
 .footnote-definition {

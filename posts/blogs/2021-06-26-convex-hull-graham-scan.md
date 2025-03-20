@@ -80,21 +80,20 @@ Next we will sort the points in increasing order of angle they and Point P make 
 
 For making a comparison of angles for sorting function, we can calculate `cos θ` using dot product, but that would be little inefficient and we can do better than that.
 
-{% equation %}
+```equation
 cos \theta = \frac{a.b} {|a| * |b|}
-{% endequation %}
+```
 
-We don't need to actually calculate the angle to sort. We can compare the angle made by any two points [Let's call them A and B] using just the cross product of {% equation inline %}\overrightarrow{PA}{% endequation %} and {% equation inline %}\overrightarrow{PB}{% endequation %}.
+We don't need to actually calculate the angle to sort. We can compare the angle made by any two points [Let's call them A and B] using just the cross product of $\overrightarrow{PA}$ and $\overrightarrow{PB}$.
 
 Calculate the cross product for ordered triplet [P, A, B], If
 
-<pre>
-<code>{% equation inline %}\overrightarrow{PA} \times \overrightarrow{PB} > 0{% endequation %} => anti-clockwise means keep order as it is i.e A then B
+$\overrightarrow{PA} \times \overrightarrow{PB} > 0$ => anti-clockwise means keep order as it is i.e A then B
 
-{% equation inline %}\overrightarrow{PA} \times \overrightarrow{PB} < 0{% endequation %} => clockwise hence swap the order i.e B then A
+$\overrightarrow{PA} \times \overrightarrow{PB} < 0$ => clockwise hence swap the order i.e B then A
 
-{% equation inline %}\overrightarrow{PA} \times \overrightarrow{PB} = 0{% endequation %} => points are colinear, keep the one with least distance first
-</code></pre>
+$\overrightarrow{PA} \times \overrightarrow{PB} = 0$ => points are colinear, keep the one with least distance first
+
 
 <div style="text-align:center">
   <img src="/assets/images/2021-06/graham-sort-ab.png" alt="Graham Scan Sort AB"></img>

@@ -29,7 +29,9 @@ So let's see how the algorithm[^rf_pb] works, then we will create a terrain and 
 
 In a 3d space where we want to draw our mesh, we will sample the points i.e assign some random value to each point at discrete intervals.
 
-{% equation %}f(x, y, z) = random(-10, 10) {% endequation %}
+```equation
+f(x, y, z) = random(-10, 10)
+```
 
 where, range of values can arbitrary.
 
@@ -56,8 +58,9 @@ In the above diagram I have generated values between [-10, 10] and considered su
 #### Step 3: Draw Mesh Triangles
 
 Now for each point we consider next nearest seven points,
-{% equation %}[x + ⟨0,1⟩,\,y + ⟨0,1⟩,\,z + ⟨0,1⟩]{% endequation %}
-
+```equation
+[x + ⟨0,1⟩,\,y + ⟨0,1⟩,\,z + ⟨0,1⟩]
+```
 thus forming a cube. Based on which points are included in mesh i.e below surface level we draw a mesh. For example: Lets take a look at the below image.
 
 <div style="text-align:center">
@@ -94,9 +97,9 @@ In the above example when just vertex 3 is above surface level, we get cubeIndex
 
 2. Now we know which edges to connect, but we also need to get a point on each edge and connect them to make a triangular mesh. Either we can take the mid point of the edge or take a weighted distance between the two vertices of the edge.
 
-{% equation %}
+```equation
 P = P1 + (IsoValue - V1) (P2 - P1) / (V2 - V1)
-{% endequation %}
+```
 
 where,
 

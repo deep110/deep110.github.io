@@ -78,7 +78,7 @@ In deterministic grammar the system always generate a fixed output because the p
 #### Context Free
 In context free grammar, each token is evaluated in the isolation. For example:
 
-{% equation %}
+```equation
   \begin{align*}
     Axiom &: X\\
     Constant &: X\\
@@ -87,7 +87,7 @@ In context free grammar, each token is evaluated in the isolation. For example:
     F &\rightarrow FF\\
     X &\rightarrow F-[[X]+X]+F[+FX]-X
   \end{align*}
-{% endequation %}
+```
 
 Here when started with the axiom X,[^fn1] both replacements will happen independently for single tokens i.e F and X.
 
@@ -96,24 +96,24 @@ Contrary to context free systems, in context sensitive rules can be defined for 
 
 For example rule `B < A -> B` means that change A to B only if there is a B before A. Similarly you can have rules with either side.
 
-{% equation %}
+```equation
   \begin{align*}
     A > B &\rightarrow B\\
     B < A > B &\rightarrow C
   \end{align*}
-{% endequation %}
+```
 
 First one means change A to B only if there is a B after A. Second one means change A to C only if there is a B before and after A.
 Consider the following system:
 
-{% equation %}
+```equation
   \begin{align*}
     Axiom &: BAAAAA\\
     Rules &: \\
     &B < A \rightarrow B\\
     &B \rightarrow A
   \end{align*}
-{% endequation %}
+```
 
 Now if you apply these rules on the axiom it will result in simulating B moving right.
 ```
@@ -142,7 +142,7 @@ You cannot generate infinite variations of even same type of tree with these fix
 
 It is simple to put randomness in generating this code structure. A simple example is given below.
 
-{% equation %}
+```equation
   \begin{align*}
     Axiom &: F\\
 
@@ -151,7 +151,7 @@ It is simple to put randomness in generating this code structure. A simple examp
     p_{2} &: F \xrightarrow{0.33} F [+F ]F\\
     p_{3} &: F \xrightarrow{0.34} F [-F ]F
   \end{align*}
-{% endequation %}
+```
 
 The idea is when replacing a token choose the replacement based on certain probability [here 1/3]. Thus it will generate different variant of same species of plant.
 

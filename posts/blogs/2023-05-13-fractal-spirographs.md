@@ -20,7 +20,7 @@ In a [blog post](https://softologyblog.wordpress.com/2017/02/27/fractal-spirogra
 
 You can try to change variables such as `RadiusFallOff`, `RotationSpeed`, etc. to get more shapes. Color is added by mapping angle of rotation to HSL space. You can change saturation to give it a grayscale or more colorful look.
 
-### The Setup
+## The Setup
 
 [Spirograph](https://wikipedia.org/wiki/Spirograph) is a geometric drawing device that produces mathematical roulette curves. But you may know them widely as stencils in shape of gears which we have used in childhood to draw beautiful works of art.
 
@@ -56,9 +56,9 @@ We can specify the size, position, and rotation speed of each circle to create a
 
 Rotation Speed of circles are distributed exponentially. So for an i-th circle speed is calculated as:
 
-{% equation %}
+```equation
 rotate\_speed(i) = k ^ i - 1
-{% endequation %}
+```
 where, ***k*** = supplied rotation speed
 
 3. <u><b>Radius Falloff</u></b>: Radius fall off controls the radius of subsequent circles. For example: If radius fall off is 2 each subsequent circle's radius would be halved. So more the value, smaller would be the details; as you can see the in the figure below:
@@ -70,9 +70,9 @@ where, ***k*** = supplied rotation speed
 
 4. <u><b>Speed Falloff</u></b>: Speed fall off directly affects rotation speed of a circle along with the provided base speed.
 
-{% equation %}
+```equation
 rotate\_speed(i) = \frac{k ^ i - 1}{k ^ {sf}}
-{% endequation %}
+```
 where, 
     ***k*** = supplied rotation speed,
     ***sf*** = supplied speed fall off

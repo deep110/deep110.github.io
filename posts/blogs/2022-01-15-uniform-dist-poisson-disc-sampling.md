@@ -74,7 +74,7 @@ There are many implementations for poisson disc sampling but the one we are goin
 
 The steps are as follows:
 
-1. First we will define the minimum distance `r` that we want our points to have. Then a 2D grid is created with a cell-size {% equation inline %}r/\sqrt{2}{% endequation %} [See the below diagram for why].
+1. First we will define the minimum distance `r` that we want our points to have. Then a 2D grid is created with a cell-size $r/\sqrt{2}$ [See the below diagram for why].
 
 <div style="text-align:center">
   <img src="/assets/images/2022-01/grid-cell-size.jpg" alt="Grid Cell Size"></img>
