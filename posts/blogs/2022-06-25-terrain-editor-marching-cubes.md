@@ -23,7 +23,7 @@ According to wikipedia, [Marching Cubes](https://wikipedia.org/wiki/Marching_cub
 
 So let's see how the algorithm[^rf_pb] works, then we will create a terrain and finally edit it. All the rendering is done using Three.js[^rf_3js] library.
 
-### The Algorithm
+## The Algorithm
 
 #### Step 1: Fill a 3d space with random values at discrete intervals
 
@@ -145,7 +145,7 @@ getFieldValue(x, y, z, type) {
 }
 ```
 
-### Creating A Procedural Terrain
+## Creating A Procedural Terrain
 
 As you have realized, you can generate any shape as long as you have the field function figured out. So for terrain we will use a noise function - [Simplex Noise](https://wikipedia.org/wiki/Simplex_noise). It is just like [Perlin Noise](https://wikipedia.org/wiki/Perlin_noise#) but with fewer directional artifacts and lower computation overhead. You can read wikipedia in more detail on how to generate it.
 
@@ -211,7 +211,7 @@ Lets see how these values affect the generated terrain.
 
 Other factors just helps in increasing or decreasing the noise amplitude. You can play around in the above terrain interactive with these values.
 
-### Editing the Generated Terrain
+## Editing the Generated Terrain
 
 Once you have a terrain setup, to edit we just have to manipulate the field values. Consider we have a brush size of radius r, we just need to manipulate the spherical field around the position on terrain which we want to edit. It is same as creating a spherical mesh, we can just put distance from center as field value.
 
@@ -243,11 +243,11 @@ sphereDistance = (spherePos, point, radius) => {
 }
 ```
 
-### Final Notes
+## Final Notes
 
 You can find the full source code on my [github](https://github.com/deep110/terrain-editor-js). If you enjoyed the article and want to see more of them then please subscribe below.
 
-### References { #references }
+## References { #references }
 
 [^rf_pb]: [Implementation by Paul Broke](http://paulbourke.net/geometry/polygonise/)
 

@@ -226,7 +226,7 @@ function main() {
 
 That's all on this, I hope you enjoyed this post. If you're looking for more tech content, be sure to check out my [other](/) blog posts or subscribe below.
 
-### References
+## References
 
 1. [https://softologyblog.wordpress.com/2017/02/27/fractal-spirographs/](https://softologyblog.wordpress.com/2017/02/27/fractal-spirographs/)
 2. [https://benice-equation.blogspot.com.au/2012/01/fractal-spirograph.html](https://benice-equation.blogspot.com.au/2012/01/fractal-spirograph.html)

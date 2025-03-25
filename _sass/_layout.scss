@@ -283,6 +283,44 @@
     }
 }
 
+.toc {
+    margin-bottom: 24px;
+    font-size: 0.9em;
+    border-radius: 6px;
+    padding: 12px;
+    background-color: var(--color-theme-light);
+
+    @media screen and (min-width: 1200px) {
+        position: fixed;
+        right: 20px;
+        top: 120px;
+        width: 250px;
+        max-height: calc(100vh - 150px);
+    }
+
+    .toc-title {
+        cursor: pointer;
+        user-select: none;
+        font-size: 1em;
+        font-weight: bold;
+    }
+
+    .toc-list {
+        margin-bottom: 0;
+        line-height: 1.6;
+    }
+
+    a {
+        color: var(--color-text);
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: $link-color;
+        text-decoration: underline;
+    }
+}
+
 .footnote-definition {
     display: flex;
 

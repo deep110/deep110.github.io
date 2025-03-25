@@ -11,7 +11,7 @@ data:
 
 [No Man's Sky](https://www.nomanssky.com/) is built around a procedurally generated deterministic open world universe with too many planets to be explored realistically. It is claimed that they used [Superformula](https://en.wikipedia.org/wiki/Superformula) and [L-Systems](https://en.wikipedia.org/wiki/L-system) for generating flora and  fauna procedurally. So, I tried playing around with L systems and see if I can create some realistic looking trees.
 
-### What is a L-System
+## What is a L-System
 An L-system or [Lindenmayer system](https://en.wikipedia.org/wiki/L-system) is a recursive and string-rewriting framework that was discovered by Hungarian biologist Aristid Lindenmayer while studying algae growth. Nowadays, in computer graphics it is used for creating procedural and fractal like structures. I won't go into much depth about it, since it is described quite elaborately on wikipedia.
 
 There are mainly three types of L systems:
@@ -72,7 +72,7 @@ There are mainly three types of L systems:
 
 Above, I have created a small interactive demo which can generate different types of L systems and you can see how it grows over generations. You can select different examples from the dropdown. To learn more about how it is rendered see [rendering](#rendering) section.
 
-### Deterministic Grammar
+## Deterministic Grammar
 In deterministic grammar the system always generate a fixed output because the predecessor is always fixed. It can be further divided into two subtypes:
 
 #### Context Free
@@ -136,7 +136,7 @@ In the above example, sometimes people get confused that if first `B` turns into
      A   ->   A  // no rule match hence same
 ```
 
-### Stochastic Grammar
+## Stochastic Grammar
 
 You cannot generate infinite variations of even same type of tree with these fixed grammar. So, for creating an infinite world we need to introduce some sort of randomness for generating the next iteration.
 
@@ -162,7 +162,7 @@ The idea is when replacing a token choose the replacement based on certain proba
 
 You can also play around with above interactive demo to generate more variations.
 
-### Rendering { #rendering }
+## Rendering
 
 There are a lot of methods for visualizing a L-system, but the easiest and mostly widely used is [Turtle Graphics](https://en.wikipedia.org/wiki/Turtle_graphics). I am pretty sure most of you have played around with turtle graphics in the past on MSLogo.
 
@@ -269,11 +269,11 @@ class Turtle {
 }
 ```
 
-### Footnotes
+## Footnotes
 [^fn1]: Here X is a constant i.e it will get ignored during rendering. For more in-depth see [rendering](#rendering) section. Dummy variables are used to give a more realistic look to generated fractal trees.
 
 <br>
 
-### References
+## References
 1. [The Algorithmic Beauty of Plants](http://algorithmicbotany.org/papers/#abop)
 2. [Job Talle - Lindenmayer Systems](https://jobtalle.com/lindenmayer_systems.html)

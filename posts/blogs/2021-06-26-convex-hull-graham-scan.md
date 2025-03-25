@@ -13,7 +13,7 @@ I am trying to experiment with rendering some basic shapes on a pixel buffer for
 
 For polygons I wanted to create random shaped [convex polygon](https://en.wikipedia.org/wiki/Convex_polygon). One way to do that is to generate a set of random points and compute its convex hull. There are many [convex hull algorithms](https://en.wikipedia.org/wiki/Convex_hull_algorithms) but the one we are discussing below is [Graham Scan](https://en.wikipedia.org/wiki/Graham_scan) which takes O(n log n) time.
 
-### Visualizing Steps
+## Visualizing Steps
 
 Here is a demo of the steps the algorithm takes.
 
@@ -33,7 +33,7 @@ Here is a demo of the steps the algorithm takes.
 </style>
 
 
-### How does it work
+## How does it work
 
 #### **Step1:** Get the bottom most point P
 
@@ -212,6 +212,6 @@ Hence the final complexity of this algorithm will be `O(n log n)` with sorting t
 That's all folks, hope this makes sense.
 
 
-### References
+## References
 
 1. [Wikipedia](https://en.wikipedia.org/wiki/Graham_scan)

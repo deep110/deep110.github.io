@@ -12,7 +12,7 @@ During my work at [vernacular.ai](https://vernacular.ai) I came across a problem
 [Unimrcp](https://github.com/unispeech/unimrcp) uses apr library for MRCP and SIP. APR does not have out of box support for TLS, hence the blog. Instructions on installing APR can be found their [homepage](https://apr.apache.org/compiling_unix.html).
 
 
-### Creating a simple TCP server
+## Creating a simple TCP server
 
 Let us start with a simple tcp server implemented using `apr_network_io`.
 
@@ -133,7 +133,7 @@ gcc -I/usr/local/apr/include/apr-1/ -Wl,-rpath,/usr/local/apr/lib -o echoserver 
 ./echoserver
 ```
 
-### Adding TLS to TCP Server
+## Adding TLS to TCP Server
 
 We will be using [OpenSSL](https://github.com/openssl/openssl) library to add TLS support. Let us implement some functions like `apr_network_io.c` to account for SSL.
 
@@ -322,7 +322,8 @@ apr_status_t start_server(apr_pool_t *pool, SSL_CTX *ssl_ctx, int port) {
     return rv;
 }
 ```
-### Building and Testing the Server
+
+## Building and Testing the Server
 
 You can build the server like this [Take care to include libssl & libcrypto]: 
 ```sh

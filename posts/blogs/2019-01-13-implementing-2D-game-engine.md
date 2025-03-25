@@ -28,14 +28,14 @@ First, we will start with some basic assumptions:
 2. Physics simulation runs at a constant frame rate i.e usually 60 fps.
 3. Whatever I will be describing has been implemented for 2D but most of the general idea is applicable for 3D as well. Also, the processes I have described is what I have implemented, different game engines tend to use different models or optimizations.
 
-### Overview
+## Overview
 For a physics engine to function properly it should perform three basic things:
 1. It should be able to predict translational properties like position, velocity, acceleration and rotational properties like orientation, angular velocity, torque at any given point of time.
 2. It should be able to detect which bodies are colliding.
 3. It should be able to properly resolve the impulses generated due to those collisions.
 
 
-### Calculating Properties
+## Calculating Properties
 For calculating the properties we basically use Newton's Law of motion.
 ```equation
 v = \intop{1/m * F \; dt}
@@ -93,7 +93,7 @@ I = Moment of Inertia
 ω = angular velocity  
 τ = Torque
 
-### Calculate colliding pairs of rigidbodies
+## Calculate colliding pairs of rigidbodies
 At each loop it is necessary for engine to know which pair of rigidbodies are colliding, so that the collision can be solved and bodies do not pass each other.
 
 Naively if we iterate on all N bodies, we will need to check `N*(N-1)/2` possible combinations which are a lot. Suppose N = 100, we will need to check 4950 body pairs which can take way too much than the frame duration (i.e just 1/60s or 16ms). In most of the games there are more objects present than that at any given point of time.
@@ -155,7 +155,7 @@ isColliding = xOverlap > 0 && yOverlap > 0
 
 For a convex polygon its implementation will be more complex, there is a good [video](https://gdcvault.com/play/1017646/Physics-for-Game-Programmers-The) in GDC Vault explaining the process. Also you can go through the [Box2D](https://github.com/erincatto/Box2D) code for the same. It is next in my list for implementation.
 
-### Impulse Resolution
+## Impulse Resolution
 Impulse resolution means when bodies collide, we need to stop them from moving inside each other. The first thing that comes to mind is that we can apply a force to them, but force does not instantaneously change the velocity. For this we directly change the velocity of the bodies or say we applied an impulse (i.e you can think of it as a large force in almost zero time).
 
 Each rigidbody apart from dynamic properties also has some physical properties which we group into **Material**.
@@ -266,7 +266,7 @@ Let us understand this definition, if our solved `jf` (representing the force of
 
 Hopefully you can now begin to understand the basics of writing a game engine, and again you can find the [code](https://github.com/deep110/LucidEngine) on github. I have tried to include most of the topics that are absolutely required to implement a working demo. Now you can read up articles for specific topics to understand them more and how it will benefit your implementation.
 
-### Image and Other Credits
+## References
 * Wikipedia
 * [ResearchGate](https://www.researchgate.net/figure/Spatial-partition-of-a-2D-scene-using-a-quadtree-subdivision_fig2_236611845)
 * [GameDevTuts](https://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169)

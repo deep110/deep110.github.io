@@ -247,376 +247,339 @@ class MathUtil {
 };
 
 const carousel = function () {
+	const getSlideWidth = (container) => 
+		container.children[0].offsetWidth + parseInt(window.getComputedStyle(container).columnGap);
+
+	const scrollToSlide = (container, slideNum) => {
+		container.style.transform = `translateX(${-slideNum * getSlideWidth(container)}px)`;
+	};
+
+	const updateIndicators = (sliderElement, activeIndex) => {
+		const indicators = sliderElement.querySelector(".carousel-indicators")?.children;
+		if (!indicators || indicators.length <= 1) return;
+		
+		[...indicators].forEach((el, i) => el.classList.toggle("active", i === activeIndex));
+	};
+
+	const goToSlide = (container, sliderElement, slideNum) => {
+		container.dataset.slideNum = slideNum;
+		scrollToSlide(container, slideNum);
+		updateIndicators(sliderElement, slideNum);
+	};
+
 	return {
 		init(rootElement = document.body) {
-			for (let sliderElement of rootElement.querySelectorAll(".carousel")) {
-				this.initSlider(sliderElement);
-			}
+			rootElement.querySelectorAll(".carousel").forEach(el => this.initSlider(el));
 		},
 
 		initSlider(sliderElement) {
 			const container = sliderElement.querySelector(".carousel-list");
 			const slideCount = container.children.length;
-			const carouselIndicator = sliderElement.querySelector(".carousel-indicators");
+			const indicators = sliderElement.querySelector(".carousel-indicators");
 
-			if (carouselIndicator !== null && slideCount > 1) {
-				for (var i = 0; i < slideCount; i++) {
-					var indicatorChild = document.createElement("li");
-					if (i == 0) {
-						indicatorChild.classList.add("active");
+			// Create indicators
+			if (indicators && slideCount > 1) {
+				indicators.innerHTML = Array(slideCount).fill().map((_, i) => 
+					`<li${i === 0 ? ' class="active"' : ''}></li>`
+				).join('');
+				indicators.onclick = (e) => {
+					if (e.target.tagName === 'LI') {
+						const index = [...e.target.parentElement.children].indexOf(e.target);
+						goToSlide(container, sliderElement, index);
 					}
-					carouselIndicator.appendChild(indicatorChild);
-				}
-				carouselIndicator.addEventListener("click", () => this.slideToByIndicator());
+				};
 			}
 
 			container.dataset.slideNum = 0;
-			for (let navElement of sliderElement.querySelectorAll(".carousel-nav")) {
-				let next = navElement.classList.contains("carousel-nav-next");
-				navElement.addEventListener("click", () => {
-					var newSlideNum = this.getNewSlideNum(container, next, slideCount);
-					container.dataset.slideNum = newSlideNum;
 
-					this.slide(container, newSlideNum);
-					this.handleIndicators(sliderElement, newSlideNum);
-				}, { passive: true });
-			}
+			// Navigation buttons
+			sliderElement.querySelectorAll(".carousel-nav").forEach(nav => {
+				const isNext = nav.classList.contains("carousel-nav-next");
+				nav.onclick = () => {
+					const current = +container.dataset.slideNum;
+					const newSlide = isNext 
+						? (current + 1) % slideCount 
+						: current === 0 ? slideCount - 1 : current - 1;
+					goToSlide(container, sliderElement, newSlide);
+				};
+			});
 
-			// mouse drag
-			container.addEventListener("mousedown", (e) => this.handleMouseDrag(e, sliderElement, container, slideCount), { passive: true });
-			container.addEventListener("touchstart", (e) => this.handleMouseDrag(e, sliderElement, container, slideCount), { passive: true });
-		},
+			// Touch/mouse drag
+			const handleDrag = (e) => {
+				const slideWidth = getSlideWidth(container);
+				const slideIndex = +container.dataset.slideNum;
+				const startPos = slideIndex * slideWidth;
+				const startX = e.clientX || e.touches[0].clientX;
+				const startY = e.clientY || e.touches[0].clientY;
+				const startTime = performance.now();
+				let deltaX = 0;
 
-		slide(container, newSlideNum) {
-			const slides = container.children;
-			const gapWidth = parseInt(window.getComputedStyle(container).columnGap);
-			const scrollStep = slides[0].offsetWidth + gapWidth;
+				const onMove = (e) => {
+					deltaX = (e.clientX || e.touches[0].clientX) - startX;
+					const deltaY = (e.clientY || e.touches[0].clientY) - startY;
+					
+					if (Math.abs(deltaY) > Math.abs(deltaX)) return; // Vertical scroll
 
-			this.scrollX(container, -1 * newSlideNum * scrollStep);
-		},
+					// Edge resistance
+					const edgeLimit = 0.3 * slideWidth;
+					if ((slideIndex === 0 && deltaX > edgeLimit) || 
+						(slideIndex === slideCount - 1 && -deltaX > edgeLimit)) {
+						deltaX = Math.sign(deltaX) * edgeLimit;
+					}
 
-		slideToByIndicator() {
-			const indicator = window.event.target;
-			const indicatorIndex = Array.from(indicator.parentElement.children).indexOf(indicator);
+					container.style.transform = `translateX(${-startPos + deltaX}px)`;
+				};
 
-			const sliderElement = indicator.closest(".carousel");
-			const container = sliderElement.querySelector(".carousel-list");
-			const gapWidth = parseInt(window.getComputedStyle(container).columnGap);
-			const scrollStep = container.children[0].offsetWidth + gapWidth;
+				const onEnd = () => {
+					container.removeEventListener('mousemove', onMove);
+					container.removeEventListener('touchmove', onMove);
 
-			container.dataset.slideNum = indicatorIndex;
-			this.scrollX(container, -1 * indicatorIndex * scrollStep);
-			this.handleIndicators(sliderElement, indicatorIndex);
-		},
+					const speed = Math.abs(deltaX) / (performance.now() - startTime);
+					let newIndex = slideIndex;
+					
+					if (Math.abs(deltaX) > slideWidth / 2 || speed > 0.3) {
+						newIndex = Math.max(0, Math.min(slideCount - 1, slideIndex - Math.sign(deltaX)));
+					}
 
-		handleIndicators(sliderElement, newSlideNum) {
-			let scrollIndicators = sliderElement.querySelector(".carousel-indicators").children;
-			for (let element of scrollIndicators) element.classList.remove("active");
-			if (scrollIndicators.length > 1) scrollIndicators[newSlideNum].classList.add("active");
-		},
+					goToSlide(container, sliderElement, newIndex);
+				};
 
-		scrollX(element, scrollFinalPosition) {
-			element.style.transform = `translateX(${scrollFinalPosition}px)`;
-		},
-
-		getNewSlideNum(container, next, slideCount) {
-			let currentSlideNum = parseInt(container.dataset.slideNum, 10);
-			if (next) {
-				currentSlideNum = (currentSlideNum + 1) % slideCount;
-			} else {
-				currentSlideNum = (currentSlideNum != 0) ? currentSlideNum - 1 : slideCount - 1;
-			}
-			return currentSlideNum;
-		},
-
-		handleMouseDrag(e, sliderElement, container, slideCount) {
-			const slideWidth = container.children[0].offsetWidth + parseInt(window.getComputedStyle(container).columnGap);
-			const slideIndex = parseInt(container.dataset.slideNum, 10);
-			const startingPosition = slideIndex * slideWidth;
-			const mouseDownStartingPosX = e.clientX || e.touches[0].clientX;
-			const mouseDownStartingPosY = e.clientY || e.touches[0].clientY;
-			const touchStartTime = window.performance.now();
-			let mouseMovedPosition = 0;
-
-			const moveProgress = (e) => {
-				mouseMovedPosition = (e.clientX || e.touches[0].clientX) - mouseDownStartingPosX;
-				// don't move if vertical scroll
-				if (Math.abs((e.clientY || e.touches[0].clientY) - mouseDownStartingPosY) > Math.abs(mouseMovedPosition)) {
-					return;
-				}
-				const edgeLimit = 0.3;
-				if (slideIndex == 0 && mouseMovedPosition > edgeLimit * slideWidth) {
-					mouseMovedPosition = edgeLimit * slideWidth;
-				}
-				if (slideIndex == (slideCount - 1) && (-1 * mouseMovedPosition) > edgeLimit * slideWidth) {
-					mouseMovedPosition = -1 * edgeLimit * slideWidth;
-				}
-				const scrollFinalPosition = -1 * startingPosition + mouseMovedPosition;
-				container.style.transform = `translateX(${scrollFinalPosition}px)`;
+				container.addEventListener('mousemove', onMove, { passive: true });
+				container.addEventListener('touchmove', onMove, { passive: true });
+				document.addEventListener('mouseup', onEnd, { once: true });
+				document.addEventListener('touchend', onEnd, { once: true });
 			};
 
-			const moveEnd = () => {
-				container.removeEventListener('mousemove', moveProgress);
-				container.removeEventListener('touchmove', moveProgress);
-
-				const moveSpeed = Math.abs(mouseMovedPosition)/ (window.performance.now() - touchStartTime);
-				let newSlideIndex = slideIndex;
-				if (Math.abs(mouseMovedPosition) > slideWidth / 2 || moveSpeed > 0.3) {
-					newSlideIndex = slideIndex - Math.sign(mouseMovedPosition);
-					if (newSlideIndex < 0) newSlideIndex = 0;
-					if (newSlideIndex == slideCount) newSlideIndex = slideCount - 1;
-				}
-
-				// scroll to chosen slide
-				this.scrollX(container, -1 * newSlideIndex * slideWidth);
-				this.handleIndicators(sliderElement, newSlideIndex);
-				container.dataset.slideNum = newSlideIndex;
-			};
-
-			container.addEventListener('mousemove', moveProgress, { passive: true });
-			container.addEventListener('touchmove', moveProgress, { passive: true });
-			document.addEventListener('mouseup', moveEnd, { once: true, passive: true });
-			document.addEventListener('touchend', moveEnd, { once: true, passive: true });
+			container.addEventListener('mousedown', handleDrag, { passive: true });
+			container.addEventListener('touchstart', handleDrag, { passive: true });
 		}
 	};
 }();
 
 const videoPlayer = function () {
-	return {
-		init(rootElement = document.body) {
-			for (let videoElement of rootElement.querySelectorAll(".video-player")) {
-				this.initVideo(videoElement);
-			}
-		},
-		initVideo(videoContainer) {
-			const video = videoContainer.querySelector("video");
-			const startButton = document.createElement("button");
-			const loader = document.createElement("div");
-			const playbackAnimation = document.createElement("div");
-			const videoControls = document.createElement("div");
+	const formatTime = (timeInSeconds) => {
+		const result = new Date(timeInSeconds * 1000).toISOString().substring(11, 19);
+		return {
+			minutes: result.substring(3, 5),
+			seconds: result.substring(6, 8),
+		};
+	};
 
-			startButton.classList.add("start-button");
-			videoContainer.appendChild(startButton);
+	const toggleIcons = (container) => {
+		container.querySelectorAll('svg').forEach(icon => icon.classList.toggle('hidden'));
+	};
 
-			loader.classList.add("loader");
-			loader.classList.add("hidden");
-			videoContainer.appendChild(loader);
+	const updateTimeDisplay = (timeElement, seconds, includeDateTime = true) => {
+		const time = formatTime(seconds);
+		timeElement.textContent = `${time.minutes}:${time.seconds}`;
+		if (includeDateTime) {
+			timeElement.setAttribute('datetime', `${time.minutes}m ${time.seconds}s`);
+		}
+	};
 
-			playbackAnimation.classList.add("playback-icons");
-			playbackAnimation.innerHTML = `
-				<svg class="hidden" viewBox="0 0 24 24">
-					<path d="M8.016 5.016l10.969 6.984-10.969 6.984v-13.969z"></path>
-				</svg>
-				<svg viewBox="0 0 24 24">
-					<path d="M14.016 5.016h3.984v13.969h-3.984v-13.969zM6 18.984v-13.969h3.984v13.969h-3.984z"></path>
-				</svg>`;
-			videoContainer.appendChild(playbackAnimation);
-
-			videoControls.classList.add("video-controls");
-			videoControls.classList.add("hidden");
-			videoControls.innerHTML = `
-				<div class="video-progress">
-					<progress value="0" min="0"></progress>
-					<input class="seek" id="seek" value="0" min="0" type="range" step="1">
-					<div class="seek-tooltip" id="seek-tooltip">00:00</div>
-				</div>
-				<div class="bottom-controls">
-					<div class="left-controls">
-						<button data-title="Play" id="play-button" class="control-button">
-							<svg viewBox="0 0 24 24">
-								<path d="M8.016 5.016l10.969 6.984-10.969 6.984v-13.969z"></path>
-							</svg>
-							<svg class="hidden" viewBox="0 0 24 24">
-								<path d="M14.016 5.016h3.984v13.969h-3.984v-13.969zM6 18.984v-13.969h3.984v13.969h-3.984z"></path>
-							</svg>
-						</button>
-
-						<div class="volume-controls">
-							<button data-title="Mute" class="control-button" id="volume-button">
-								<svg class="hidden" viewBox="0 0 24 24">
-									<path d="M12 3.984v4.219L9.891 6.094zM4.266 3 21 19.734 19.734 21l-2.063-2.063q-1.547 1.313-3.656 1.828v-2.063q1.172-.328 2.25-1.172l-4.266-4.266v6.75l-5.016-5.016H2.999v-6h4.734L2.999 4.264zm14.718 9q0-2.391-1.383-4.219t-3.586-2.484V3.234q3.047.656 5.016 3.117T21 11.999q0 2.203-1.031 4.172l-1.5-1.547q.516-1.266.516-2.625zM16.5 12q0 .422-.047.609l-2.438-2.438V7.968q1.031.516 1.758 1.688T16.5 12z"/>
-								</svg>
-								<svg viewBox="0 0 24 24">
-									<path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q1.031 0.516 1.758 1.688t0.727 2.344zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path>
-								</svg>
-							</button>
-							<input class="volume" id="volume-input" value="1" data-mute="0.5" type="range" max="1" min="0" step="0.01">
-						</div>
-
-						<div class="time">
-							<time id="time-elapsed">00:00</time>
-							<span> / </span>
-							<time id="duration">00:00</time>
-						</div>
-					</div>
-
-					<button data-title="Full screen" class="control-button fullscreen-button" id="fullscreen-button">
-						<svg id="fullscreen" viewBox="0 0 24 24">
-							<path d="M14.705 2.345h6.89v6.578h-2.731V4.952h-4.159V2.345Zm4.159 15.886v-3.972h2.731v6.577h-6.89v-2.605h4.159ZM2.224 8.922V2.344h6.891v2.607H4.954v3.971h-2.73Zm2.729 5.337v3.972h4.16v2.605h-6.89v-6.577h2.73Z"/>
+	const createVideoControls = () => `
+		<div class="video-progress">
+			<progress value="0" min="0"></progress>
+			<input class="seek" value="0" min="0" type="range" step="1">
+			<div class="seek-tooltip">00:00</div>
+		</div>
+		<div class="bottom-controls">
+			<div class="left-controls">
+				<button data-title="Play" class="control-button play-button">
+					<svg viewBox="0 0 24 24">
+						<path d="M8.016 5.016l10.969 6.984-10.969 6.984v-13.969z"></path>
+					</svg>
+					<svg class="hidden" viewBox="0 0 24 24">
+						<path d="M14.016 5.016h3.984v13.969h-3.984v-13.969zM6 18.984v-13.969h3.984v13.969h-3.984z"></path>
+					</svg>
+				</button>
+				<div class="volume-controls">
+					<button data-title="Mute" class="control-button volume-button">
+						<svg class="hidden" viewBox="0 0 24 24">
+							<path d="M12 3.984v4.219L9.891 6.094zM4.266 3 21 19.734 19.734 21l-2.063-2.063q-1.547 1.313-3.656 1.828v-2.063q1.172-.328 2.25-1.172l-4.266-4.266v6.75l-5.016-5.016H2.999v-6h4.734L2.999 4.264zm14.718 9q0-2.391-1.383-4.219t-3.586-2.484V3.234q3.047.656 5.016 3.117T21 11.999q0 2.203-1.031 4.172l-1.5-1.547q.516-1.266.516-2.625zM16.5 12q0 .422-.047.609l-2.438-2.438V7.968q1.031.516 1.758 1.688T16.5 12z"/>
 						</svg>
-						<svg id="fullscreen-exit" class="hidden" viewBox="0 0 24 24">
-							<path d="M15.984 8.016h3v1.969h-4.969v-4.969h1.969v3zM14.016 18.984v-4.969h4.969v1.969h-3v3h-1.969zM8.016 8.016v-3h1.969v4.969h-4.969v-1.969h3zM5.016 15.984v-1.969h4.969v4.969h-1.969v-3h-3z"/>
+						<svg viewBox="0 0 24 24">
+							<path d="M14.016 3.234q3.047 0.656 5.016 3.117t1.969 5.648-1.969 5.648-5.016 3.117v-2.063q2.203-0.656 3.586-2.484t1.383-4.219-1.383-4.219-3.586-2.484v-2.063zM16.5 12q0 2.813-2.484 4.031v-8.063q1.031 0.516 1.758 1.688t0.727 2.344zM3 9h3.984l5.016-5.016v16.031l-5.016-5.016h-3.984v-6z"></path>
 						</svg>
 					</button>
-        		</div>`;
+					<input class="volume" value="1" data-mute="0.5" type="range" max="1" min="0" step="0.01">
+				</div>
+				<div class="time">
+					<time class="time-elapsed">00:00</time>
+					<span> / </span>
+					<time class="duration">00:00</time>
+				</div>
+			</div>
+			<button data-title="Full screen" class="control-button fullscreen-button">
+				<svg viewBox="0 0 24 24">
+					<path d="M14.705 2.345h6.89v6.578h-2.731V4.952h-4.159V2.345Zm4.159 15.886v-3.972h2.731v6.577h-6.89v-2.605h4.159ZM2.224 8.922V2.344h6.891v2.607H4.954v3.971h-2.73Zm2.729 5.337v3.972h4.16v2.605h-6.89v-6.577h2.73Z"/>
+				</svg>
+				<svg class="hidden" viewBox="0 0 24 24">
+					<path d="M15.984 8.016h3v1.969h-4.969v-4.969h1.969v3zM14.016 18.984v-4.969h4.969v1.969h-3v3h-1.969zM8.016 8.016v-3h1.969v4.969h-4.969v-1.969h3zM5.016 15.984v-1.969h4.969v4.969h-1.969v-3h-3z"/>
+				</svg>
+			</button>
+		</div>`;
 
-			videoContainer.appendChild(videoControls);
+	return {
+		init: (rootElement = document.body) => 
+			rootElement.querySelectorAll(".video-player").forEach(el => videoPlayer.initVideo(el)),
 
-			const playButton = videoControls.querySelector("#play-button");
-			const volumeButton = videoControls.querySelector("#volume-button");
-			const volumeInput = videoControls.querySelector("#volume-input");
-			const seek = videoControls.querySelector("#seek");
-			const seekTooltip = videoControls.querySelector("#seek-tooltip");
-			const progressBar = videoControls.querySelector("progress");
-			const duration = videoControls.querySelector("#duration");
-			const timeElapsed = videoControls.querySelector("#time-elapsed");
-			const fullscreenButton = videoControls.querySelector("#fullscreen-button");
-
-			startButton.addEventListener("click", () => {
-				video.play();
-				startButton.classList.add("hidden");
-				loader.classList.remove("hidden");
-				video.addEventListener("click", () => {
-					this.animatePlayback(playbackAnimation);
-					this.togglePlay(video);
-				});
-			});
-
-			video.addEventListener('play', () => this.updatePlayButton(video, playButton));
-			video.addEventListener('pause', () => this.updatePlayButton(video, playButton));
-			video.addEventListener('loadedmetadata', () => this.initializeVideo(video, seek, progressBar, duration));
-			video.addEventListener('loadeddata', () => { loader.classList.add("hidden"); });
-			video.addEventListener('timeupdate', () => this.videoTimerUpdate(video, timeElapsed, seek, progressBar));
-			video.addEventListener('volumechange', () => this.updateVolumeIcon(video, volumeButton));
-			videoContainer.addEventListener('mouseenter', () => this.toggleControls(videoControls, video));
-			videoContainer.addEventListener('mouseleave', () => this.toggleControls(videoControls, video));
-
-			playButton.addEventListener("click", () => this.togglePlay(video));
-			seek.addEventListener('mousemove', (e) => this.updateSeekTooltip(e, video, seek, seekTooltip));
-			seek.addEventListener('input', (e) => this.skipAhead(e, video, progressBar, seek));
-			volumeInput.addEventListener('input', () => {
-				if (video.muted) video.muted = false;
-				if (volumeInput.value == 0) video.muted = true;
-				video.volume = volumeInput.value;
-			});
-			volumeButton.addEventListener('click', () => this.toggleMute(video, volumeInput));
-			fullscreenButton.addEventListener('click', () => this.toggleFullScreen(videoContainer));
-			videoContainer.addEventListener('fullscreenchange', () => {
-				fullscreenButton.querySelectorAll('svg').forEach((icon) => icon.classList.toggle('hidden'));
-				if (document.fullscreenElement) {
-					fullscreenButton.setAttribute('data-title', 'Exit full screen');
-				} else {
-					fullscreenButton.setAttribute('data-title', 'Full screen');
-				}
-			});
-		},
-		animatePlayback(element) {
-			element.animate(
-				[{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(1.3)' }],
-				{ duration: 500 }
-			);
-			element.querySelectorAll('svg').forEach((icon) => icon.classList.toggle('hidden'));
-		},
-		updatePlayButton(video, playButton) {
-			playButton.querySelectorAll('svg').forEach((icon) => icon.classList.toggle('hidden'));
-			if (video.paused) {
-				playButton.setAttribute('data-title', 'Play');
-			} else {
-				playButton.setAttribute('data-title', 'Pause');
-			}
-		},
-		togglePlay(video) {
-			if (video.paused || video.ended) {
-				video.play();
-			} else {
-				video.pause();
-			}
-		},
-		initializeVideo(video, seek, progressBar, duration) {
-			const videoDuration = Math.round(video.duration);
-			seek.setAttribute('max', videoDuration);
-			progressBar.setAttribute('max', videoDuration);
-			const time = this.__formatTime(videoDuration);
-			duration.innerText = `${time.minutes}:${time.seconds}`;
-			duration.setAttribute('datetime', `${time.minutes}m ${time.seconds}s`);
-		},
-		toggleControls(videoControls, video) {
-			if (video.readyState == 4 && (video.paused && !video.ended)) {
-				return;
-			}
-			videoControls.classList.toggle('hidden');
-		},
-		videoTimerUpdate(video, timeElapsed, seek, progressBar) {
-			const currTime = Math.round(video.currentTime);
-			const formattedTime = this.__formatTime(currTime);
-			timeElapsed.innerText = `${formattedTime.minutes}:${formattedTime.seconds}`;
-			timeElapsed.setAttribute('datetime', `${formattedTime.minutes}m ${formattedTime.seconds}s`);
-			seek.value = Math.round(currTime);
-			progressBar.value = Math.round(currTime);
-		},
-		updateVolumeIcon(video, volumeButton) {
-			if (video.muted || video.volume === 0) {
-				volumeButton.setAttribute('data-title', 'Unmute');
-				volumeButton.children[0].classList.remove('hidden');
-				volumeButton.children[1].classList.add('hidden');
-			} else {
-				volumeButton.setAttribute('data-title', 'Mute');
-				volumeButton.children[0].classList.add('hidden');
-				volumeButton.children[1].classList.remove('hidden');
-			}
-		},
-		updateSeekTooltip(event, video, seek, seekTooltip) {
-			if (video.readyState != 4) return;
-			const skipTo = Math.round(
-				(event.offsetX / event.target.clientWidth) *
-				parseInt(event.target.getAttribute('max'), 10)
-			);
-			seek.setAttribute('data-seek', skipTo);
-			const t = this.__formatTime(skipTo);
-			seekTooltip.textContent = `${t.minutes}:${t.seconds}`;
-			const rect = video.getBoundingClientRect();
-			seekTooltip.style.left = `${event.pageX - rect.left}px`;
-		},
-		skipAhead(event, video, progressBar, seek) {
-			const skipTo = event.target.dataset.seek
-				? event.target.dataset.seek
-				: event.target.value;
-			video.currentTime = skipTo;
-			progressBar.value = skipTo;
-			seek.value = skipTo;
-		},
-		toggleMute(video, volume) {
-			video.muted = !video.muted;
-			if (video.muted) {
-				volume.setAttribute('data-volume', volume.value);
-				volume.value = 0;
-			} else {
-				if (video.volume == 0) {
-					video.volume = 1;
-					volume.dataset.volume = 1;
-				}
-				volume.value = volume.dataset.volume;
-			}
-		},
-		toggleFullScreen(videoContainer) {
-			if (document.fullscreenElement) {
-				document.exitFullscreen();
-			} else if (document.webkitFullscreenElement) { // safari
-				document.webkitExitFullscreen();
-			} else if (videoContainer.requestFullscreen) {
-				videoContainer.requestFullscreen();
-			} else if (videoContainer.webkitRequestFullscreen) { // safari
-				videoContainer.webkitRequestFullscreen();
-			}
-		},
-		__formatTime(timeInSeconds) {
-			const result = new Date(timeInSeconds * 1000).toISOString().substring(11, 8);
-			return {
-				minutes: result.substring(3, 2),
-				seconds: result.substring(6, 2),
+		initVideo(videoContainer) {
+			const video = videoContainer.querySelector("video");
+			
+			// Create UI elements
+			const elements = {
+				startButton: Object.assign(document.createElement("button"), { className: "start-button" }),
+				loader: Object.assign(document.createElement("div"), { className: "loader hidden" }),
+				playbackAnimation: Object.assign(document.createElement("div"), { 
+					className: "playback-icons",
+					innerHTML: `
+						<svg class="hidden" viewBox="0 0 24 24">
+							<path d="M8.016 5.016l10.969 6.984-10.969 6.984v-13.969z"></path>
+						</svg>
+						<svg viewBox="0 0 24 24">
+							<path d="M14.016 5.016h3.984v13.969h-3.984v-13.969zM6 18.984v-13.969h3.984v13.969h-3.984z"></path>
+						</svg>`
+				}),
+				videoControls: Object.assign(document.createElement("div"), { 
+					className: "video-controls hidden",
+					innerHTML: createVideoControls()
+				})
 			};
-		},
-	}
+
+			// Append elements
+			Object.values(elements).forEach(el => videoContainer.appendChild(el));
+
+			// Get control elements
+			const controls = {
+				playButton: elements.videoControls.querySelector(".play-button"),
+				volumeButton: elements.videoControls.querySelector(".volume-button"),
+				volumeInput: elements.videoControls.querySelector(".volume"),
+				seek: elements.videoControls.querySelector(".seek"),
+				seekTooltip: elements.videoControls.querySelector(".seek-tooltip"),
+				progressBar: elements.videoControls.querySelector("progress"),
+				duration: elements.videoControls.querySelector(".duration"),
+				timeElapsed: elements.videoControls.querySelector(".time-elapsed"),
+				fullscreenButton: elements.videoControls.querySelector(".fullscreen-button")
+			};
+
+			// Event handlers
+			const handlers = {
+				startVideo: () => {
+					video.play();
+					elements.startButton.classList.add("hidden");
+					elements.loader.classList.remove("hidden");
+					video.onclick = () => {
+						elements.playbackAnimation.animate(
+							[{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(1.3)' }],
+							{ duration: 500 }
+						);
+						toggleIcons(elements.playbackAnimation);
+						handlers.togglePlay();
+					};
+				},
+
+				updatePlayButton: () => {
+					toggleIcons(controls.playButton);
+					controls.playButton.setAttribute('data-title', video.paused ? 'Play' : 'Pause');
+				},
+
+				togglePlay: () => {
+					video.paused || video.ended ? video.play() : video.pause();
+				},
+
+				initializeVideo: () => {
+					const duration = Math.round(video.duration);
+					controls.seek.max = controls.progressBar.max = duration;
+					updateTimeDisplay(controls.duration, duration);
+				},
+
+				toggleControls: () => {
+					if (video.readyState === 4 && video.paused && !video.ended) return;
+					elements.videoControls.classList.toggle('hidden');
+				},
+
+				updateTime: () => {
+					const currentTime = Math.round(video.currentTime);
+					updateTimeDisplay(controls.timeElapsed, currentTime);
+					controls.seek.value = controls.progressBar.value = currentTime;
+				},
+
+				updateVolumeIcon: () => {
+					const isMuted = video.muted || video.volume === 0;
+					controls.volumeButton.setAttribute('data-title', isMuted ? 'Unmute' : 'Mute');
+					controls.volumeButton.children[0].classList.toggle('hidden', !isMuted);
+					controls.volumeButton.children[1].classList.toggle('hidden', isMuted);
+				},
+
+				updateSeekTooltip: (e) => {
+					if (video.readyState !== 4) return;
+					const skipTo = Math.round((e.offsetX / e.target.clientWidth) * +e.target.max);
+					controls.seek.setAttribute('data-seek', skipTo);
+					updateTimeDisplay(controls.seekTooltip, skipTo, false);
+					controls.seekTooltip.style.left = `${e.pageX - video.getBoundingClientRect().left}px`;
+				},
+
+				skipAhead: (e) => {
+					const skipTo = e.target.dataset.seek || e.target.value;
+					video.currentTime = controls.progressBar.value = controls.seek.value = skipTo;
+				},
+
+				handleVolume: () => {
+					if (video.muted) video.muted = false;
+					video.muted = +controls.volumeInput.value === 0;
+					video.volume = controls.volumeInput.value;
+				},
+
+				toggleMute: () => {
+					video.muted = !video.muted;
+					if (video.muted) {
+						controls.volumeInput.setAttribute('data-volume', controls.volumeInput.value);
+						controls.volumeInput.value = 0;
+					} else {
+						if (video.volume === 0) {
+							video.volume = 1;
+							controls.volumeInput.dataset.volume = 1;
+						}
+						controls.volumeInput.value = controls.volumeInput.dataset.volume;
+					}
+				},
+
+				toggleFullScreen: () => {
+					const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+					if (isFullscreen) {
+						(document.exitFullscreen || document.webkitExitFullscreen).call(document);
+					} else {
+						(videoContainer.requestFullscreen || videoContainer.webkitRequestFullscreen).call(videoContainer);
+					}
+				},
+
+				handleFullscreenChange: () => {
+					toggleIcons(controls.fullscreenButton);
+					controls.fullscreenButton.setAttribute('data-title', 
+						document.fullscreenElement ? 'Exit full screen' : 'Full screen');
+				}
+			};
+
+			// Bind events
+			elements.startButton.onclick = handlers.startVideo;
+			controls.playButton.onclick = handlers.togglePlay;
+			controls.seek.onmousemove = handlers.updateSeekTooltip;
+			controls.seek.oninput = handlers.skipAhead;
+			controls.volumeInput.oninput = handlers.handleVolume;
+			controls.volumeButton.onclick = handlers.toggleMute;
+			controls.fullscreenButton.onclick = handlers.toggleFullScreen;
+
+			video.onplay = video.onpause = handlers.updatePlayButton;
+			video.onloadedmetadata = handlers.initializeVideo;
+			video.onloadeddata = () => elements.loader.classList.add("hidden");
+			video.ontimeupdate = handlers.updateTime;
+			video.onvolumechange = handlers.updateVolumeIcon;
+
+			videoContainer.onmouseenter = videoContainer.onmouseleave = handlers.toggleControls;
+			videoContainer.onfullscreenchange = handlers.handleFullscreenChange;
+		}
+	};
 }();
 
 const snackbar = function (msg, displayTime = 2000) {

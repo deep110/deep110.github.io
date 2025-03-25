@@ -3,6 +3,7 @@
   {% include "head.liquid" %}
   <body>
     {% include "header.liquid" %}
+
     <div class="page-content">
       <div class="wrapper">
 
@@ -19,6 +20,22 @@
                    Minute Read
             </p>
           </header>
+
+          {% if page.toc and page.toc.h2 %}
+          <div class="toc">
+              <details open>
+                  <summary class="toc-title">Table of Contents</summary>
+                  <ul class="toc-list">
+                      {% for h2 in page.toc.h2 %}
+                      <li class="toc-item">
+                          <a href="{{ h2.permalink }}" class="toc-link">{{ h2.title }}</a>
+                      </li>
+                      {% endfor %}
+                  </ul>
+              </details>
+          </div>
+          {% endif %}
+
           <div class="post-content" itemprop="articleBody">
             {{ page.content }}
           </div>

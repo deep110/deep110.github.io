@@ -68,7 +68,7 @@ Poisson Disc Sampling has many applications in games:
 
 The one i would be focusing on is object placement.
 
-### Implementation
+## Implementation
 
 There are many implementations for poisson disc sampling but the one we are going to discuss was proposed by Robert Bridson[^robert]. It is reasonably fast and can be used for N arbitrary dimensions.
 
@@ -201,7 +201,7 @@ function isNeighborOk(grid_i, grid_j, sample) {
 }
 ```
 
-### Effect of Max tries
+## Effect of Max tries
 
 Having a greater value of k [typically more than 30] will give you a dense packing while having a less value [< 5] can leave holes in the generation.
 
@@ -212,7 +212,7 @@ Having a greater value of k [typically more than 30] will give you a dense packi
 
 Though it can be desirable if you would want to fill those areas with some other things. For example with lakes when generating a forest. You can try playing around with `MaxTries` slider above to see the effect of k.
 
-### References { #references }
+## References { #references }
 
 [^robert]:  [Fast Poisson Disk Sampling in Arbitrary Dimensions](https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf) by Robert Bridson, University of British Columbia
 
