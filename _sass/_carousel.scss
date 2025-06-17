@@ -62,12 +62,12 @@
     border-radius: 50%;
     margin-right: 6px;
 
-    .active {
+    &.active {
         transform: scale(1.4);
         background: var(--color-text);
     }
 
-    :hover {
+    &:hover {
         opacity: 0.9;
         background-color: var(--color-btn-hover);
     }
