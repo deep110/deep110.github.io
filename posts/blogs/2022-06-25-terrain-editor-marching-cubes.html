@@ -54,6 +54,28 @@ Jun 25, 2022
 Minute Read
 </p>
 </header>
+<div class="toc">
+<details open>
+<summary class="toc-title">Table of Contents</summary>
+<ul class="toc-list">
+<li class="toc-item">
+<a href="#the-algorithm" class="toc-link">The Algorithm</a>
+</li>
+<li class="toc-item">
+<a href="#creating-a-procedural-terrain" class="toc-link">Creating A Procedural Terrain</a>
+</li>
+<li class="toc-item">
+<a href="#editing-the-generated-terrain" class="toc-link">Editing the Generated Terrain</a>
+</li>
+<li class="toc-item">
+<a href="#final-notes" class="toc-link">Final Notes</a>
+</li>
+<li class="toc-item">
+<a href="#references" class="toc-link">References</a>
+</li>
+</ul>
+</details>
+</div>
 <div class="post-content" itemprop="articleBody">
 <div id="canvas-container" style="position: relative;">
 <canvas id="main-canvas" height=500 width=740></canvas>
@@ -65,17 +87,16 @@ Minute Read
 <br>
 <p>According to wikipedia, <a href="https://wikipedia.org/wiki/Marching_cubes">Marching Cubes</a> is an algorithm for creating a polygonal mesh out of a discrete 3d scalar field.</p>
 <p>So let's see how the algorithm<sup class="footnote-reference"><a href="#rf_pb">1</a></sup> works, then we will create a terrain and finally edit it. All the rendering is done using Three.js<sup class="footnote-reference"><a href="#rf_3js">2</a></sup> library.</p>
-<h3>The Algorithm</h3>
-<h4>Step 1: Fill a 3d space with random values at discrete intervals</h4>
+<h2 id="the-algorithm">The Algorithm<a hidden class="anchor" aria-hidden="true" href="#the-algorithm">#</a></h2><h4 id="step-1-fill-a-3d-space-with-random-values-at-discrete-intervals">Step 1: Fill a 3d space with random values at discrete intervals<a hidden class="anchor" aria-hidden="true" href="#step-1-fill-a-3d-space-with-random-values-at-discrete-intervals">#</a></h4>
 <p>In a 3d space where we want to draw our mesh, we will sample the points i.e assign some random value to each point at discrete intervals.</p>
-<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">an</span><span class="mord mathnormal">d</span><span class="mord mathnormal">o</span><span class="mord mathnormal">m</span><span class="mopen">(</span><span class="mord">−</span><span class="mord">10</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">10</span><span class="mclose">)</span></span></span></span></span></p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal">an</span><span class="mord mathnormal">d</span><span class="mord mathnormal">o</span><span class="mord mathnormal">m</span><span class="mopen">(</span><span class="mord">−</span><span class="mord">10</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">10</span><span class="mclose">)</span></span></span></span></span>
 <p>where, range of values can arbitrary.</p>
 <div style="text-align:center">
 <img src="/assets/images/2022-06/sample-points-3d-space.png" alt="Sample Points in 3d Space" width=450 aspect-ratio=1.25></img>
 <div>Sample Points at discrete intervals in 3d Space</div>
 </div>
 <br>
-<h4>Step 2: Choose a surface level</h4>
+<h4 id="step-2-choose-a-surface-level">Step 2: Choose a surface level<a hidden class="anchor" aria-hidden="true" href="#step-2-choose-a-surface-level">#</a></h4>
 <p>Now we have to define a surface level i.e any value between min and max of the whole field. A point with value above surface level is considered inside the mesh and below the surface level is considered outside the mesh.</p>
 <div style="text-align:center">
 <img src="/assets/images/2022-06/points-surface-level.png" alt="Points above or below surface level" width=450 aspect-ratio=1.25></img>
@@ -86,9 +107,9 @@ Minute Read
 <blockquote>
 <p>Note: Above and below surface level is subjective and does not affect the algorithm in any way. We just want to draw the boundary of the mesh. Mesh will be just inverted.</p>
 </blockquote>
-<h4>Step 3: Draw Mesh Triangles</h4>
-<p>Now for each point we consider next nearest seven points,
-<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⟨</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">⟩</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⟨</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">⟩</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⟨</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">⟩]</span></span></span></span></span></p>
+<h4 id="step-3-draw-mesh-triangles">Step 3: Draw Mesh Triangles<a hidden class="anchor" aria-hidden="true" href="#step-3-draw-mesh-triangles">#</a></h4>
+<p>Now for each point we consider next nearest seven points,</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord mathnormal">x</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⟨</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">⟩</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⟨</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">⟩</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⟨</span><span class="mord">0</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">⟩]</span></span></span></span></span>
 <p>thus forming a cube. Based on which points are included in mesh i.e below surface level we draw a mesh. For example: Lets take a look at the below image.</p>
 <div style="text-align:center">
 <img src="/assets/images/2022-06/mesh-isosurface-facet.png" alt="Iso-surface facet" width=400 aspect-ratio=1.334></img>
@@ -97,7 +118,7 @@ Minute Read
 <br>
 <p>The vertex number 3 is above surface level so we will draw a mesh facet that will cut edge 2-3-11. Now if we manually code all the 2<sup>8</sup> combinations it would be little difficult. Thus we use <a href="https://github.com/deep110/terrain-editor-js/blob/master/marching-cubes.js#L260">edge tables</a> and <a href="https://github.com/deep110/terrain-editor-js/blob/master/marching-cubes.js#L1">triangulation tables</a> to make this process easier.</p>
 <ol>
-<li>Calculate the <code>cubeIndex</code> which will give a 12bit number in edge table where each bit corresponds to an edge. </li>
+<li>Calculate the <code>cubeIndex</code> which will give a 12bit number in edge table where each bit corresponds to an edge.</li>
 </ol>
 <pre style="background-color:#fafafa;">
 <code><span style="color:#a626a4;">function </span><span style="color:#4078f2;">getCubeIndex</span><span style="color:#383a42;">() {
@@ -123,7 +144,7 @@ Minute Read
 <ol start="2">
 <li>Now we know which edges to connect, but we also need to get a point on each edge and connect them to make a triangular mesh. Either we can take the mid point of the edge or take a weighted distance between the two vertices of the edge.</li>
 </ol>
-<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord mathnormal">so</span><span class="mord mathnormal">Va</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mord">1</span><span class="mclose">)</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord">1</span><span class="mclose">)</span><span class="mord">/</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></span></p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7667em;vertical-align:-0.0833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord mathnormal">so</span><span class="mord mathnormal">Va</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">u</span><span class="mord mathnormal">e</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mord">1</span><span class="mclose">)</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord">1</span><span class="mclose">)</span><span class="mord">/</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mord">2</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="mord">1</span><span class="mclose">)</span></span></span></span></span>
 <p>where,</p>
 <p>V1 = Value of vertex 1<br>
 V2 = Value of Vertex 2<br>
@@ -140,7 +161,7 @@ P2 = position of Vertex 2</p>
 </div>
 <br>
 <p>Btw if you really check there are just 15 unique combinations<sup class="footnote-reference"><a href="#rf_wiki">3</a></sup> possible.</p>
-<h4>Step 4: Iterate over whole field and draw</h4>
+<h4 id="step-4-iterate-over-whole-field-and-draw">Step 4: Iterate over whole field and draw<a hidden class="anchor" aria-hidden="true" href="#step-4-iterate-over-whole-field-and-draw">#</a></h4>
 <p>Now we just need to iterate over the whole field and apply the step 3. You can play with the interactive demo below. Try changing the surface level and field type.</p>
 <div style="position: relative;">
 <canvas id="canvas-algo" height=400 width=600></canvas>
@@ -158,7 +179,7 @@ P2 = position of Vertex 2</p>
 </span><span style="color:#383a42;">  }
 </span><span style="color:#383a42;">}
 </span></code></pre>
-<h3>Creating A Procedural Terrain</h3>
+<h2 id="creating-a-procedural-terrain">Creating A Procedural Terrain<a hidden class="anchor" aria-hidden="true" href="#creating-a-procedural-terrain">#</a></h2>
 <p>As you have realized, you can generate any shape as long as you have the field function figured out. So for terrain we will use a noise function - <a href="https://wikipedia.org/wiki/Simplex_noise">Simplex Noise</a>. It is just like <a href="https://wikipedia.org/wiki/Perlin_noise#">Perlin Noise</a> but with fewer directional artifacts and lower computation overhead. You can read wikipedia in more detail on how to generate it.</p>
 <p>It is often used in procedural generation because the randomness vary very smoothly but still gives a natural looking feel.</p>
 <pre style="background-color:#fafafa;">
@@ -218,7 +239,7 @@ P2 = position of Vertex 2</p>
 </div>
 <br>
 <p>Other factors just helps in increasing or decreasing the noise amplitude. You can play around in the above terrain interactive with these values.</p>
-<h3>Editing the Generated Terrain</h3>
+<h2 id="editing-the-generated-terrain">Editing the Generated Terrain<a hidden class="anchor" aria-hidden="true" href="#editing-the-generated-terrain">#</a></h2>
 <p>Once you have a terrain setup, to edit we just have to manipulate the field values. Consider we have a brush size of radius r, we just need to manipulate the spherical field around the position on terrain which we want to edit. It is same as creating a spherical mesh, we can just put distance from center as field value.</p>
 <pre style="background-color:#fafafa;">
 <code><span style="font-style:italic;color:#a0a1a7;">/**
@@ -247,9 +268,9 @@ P2 = position of Vertex 2</p>
 </span><span style="color:#383a42;">  </span><span style="color:#a626a4;">return </span><span style="color:#e45649;">spherePos</span><span style="color:#383a42;">.</span><span style="color:#e45649;">distanceTo</span><span style="color:#383a42;">(point) </span><span style="color:#0184bc;">- </span><span style="color:#383a42;">radius;
 </span><span style="color:#383a42;">}
 </span></code></pre>
-<h3>Final Notes</h3>
+<h2 id="final-notes">Final Notes<a hidden class="anchor" aria-hidden="true" href="#final-notes">#</a></h2>
 <p>You can find the full source code on my <a href="https://github.com/deep110/terrain-editor-js">github</a>. If you enjoyed the article and want to see more of them then please subscribe below.</p>
-<h3 id="references">References</h3>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
 <div class="footnote-definition" id="rf_pb"><sup class="footnote-definition-label">1</sup>
 <p><a href="http://paulbourke.net/geometry/polygonise/">Implementation by Paul Broke</a></p>
 </div>

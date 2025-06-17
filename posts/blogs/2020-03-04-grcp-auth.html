@@ -54,6 +54,19 @@ Mar 4, 2020
 Minute Read
 </p>
 </header>
+<div class="toc">
+<details open>
+<summary class="toc-title">Table of Contents</summary>
+<ul class="toc-list">
+<li class="toc-item">
+<a href="#client-side-tls-ssl-authentication" class="toc-link">Client Side TLS/SSL Authentication</a>
+</li>
+<li class="toc-item">
+<a href="#token-based-authentication-oauth2" class="toc-link">Token Based Authentication / OAuth2</a>
+</li>
+</ul>
+</details>
+</div>
 <div class="post-content" itemprop="articleBody">
 <p>In gRPC there are number of ways you can add authentication between client and server. It is handled via Credentials Objects.</p>
 <p>There are two types of credential objects:</p>
@@ -63,7 +76,7 @@ Minute Read
 </ol>
 <p>These Credential objects can also be combined to create <strong>CompositeChannelCredentials</strong> with one Channel Credential and one Call Credential object.</p>
 <p>Now let us see how we can use these credential objects.</p>
-<h2>Client Side TLS/SSL Authentication</h2>
+<h2 id="client-side-tls-ssl-authentication">Client Side TLS/SSL Authentication<a hidden class="anchor" aria-hidden="true" href="#client-side-tls-ssl-authentication">#</a></h2>
 <p>gRPC provides a way to establish a connection without any secure connection i.e just like HTTP.</p>
 <pre style="background-color:#fafafa;">
 <code><span style="font-style:italic;color:#a0a1a7;">// client.go
@@ -101,9 +114,9 @@ Minute Read
 </span><span style="font-style:italic;color:#a0a1a7;">// server code remains the same
 </span></code></pre>
 <p>In this case what happens is that grpc loads the certificates of well known Certificate Authorities from the OS and send it to server, hence no need to manually provide a certificate.</p>
-<h2>Token Based Authentication / OAuth2</h2>
+<h2 id="token-based-authentication-oauth2">Token Based Authentication / OAuth2<a hidden class="anchor" aria-hidden="true" href="#token-based-authentication-oauth2">#</a></h2>
 <p>Many a times we want to differentiate a client by issuing them different tokens. TLS Authentication is good way to secure your connection but it does not tell us from which client the request is coming from. We will send the token in request metadata just like HTTP Headers.</p>
-<p>gRPC has <code>&quot;google.golang.org/grpc/metadata&quot;</code> package to send and receive metadata with a RPC request. </p>
+<p>gRPC has <code>"google.golang.org/grpc/metadata"</code> package to send and receive metadata with a RPC request.</p>
 <pre style="background-color:#fafafa;">
 <code><span style="font-style:italic;color:#a0a1a7;">// client.go
 </span><span style="color:#383a42;">

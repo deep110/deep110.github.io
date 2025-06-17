@@ -54,10 +54,26 @@ Dec 29, 2020
 Minute Read
 </p>
 </header>
+<div class="toc">
+<details open>
+<summary class="toc-title">Table of Contents</summary>
+<ul class="toc-list">
+<li class="toc-item">
+<a href="#creating-a-simple-tcp-server" class="toc-link">Creating a simple TCP server</a>
+</li>
+<li class="toc-item">
+<a href="#adding-tls-to-tcp-server" class="toc-link">Adding TLS to TCP Server</a>
+</li>
+<li class="toc-item">
+<a href="#building-and-testing-the-server" class="toc-link">Building and Testing the Server</a>
+</li>
+</ul>
+</details>
+</div>
 <div class="post-content" itemprop="articleBody">
 <p>During my work at <a href="https://vernacular.ai">vernacular.ai</a> I came across a problem in our telephony setup that some of our clients wanted TLS support even if the setup runs on premise without any internet access.</p>
 <p><a href="https://github.com/unispeech/unimrcp">Unimrcp</a> uses apr library for MRCP and SIP. APR does not have out of box support for TLS, hence the blog. Instructions on installing APR can be found their <a href="https://apr.apache.org/compiling_unix.html">homepage</a>.</p>
-<h3>Creating a simple TCP server</h3>
+<h2 id="creating-a-simple-tcp-server">Creating a simple TCP server<a hidden class="anchor" aria-hidden="true" href="#creating-a-simple-tcp-server">#</a></h2>
 <p>Let us start with a simple tcp server implemented using <code>apr_network_io</code>.</p>
 <ol>
 <li>Initialize the apr_pool</li>
@@ -174,7 +190,7 @@ Minute Read
 </span><span style="color:#383a42;"># run the server
 </span><span style="color:#383a42;">./echoserver
 </span></code></pre>
-<h3>Adding TLS to TCP Server</h3>
+<h2 id="adding-tls-to-tcp-server">Adding TLS to TCP Server<a hidden class="anchor" aria-hidden="true" href="#adding-tls-to-tcp-server">#</a></h2>
 <p>We will be using <a href="https://github.com/openssl/openssl">OpenSSL</a> library to add TLS support. Let us implement some functions like <code>apr_network_io.c</code> to account for SSL.</p>
 <ol>
 <li>Add functions for initialize &amp; destroy OpenSSL Context.</li>
@@ -360,8 +376,8 @@ Minute Read
 </span><span style="color:#383a42;">    </span><span style="color:#a626a4;">return</span><span style="color:#383a42;"> rv;
 </span><span style="color:#383a42;">}
 </span></code></pre>
-<h3>Building and Testing the Server</h3>
-<p>You can build the server like this [Take care to include libssl &amp; libcrypto]: </p>
+<h2 id="building-and-testing-the-server">Building and Testing the Server<a hidden class="anchor" aria-hidden="true" href="#building-and-testing-the-server">#</a></h2>
+<p>You can build the server like this [Take care to include libssl &amp; libcrypto]:</p>
 <pre style="background-color:#fafafa;">
 <code><span style="color:#e45649;">gcc</span><span style="color:#383a42;"> -I/usr/local/apr/include/apr-1/ -Wl,-rpath,/usr/local/apr/lib -o echoserver echoserver.c -L/usr/local/apr/lib -lapr-1 -lssl -lcrypto
 </span></code></pre>

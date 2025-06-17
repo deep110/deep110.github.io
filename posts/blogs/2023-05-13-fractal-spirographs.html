@@ -54,6 +54,22 @@ May 13, 2023
 Minute Read
 </p>
 </header>
+<div class="toc">
+<details open>
+<summary class="toc-title">Table of Contents</summary>
+<ul class="toc-list">
+<li class="toc-item">
+<a href="#the-setup" class="toc-link">The Setup</a>
+</li>
+<li class="toc-item">
+<a href="#implementation" class="toc-link">Implementation</a>
+</li>
+<li class="toc-item">
+<a href="#references" class="toc-link">References</a>
+</li>
+</ul>
+</details>
+</div>
 <div class="post-content" itemprop="articleBody">
 <p>In a <a href="https://softologyblog.wordpress.com/2017/02/27/fractal-spirographs/">blog post</a> recently, I discovered how to create 2D fractals from spirographs. Intrigued by the possibilities of this technique, I decided to experiment with it further. I found that by controlling just a few variables, I could generate a wide variety of patterns. I hope you enjoy this exploration of a beautiful and complex mathematical concept just like I did.</p>
 <div id="canvas-container" style="position: relative;">
@@ -63,7 +79,7 @@ Minute Read
 </div>
 <br>
 <p>You can try to change variables such as <code>RadiusFallOff</code>, <code>RotationSpeed</code>, etc. to get more shapes. Color is added by mapping angle of rotation to HSL space. You can change saturation to give it a grayscale or more colorful look.</p>
-<h3>The Setup</h3>
+<h2 id="the-setup">The Setup<a hidden class="anchor" aria-hidden="true" href="#the-setup">#</a></h2>
 <p><a href="https://wikipedia.org/wiki/Spirograph">Spirograph</a> is a geometric drawing device that produces mathematical roulette curves. But you may know them widely as stencils in shape of gears which we have used in childhood to draw beautiful works of art.</p>
 <div style="text-align:center">
 <img src="/assets/images/2023-05/spirograph-example-set.webp" alt="Spirograph Example Set" width=350></img>
@@ -92,8 +108,8 @@ Minute Read
 </div>
 <br>
 <p>Rotation Speed of circles are distributed exponentially. So for an i-th circle speed is calculated as:</p>
-<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mord mathnormal">ro</span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal">t</span><span class="mord mathnormal">e</span><span class="mord" style="margin-right:0.02778em;">_</span><span class="mord mathnormal">s</span><span class="mord mathnormal">p</span><span class="mord mathnormal">ee</span><span class="mord mathnormal">d</span><span class="mopen">(</span><span class="mord mathnormal">i</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.958em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8747em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span></span>
-where, <em><strong>k</strong></em> = supplied rotation speed</p>
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mord mathnormal">ro</span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal">t</span><span class="mord mathnormal">e</span><span class="mord" style="margin-right:0.02778em;">_</span><span class="mord mathnormal">s</span><span class="mord mathnormal">p</span><span class="mord mathnormal">ee</span><span class="mord mathnormal">d</span><span class="mopen">(</span><span class="mord mathnormal">i</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.958em;vertical-align:-0.0833em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8747em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">1</span></span></span></span></span>
+<p>where, <em><strong>k</strong></em> = supplied rotation speed</p>
 <ol start="3">
 <li><u><b>Radius Falloff</u></b>: Radius fall off controls the radius of subsequent circles. For example: If radius fall off is 2 each subsequent circle's radius would be halved. So more the value, smaller would be the details; as you can see the in the figure below:</li>
 </ol>
@@ -104,8 +120,8 @@ where, <em><strong>k</strong></em> = supplied rotation speed</p>
 <ol start="4">
 <li><u><b>Speed Falloff</u></b>: Speed fall off directly affects rotation speed of a circle along with the provided base speed.</li>
 </ol>
-<p><span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mord mathnormal">ro</span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal">t</span><span class="mord mathnormal">e</span><span class="mord" style="margin-right:0.02778em;">_</span><span class="mord mathnormal">s</span><span class="mord mathnormal">p</span><span class="mord mathnormal">ee</span><span class="mord mathnormal">d</span><span class="mopen">(</span><span class="mord mathnormal">i</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.1877em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5017em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7751em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8247em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
-where,
+<span class="katex-display"><span class="katex"><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.06em;vertical-align:-0.31em;"></span><span class="mord mathnormal">ro</span><span class="mord mathnormal">t</span><span class="mord mathnormal">a</span><span class="mord mathnormal">t</span><span class="mord mathnormal">e</span><span class="mord" style="margin-right:0.02778em;">_</span><span class="mord mathnormal">s</span><span class="mord mathnormal">p</span><span class="mord mathnormal">ee</span><span class="mord mathnormal">d</span><span class="mopen">(</span><span class="mord mathnormal">i</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:2.1877em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.5017em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7751em;"><span style="top:-2.989em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8247em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mord">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>
+<p>where,
 <em><strong>k</strong></em> = supplied rotation speed,
 <em><strong>sf</strong></em> = supplied speed fall off</p>
 <p>More the value of fall off, less would be the speed of rotation, hence more details can be rendered.</p>
@@ -114,7 +130,7 @@ where,
 </div>
 <br>
 <p>Now lets see how we can use the above parameters in code.</p>
-<h2>Implementation</h2>
+<h2 id="implementation">Implementation<a hidden class="anchor" aria-hidden="true" href="#implementation">#</a></h2>
 <ol>
 <li>First we will define a circle class with some properties.</li>
 </ol>
@@ -249,7 +265,7 @@ where,
 </span><span style="color:#383a42;">}
 </span></code></pre>
 <p>That's all on this, I hope you enjoyed this post. If you're looking for more tech content, be sure to check out my <a href="/">other</a> blog posts or subscribe below.</p>
-<h3>References</h3>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
 <ol>
 <li><a href="https://softologyblog.wordpress.com/2017/02/27/fractal-spirographs/">https://softologyblog.wordpress.com/2017/02/27/fractal-spirographs/</a></li>
 <li><a href="https://benice-equation.blogspot.com.au/2012/01/fractal-spirograph.html">https://benice-equation.blogspot.com.au/2012/01/fractal-spirograph.html</a></li>

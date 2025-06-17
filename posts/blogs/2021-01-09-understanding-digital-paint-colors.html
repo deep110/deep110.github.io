@@ -54,6 +54,19 @@ Jan 9, 2021
 Minute Read
 </p>
 </header>
+<div class="toc">
+<details open>
+<summary class="toc-title">Table of Contents</summary>
+<ul class="toc-list">
+<li class="toc-item">
+<a href="#light-and-rgb-color-model" class="toc-link">Light and RGB Color Model</a>
+</li>
+<li class="toc-item">
+<a href="#paint-and-cmyk-color-space" class="toc-link">Paint and CMYK Color Space</a>
+</li>
+</ul>
+</details>
+</div>
 <div class="post-content" itemprop="articleBody">
 <p>Before going into the any of this I would like to talk about why I wrote this:</p>
 <ul>
@@ -67,7 +80,7 @@ Minute Read
 <p>Why if I mix green and red paints in equal proportions, I see a desaturated brown, but if I mix green and red light in equal proportions like in an LCD screen, I get pure yellow?</p>
 </blockquote>
 <p>To answer this it is important to understand difference between colors we see directly because of light and paint colors.</p>
-<h2>Light and RGB Color Model</h2>
+<h2 id="light-and-rgb-color-model">Light and RGB Color Model<a hidden class="anchor" aria-hidden="true" href="#light-and-rgb-color-model">#</a></h2>
 <p>We know that <a href="https://en.wikipedia.org/wiki/Visible_spectrum">visible spectrum</a> [390nm - 750nm] is the range of wavelength that human eye can see and this gives us the colors.
 But why is that Red, Green and Blue are the primary colors for the light. It is because eye have three <a href="https://en.wikipedia.org/wiki/Color#Color_in_the_eye">types of cones</a>, each sensitive to range of wavelength corresponding to those colors. You can read more about the <a href="https://en.wikipedia.org/wiki/Photoreceptor_cell">photoceptor cells</a> in our eyes.</p>
 <div style="text-align:center"><img src="/assets/images/2021-01/cones-responses.png" alt="Cones Response vs Wavelength"/></div>
@@ -99,7 +112,7 @@ So for example if you take yellow light [wavelength = 580nm], it will be sensiti
 Similarly white light is a mixture of all three light components, hence adding more red, or green or blue won't change the color of final light produced.</p>
 <p>Because of this, RGB color model is called as <strong>Additive Color Model</strong>. Mixing lights of all colors will eventually get you to white.</p>
 <p>Now think of above table in terms of paints, it is completely weird right? Red and Black color paint should produce what - darker shade of red.</p>
-<h2>Paint and CMYK Color Space</h2>
+<h2 id="paint-and-cmyk-color-space">Paint and CMYK Color Space<a hidden class="anchor" aria-hidden="true" href="#paint-and-cmyk-color-space">#</a></h2>
 <p>The basis for understanding paints is how we see color of objects. So for a object to appear green, it should absorb all visible wavelengths except for green light, which then will enter our eyes and we will perceive that object as green. Similarly for an object to appear,</p>
 <ul>
 <li>White - It has to absorb no visible wavelength</li>

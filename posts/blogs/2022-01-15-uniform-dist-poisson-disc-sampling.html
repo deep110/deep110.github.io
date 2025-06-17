@@ -54,6 +54,22 @@ Jan 15, 2022
 Minute Read
 </p>
 </header>
+<div class="toc">
+<details open>
+<summary class="toc-title">Table of Contents</summary>
+<ul class="toc-list">
+<li class="toc-item">
+<a href="#implementation" class="toc-link">Implementation</a>
+</li>
+<li class="toc-item">
+<a href="#effect-of-max-tries" class="toc-link">Effect of Max tries</a>
+</li>
+<li class="toc-item">
+<a href="#references" class="toc-link">References</a>
+</li>
+</ul>
+</details>
+</div>
 <div class="post-content" itemprop="articleBody">
 <div id="canvas-container">
 <canvas id="canvas" height=500 width=740></canvas>
@@ -84,7 +100,7 @@ Minute Read
 <li>mesh algorithms</li>
 </ul>
 <p>The one i would be focusing on is object placement.</p>
-<h3>Implementation</h3>
+<h2 id="implementation">Implementation<a hidden class="anchor" aria-hidden="true" href="#implementation">#</a></h2>
 <p>There are many implementations for poisson disc sampling but the one we are going to discuss was proposed by Robert Bridson<sup class="footnote-reference"><a href="#robert">1</a></sup>. It is reasonably fast and can be used for N arbitrary dimensions.</p>
 <p>The steps are as follows:</p>
 <ol>
@@ -225,14 +241,14 @@ M834 80h400000v40h-400000z'/></svg></span></span></span><span class="vlist-s">â€
 </span><span style="color:#383a42;">  </span><span style="color:#a626a4;">return </span><span style="color:#986801;">true</span><span style="color:#383a42;">;
 </span><span style="color:#383a42;">}
 </span></code></pre>
-<h3>Effect of Max tries</h3>
+<h2 id="effect-of-max-tries">Effect of Max tries<a hidden class="anchor" aria-hidden="true" href="#effect-of-max-tries">#</a></h2>
 <p>Having a greater value of k [typically more than 30] will give you a dense packing while having a less value [&lt; 5] can leave holes in the generation.</p>
 <div style="text-align:center">
 <img src="/assets/images/2022-01/sampling-less-k.jpg" alt="Poisson Disc Sampling Less Max tries"></img>
 </div>
 <br>
 <p>Though it can be desirable if you would want to fill those areas with some other things. For example with lakes when generating a forest. You can try playing around with <code>MaxTries</code> slider above to see the effect of k.</p>
-<h3 id="references">References</h3>
+<h2 id="references">References<a hidden class="anchor" aria-hidden="true" href="#references">#</a></h2>
 <div class="footnote-definition" id="robert"><sup class="footnote-definition-label">1</sup>
 <p><a href="https://www.cs.ubc.ca/~rbridson/docs/bridson-siggraph07-poissondisk.pdf">Fast Poisson Disk Sampling in Arbitrary Dimensions</a> by Robert Bridson, University of British Columbia</p>
 </div>

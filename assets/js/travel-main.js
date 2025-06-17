@@ -1,6 +1,10 @@
-var visitedCountries = ['IN', 'TR', 'NP', 'AE', 'VN'];
+var visitedCountries = ['IN', 'TR', 'NP', 'AE', 'VN', 'HK', 'MO'];
 
 var visitedCities = {
+    "2024": [
+        { name: "Hong Kong", coords: [22.3193, 114.1694], image: "hong-kong.webp", post: "2024-08-18-hongkong.html", date: "July, 2024" },
+        { name: "Macau", coords: [22.1987, 113.5461], image: "macau.webp", post: "2024-12-18-macau.html", date: "July, 2024" },
+    ],
     "2023": [
         // Vietnam
         { name: "Hanoi", coords: [21.0278, 105.8342], image: "hanoi.webp", post: "2023-03-19-vietnam.html#hanoi", date: "Feb, 2023" },
@@ -38,8 +42,8 @@ var visitedCities = {
     ],
     "2019": [
         // United Arab Emirates
-        { name: "Abu Dhabi", coords: [24.4539, 54.3773], image: "abu-dhabi.webp", post: "2019-11-28-uae.html#dubai", date: "Nov, 2019" },
-        { name: "Dubai", coords: [25.2048, 55.2708], image: "dubai.webp", post: "2019-11-28-uae.html#abu-dhabi", date: "Nov, 2019" },
+        { name: "Abu Dhabi", coords: [24.4539, 54.3773], image: "abu-dhabi.webp", post: "2019-11-28-uae.html#abu-dhabi", date: "Nov, 2019" },
+        { name: "Dubai", coords: [25.2048, 55.2708], image: "dubai.webp", post: "2019-11-28-uae.html", date: "Nov, 2019" },
     ],
     "2018": [
         { name: "Sikkim", coords: [27.5330, 88.5122], image: "sikkim.webp", date: "Nov, 2018" },
@@ -81,7 +85,7 @@ var map = new jsVectorMap({
     selector: "#map",
     map: "world_merc",
     focusOn: {
-        regions: ['IN', 'RS', 'VN'],
+        regions: ['IN', 'RS', 'VN', 'HK'],
         animate: true
     },
     regionStyle: {
